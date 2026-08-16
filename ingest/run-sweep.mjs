@@ -80,7 +80,8 @@ async function main() {
   const touchedDates = new Set();
   /** Sharh tarixi uchun — sweepda koʻrilgan mahsulotlar. */
   const seenProducts = new Set();
-  let totalCaptured = 0;
+  let totalMeasured = 0;
+  let totalStored = 0;
   let totalErrors = 0;
   /** 07-band: Uzum nechta dedi ↔ biz nechtasini oldik. */
   const coverage = { reported: 0, captured: 0, truncated: 0, dead: 0 };
@@ -89,13 +90,17 @@ async function main() {
     // Dry run bazaga umuman tegmaydi — sweep ham ochilmaydi.
     const sweepId = config.dryRun ? null : await store.openSweep(source.name, `slot ${slot.key}`);
     let targets = 0;
-    let captured = 0;
+    /** Nechta obyekt haqiqatan oʻlchandi. Bajarilish ulushi shundan chiqadi. */
+    let measured = 0;
+    /** Nechta qator bazaga tushdi. Oʻzgarmagan oʻlchov yozilmaydi (06.5). */
+    let stored = 0;
     let errors = 0;
 
     try {
       for await (const batch of source.collect(slot)) {
         targets += batch.shops.length + batch.products.length;
         errors += batch.errors ?? 0;
+        measured += batch.shopObservations.length + batch.productObservations.length;
 
         if (batch.coverage) {
           coverage.reported += batch.coverage.reported ?? 0;
@@ -104,12 +109,9 @@ async function main() {
           coverage.dead += batch.coverage.dead ?? 0;
         }
 
-        if (config.dryRun) {
-          captured += batch.shopObservations.length + batch.productObservations.length;
-          continue;
-        }
+        if (config.dryRun) continue;
 
-        captured += await store.saveBatch(sweepId, batch);
+        stored += await store.saveBatch(sweepId, batch);
 
         for (const o of batch.shopObservations) touchedDates.add(tashkentDate(o.observedAt));
         for (const o of batch.productObservations) {
@@ -122,7 +124,7 @@ async function main() {
       if (!config.dryRun) {
         await store.closeSweep(sweepId, {
           targets,
-          captured,
+          captured: measured,
           errors,
           note: `to'xtadi: ${error.message}`,
         });
@@ -131,22 +133,28 @@ async function main() {
     }
 
     if (!config.dryRun) {
-      // 06.7: rejalashtirilganning 90% idan kam bajarilsa — run "xato".
-      const ratio = targets > 0 ? captured / targets : 1;
+      // 06.7: rejalashtirilganning 90% idan kam OʻLCHANSA — run "xato".
+      //
+      // Bu yerda ataylab `measured` ishlatiladi, `stored` emas. Oʻlchov
+      // oʻzgarmagan boʻlsa bazaga yozilmaydi (06.5), shuning uchun yozilgan
+      // qator soni bajarilish oʻlchovi emas — narx bir hafta turgan doʻkon
+      // "qamrov past" deb notoʻgʻri belgilanardi.
+      const ratio = targets > 0 ? measured / targets : 1;
       const note =
         ratio < MIN_COMPLETION
-          ? `qamrov past: ${(ratio * 100).toFixed(1)}% (${captured}/${targets})`
+          ? `qamrov past: ${(ratio * 100).toFixed(1)}% (${measured}/${targets})`
           : null;
       await store.closeSweep(sweepId, {
         targets,
-        captured,
+        captured: measured,
         errors: note ? errors + 1 : errors,
         note,
       });
       if (note) log(`OGOHLANTIRISH — ${note}`);
     }
 
-    totalCaptured += captured;
+    totalMeasured += measured;
+    totalStored += stored;
     totalErrors += errors;
 
     if (slots.length > 1 && (index + 1) % 20 === 0) {
@@ -154,7 +162,12 @@ async function main() {
     }
   }
 
-  log(`Yozildi: ${totalCaptured} o'lchov, ${totalErrors} xato.`);
+  // Ikki raqam ataylab alohida: o'lchangan ≠ yozilgan. O'zgarmagan o'lchov
+  // yozilmaydi, va bu xato emas — 06.5 shuni talab qiladi.
+  log(
+    `O'lchandi: ${totalMeasured}, bazaga yozildi: ${totalStored} ` +
+      `(o'zgarmaganlari yozilmaydi), ${totalErrors} xato.`,
+  );
 
   if (config.dryRun) {
     log("Dry run — bazaga hech narsa yozilmadi.");

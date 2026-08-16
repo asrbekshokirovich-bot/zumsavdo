@@ -1,4 +1,5 @@
 import type { BootResult } from "@/data/bootstrap";
+import { enableDemo } from "@/lib/demo";
 
 /**
  * Oʻlchov yoʻqligini aytadigan ekran.
@@ -19,6 +20,22 @@ export function NoDataPage({ boot }: { boot: Extract<BootResult, { mode: "empty"
       )}
 
       <div className="panel" style={{ marginTop: 18 }}>
+        <header>
+          <h2>Dizaynni koʻrish</h2>
+        </header>
+        <div className="body" style={{ maxWidth: "70ch" }}>
+          <p style={{ marginTop: 0 }}>
+            Panel qanday ishlashini haqiqiy oʻlchovsiz ham koʻrish mumkin.
+            Demo rejimida toʻqilgan maʻlumot ishlatiladi va har sahifaning
+            tepasida oʻchmaydigan <b>DEMO</b> tasmasi turadi.
+          </p>
+          <button type="button" className="chip" onClick={enableDemo}>
+            Demo maʻlumot bilan ochish
+          </button>
+        </div>
+      </div>
+
+      <div className="panel">
         <header>
           <h2>Nega raqam koʻrsatilmayapti</h2>
         </header>

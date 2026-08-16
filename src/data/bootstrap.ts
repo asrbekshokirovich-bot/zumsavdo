@@ -1,5 +1,7 @@
 import { setDataStart } from "@/lib/dates";
+import { isDemoEnabled } from "@/lib/demo";
 import { setDataset } from "./dataset";
+import { buildDemoDataset } from "./demo";
 import { isRemoteConfigured, loadRemoteDataset } from "./remote";
 
 /**
@@ -14,6 +16,7 @@ import { isRemoteConfigured, loadRemoteDataset } from "./remote";
  */
 export type BootResult =
   | { mode: "ready" }
+  | { mode: "demo" }
   | { mode: "empty"; reason: string; detail?: string };
 
 /**
@@ -34,6 +37,15 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 }
 
 export async function bootstrap(): Promise<BootResult> {
+  // Demo faqat ochiq soʻralganda. Ombordan oldin tekshiriladi, chunki bu
+  // foydalanuvchining ataylab tanlovi va u ustunlik qiladi.
+  if (isDemoEnabled()) {
+    const dataset = buildDemoDataset();
+    setDataset(dataset);
+    if (dataset.dates.length) setDataStart(dataset.dates[0]);
+    return { mode: "demo" };
+  }
+
   if (!isRemoteConfigured()) {
     return {
       mode: "empty",

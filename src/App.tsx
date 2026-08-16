@@ -7,12 +7,13 @@ import { ProductPage } from "@/pages/Product";
 import { CategoryPage } from "@/pages/Category";
 import { NotFoundPage } from "@/pages/NotFound";
 import { getStatus } from "@/data/api";
+import { disableDemo } from "@/lib/demo";
 
 /**
  * Manzillar id boʻyicha: /sotuvchi/9103, /mahsulot/560305, /turkum/1007.
  * Nomga bogʻlanmaydi — Uzumda nom istalgan kuni oʻzgarishi mumkin, id esa yoʻq.
  */
-export function App() {
+export function App({ demo = false }: { demo?: boolean }) {
   const location = useLocation();
   // Ombor ulangani hech narsani isbotlamaydi: ichida namunaviy oʻlchov turgan
   // boʻlishi mumkin. Ogohlantirish ulanishga emas, maʻlumot manbaiga qaraydi.
@@ -24,6 +25,24 @@ export function App() {
 
   return (
     <>
+      {/*
+        DEMO tasmasi sahifaning eng tepasida, yopishib turadi va yopilmaydi.
+        Ilgari toʻqilgan raqamlar haqiqiy oʻlchov deb oʻqilgani uchun bu belgi
+        koʻz qochirib boʻlmaydigan joyda turishi kerak.
+      */}
+      {demo && (
+        <div className="demo-strip">
+          <b>DEMO</b>
+          <span>
+            Bu sahifadagi barcha raqamlar toʻqilgan — Uzumdan olingan emas.
+            Dizaynni koʻrish uchun.
+          </span>
+          <button type="button" className="demo-exit" onClick={disableDemo}>
+            Demo'dan chiqish
+          </button>
+        </div>
+      )}
+
       <header className="topbar">
         <div className="topbar-inner">
           <Link className="brand" to="/">

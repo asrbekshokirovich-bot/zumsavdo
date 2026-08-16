@@ -18,6 +18,12 @@ const DEFAULT_URL = "https://duequijnnzcngzzvjqst.supabase.co";
 
 const rl = readline.createInterface({ input: stdin, output: stdout });
 
+/** `https://abc.supabase.co` → `abc` */
+function projectRef(url) {
+  const match = String(url).match(/https:\/\/([^.]+)\.supabase\.co/);
+  return match ? match[1] : "<project>";
+}
+
 function readExisting() {
   if (!fs.existsSync(ENV_PATH)) return {};
   const out = {};
@@ -37,13 +43,31 @@ async function ask(question, fallback) {
 const current = readExisting();
 stdout.write("\nZumSavdo yigʻuvchisini sozlash\n\n");
 
-const url = await ask("1) Supabase URL", current.SUPABASE_URL || DEFAULT_URL);
+/**
+ * Manzilni tozalaydi.
+ *
+ * Supabase panelida koʻrinadigan manzil koʻpincha `/rest/v1/` bilan boʻladi,
+ * lekin mijozga asosiy manzil kerak. Foydalanuvchi oʻshani qoʻyib yuborsa
+ * baza ulanmaydi va sabab tushunarsiz boʻladi — shuning uchun bu yerda
+ * kesiladi.
+ */
+function normalizeUrl(raw) {
+  return String(raw)
+    .trim()
+    .replace(/\/(rest|auth|storage|realtime)\/v\d+\/?$/, "")
+    .replace(/\/+$/, "");
+}
+
+const rawUrl = await ask("1) Supabase URL", current.SUPABASE_URL || DEFAULT_URL);
+const url = normalizeUrl(rawUrl);
+if (url !== rawUrl.trim()) {
+  stdout.write(`   → tozalandi: ${url}\n`);
+}
 
 stdout.write(
   "\n2) service_role kaliti\n" +
     "   Bu yerdan oling: " +
-    url.replace("https://", "https://supabase.com/dashboard/project/").replace(".supabase.co", "") +
-    "/settings/api\n" +
+    `https://supabase.com/dashboard/project/${projectRef(url)}/settings/api\n` +
     "   'service_role' qatorida Reveal bosing.\n" +
     "   DIQQAT: kalit manzil EMAS. U 'eyJ' bilan boshlanadi va juda uzun.\n",
 );

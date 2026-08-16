@@ -3,24 +3,24 @@ import { setDataset } from "./dataset";
 import { isRemoteConfigured, loadRemoteDataset } from "./remote";
 
 /**
- * Panel qaysi maʻlumot bilan ochilgani.
+ * Panel ochilishidan oldin ombor oʻqiladi.
  *
- * Bu holat interfeysda koʻrsatiladi: namuna toʻplami haqiqiy oʻlchov kabi
- * koʻrinib qolsa, panelning butun maʻnosi yoʻqoladi.
+ * Maʻlumot boʻlmasa panel **hech qanday raqam koʻrsatmaydi**. Ilgari bu holatda
+ * namuna toʻplami ishga tushardi va sahifa toʻqilgan raqamlar bilan toʻlardi;
+ * ular haqiqiy oʻlchov deb oʻqilgani uchun butunlay olib tashlandi.
+ *
+ * Boʻsh sahifa ham yolgʻon — u "sotuv yoʻq" deb oʻqiladi. Shuning uchun bu
+ * holatda raqam oʻrniga nima yetishmayotgani yoziladi.
  */
-export type DataMode = "remote" | "sample";
-
-export interface BootResult {
-  mode: DataMode;
-  /** Omborga ulanib boʻlmagan boʻlsa — sababi. */
-  fallbackReason?: string;
-}
+export type BootResult =
+  | { mode: "ready" }
+  | { mode: "empty"; reason: string; detail?: string };
 
 /**
- * Ombor shuncha vaqtda javob bermasa, panel namuna bilan ochiladi.
+ * Ombor shuncha vaqtda javob bermasa kutish toʻxtatiladi.
  *
- * Cheklovsiz kutish eng yomon holat: soʻrov osilib qolsa, foydalanuvchi
- * abadiy yuklanish ekranini koʻradi va nima boʻlganini bilmaydi.
+ * Cheklovsiz kutish eng yomon holat: soʻrov osilib qolsa, foydalanuvchi abadiy
+ * yuklanish ekranini koʻradi va nima boʻlganini bilmaydi.
  */
 const LOAD_TIMEOUT_MS = 15_000;
 
@@ -28,10 +28,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return Promise.race([
     promise,
     new Promise<never>((_, reject) =>
-      setTimeout(
-        () => reject(new Error(`Ombor ${ms / 1000} soniyada javob bermadi.`)),
-        ms,
-      ),
+      setTimeout(() => reject(new Error(`Ombor ${ms / 1000} soniyada javob bermadi.`)), ms),
     ),
   ]);
 }
@@ -39,9 +36,11 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 export async function bootstrap(): Promise<BootResult> {
   if (!isRemoteConfigured()) {
     return {
-      mode: "sample",
-      fallbackReason:
-        "Ombor sozlanmagan (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY yoʻq).",
+      mode: "empty",
+      reason: "Ombor sozlanmagan.",
+      detail:
+        "VITE_SUPABASE_URL va VITE_SUPABASE_ANON_KEY berilmagan. " +
+        ".env.example dan nusxa olib .env.local yarating.",
     };
   }
 
@@ -50,11 +49,12 @@ export async function bootstrap(): Promise<BootResult> {
     setDataset(dataset);
     // Davr tanlagich eng eski oʻlchovdan orqaga chiqmasligi kerak.
     if (dataset.dates.length) setDataStart(dataset.dates[0]);
-    return { mode: "remote" };
+    return { mode: "ready" };
   } catch (error) {
     return {
-      mode: "sample",
-      fallbackReason: error instanceof Error ? error.message : String(error),
+      mode: "empty",
+      reason: "Omborda oʻlchov yoʻq.",
+      detail: error instanceof Error ? error.message : String(error),
     };
   }
 }

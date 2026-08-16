@@ -98,12 +98,13 @@ export async function loadRemoteDataset(): Promise<Dataset> {
         (q) => q.gte("date", sinceKey),
       ),
       selectAll<{
+        source: string;
         started_at: string;
         finished_at: string | null;
         targets: number;
         captured: number;
         errors: number;
-      }>(db, "zs_sweep", "started_at,finished_at,targets,captured,errors", (q) =>
+      }>(db, "zs_sweep", "source,started_at,finished_at,targets,captured,errors", (q) =>
         q.order("started_at", { ascending: false }).limit(1),
       ),
     ]);
@@ -234,7 +235,9 @@ function buildDateAxis(observed: string[]): string[] {
  * qamrov pasaysa, panelning barcha yigʻindilari ham pasayadi.
  */
 function buildStatus(
-  sweep: { started_at: string; finished_at: string | null; errors: number } | undefined,
+  sweep:
+    | { source: string; started_at: string; finished_at: string | null; errors: number }
+    | undefined,
   shopDayRows: { date: string; sweeps: number }[],
   lastDate: string,
 ): SweepStatus {
@@ -246,6 +249,7 @@ function buildStatus(
     lastSweepAt: sweep?.finished_at ?? sweep?.started_at ?? new Date().toISOString(),
     coveragePercent: total ? Math.round((covered / total) * 1000) / 10 : 0,
     errors: sweep?.errors ?? 0,
+    source: sweep?.source ?? "nomaʻlum",
   };
 }
 

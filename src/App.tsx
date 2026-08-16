@@ -6,14 +6,17 @@ import { ShopPage } from "@/pages/Shop";
 import { ProductPage } from "@/pages/Product";
 import { CategoryPage } from "@/pages/Category";
 import { NotFoundPage } from "@/pages/NotFound";
-import type { BootResult } from "@/data/bootstrap";
+import { getStatus } from "@/data/api";
 
 /**
  * Manzillar id boʻyicha: /sotuvchi/9103, /mahsulot/560305, /turkum/1007.
  * Nomga bogʻlanmaydi — Uzumda nom istalgan kuni oʻzgarishi mumkin, id esa yoʻq.
  */
-export function App({ boot }: { boot: BootResult }) {
+export function App() {
   const location = useLocation();
+  // Ombor ulangani hech narsani isbotlamaydi: ichida namunaviy oʻlchov turgan
+  // boʻlishi mumkin. Ogohlantirish ulanishga emas, maʻlumot manbaiga qaraydi.
+  const sampleData = getStatus().source === "sample";
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -33,12 +36,11 @@ export function App({ boot }: { boot: BootResult }) {
       </header>
 
       <main className="wrap">
-        {/* Namuna raqamlari hech qachon haqiqiy oʻlchov kabi koʻrinmasligi kerak. */}
-        {boot.mode === "sample" && (
+        {sampleData && (
           <div className="callout warn" style={{ marginTop: 14 }}>
-            <b>Bu namuna maʻlumot — Uzumdan olingan emas.</b>{" "}
-            {boot.fallbackReason}{" "}
-            Haqiqiy oʻlchovlar uchun <code>ingest</code> sweepini ishga tushiring.
+            <b>Bu namuna maʻlumot — Uzumdan olingan emas.</b> Ombordagi oxirgi
+            sweep manbai <code>sample</code>. Haqiqiy oʻlchovlar uchun{" "}
+            <code>ingest</code> sweepini haqiqiy manba bilan ishga tushiring.
           </div>
         )}
 

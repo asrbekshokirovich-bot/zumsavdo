@@ -123,6 +123,14 @@ export interface SweepStatus {
   coveragePercent: number;
   /** Oxirgi sweepdagi xatolar soni. */
   errors: number;
+  /**
+   * Oʻlchovni kim yigʻgani: `uzum-catalog`, `uzum-seller` yoki `sample`.
+   *
+   * Bu maydon interfeysga chiqadi. Sababi: ombor ulangan boʻlsa-yu, ichidagi
+   * maʻlumot namunaviy boʻlsa, panel jim turib toʻqilgan raqamni haqiqiy
+   * oʻlchov kabi koʻrsatadi — bu tizimdagi eng yomon yolgʻon.
+   */
+  source: string;
 }
 
 export type SearchKind = "shop" | "product" | "category";

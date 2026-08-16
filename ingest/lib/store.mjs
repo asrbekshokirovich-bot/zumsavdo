@@ -72,6 +72,33 @@ export function createStore(config) {
       return written;
     },
 
+    /**
+     * Sharhlarni yozadi.
+     *
+     * Alohida yo'l: sharh o'lchov emas, u tarix. Bir mahsulotda minglab
+     * sharh bo'lishi mumkin, shuning uchun bo'laklab yuboriladi. Kalit —
+     * sharh id si, ya'ni takroriy sweep hech narsani ikkilantirmaydi.
+     */
+    async saveFeedbacks(sweepId, feedbacks) {
+      let written = 0;
+      for (let i = 0; i < feedbacks.length; i += CHUNK) {
+        written += (await rpc("zs_ingest_batch", {
+          p_sweep_id: sweepId,
+          p_payload: {
+            categories: [],
+            shops: [],
+            products: [],
+            shopObservations: [],
+            productObservations: [],
+            skuObservations: [],
+            positions: [],
+            feedbacks: feedbacks.slice(i, i + CHUNK),
+          },
+        })) ?? 0;
+      }
+      return written;
+    },
+
     /** Kunlik yig'indini qayta hisoblash. */
     async rollup(fromDate, toDate) {
       const rows = await rpc("zs_rollup_days", { from_date: fromDate, to_date: toDate });

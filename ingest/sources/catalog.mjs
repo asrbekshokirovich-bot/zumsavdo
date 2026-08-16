@@ -340,7 +340,7 @@ export function createCatalogSource(config, { onWait } = {}) {
         for (let page = 0; page < pages; page++) {
           let data;
           try {
-            data = await gql(FEEDBACKS_QUERY, { id: productId, page, size });
+            data = await gqlPatient(FEEDBACKS_QUERY, { id: productId, page, size });
           } catch (error) {
             if (error instanceof AccessDeniedError) throw error;
             break;

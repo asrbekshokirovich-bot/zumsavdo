@@ -78,6 +78,8 @@ async function main() {
   log(`${slots.length} ta o'lchov oni.`);
 
   const touchedDates = new Set();
+  /** Sharh tarixi uchun — sweepda koʻrilgan mahsulotlar. */
+  const seenProducts = new Set();
   let totalCaptured = 0;
   let totalErrors = 0;
   /** 07-band: Uzum nechta dedi ↔ biz nechtasini oldik. */
@@ -110,7 +112,10 @@ async function main() {
         captured += await store.saveBatch(sweepId, batch);
 
         for (const o of batch.shopObservations) touchedDates.add(tashkentDate(o.observedAt));
-        for (const o of batch.productObservations) touchedDates.add(tashkentDate(o.observedAt));
+        for (const o of batch.productObservations) {
+          touchedDates.add(tashkentDate(o.observedAt));
+          seenProducts.add(o.productId);
+        }
       }
     } catch (error) {
       errors++;
@@ -156,6 +161,8 @@ async function main() {
     return;
   }
 
+  await collectFeedbackHistory(config, source, store, seenProducts);
+
   // Yig'indi tegilgan kunlardan bir kun oldin boshlanadi: kunlik farq oldingi
   // kun yakuniga tayanadi.
   const dates = [...touchedDates].sort();
@@ -163,6 +170,46 @@ async function main() {
   const to = dates[dates.length - 1] ?? from;
   const rows = await store.rollup(from, to);
   log(`Rollup ${from}…${to}: ${JSON.stringify(rows)}`);
+}
+
+/**
+ * Sharh tarixi — o'lchovdan keyin, alohida sweepda.
+ *
+ * Nega alohida: sharh o'lchov emas. Qolgan hamma raqam kamida ikki o'lchov
+ * farqidan chiqadi, ya'ni birinchi kuni bo'sh bo'ladi. Sharh esa sanasi bilan
+ * keladi — u kutmasdan tarix beradi. Shuning uchun uni kunlik sweep ichida
+ * emas, undan keyin yig'amiz: asosiy o'lchov sharh xatosidan yiqilmasin.
+ *
+ * Sharh o'zgarmaydi, faqat yangisi qo'shiladi — takroriy sweep hech narsani
+ * ikkilantirmaydi (kalit — sharh id si).
+ */
+async function collectFeedbackHistory(config, source, store, productIds) {
+  if (!config.feedbackPages || !productIds.size || !source.collectFeedbacks) return;
+
+  const sweepId = await store.openSweep(source.name, "sharh tarixi");
+  let written = 0;
+  let errors = 0;
+
+  try {
+    for await (const batch of source.collectFeedbacks([...productIds], {
+      pages: config.feedbackPages,
+    })) {
+      written += await store.saveFeedbacks(sweepId, batch.feedbacks);
+    }
+    log(`Sharhlar: ${written} ta yangi (${productIds.size} mahsulot).`);
+  } catch (error) {
+    // Sharh tushmasa o'lchov baribir o'z joyida — sweep muvaffaqiyatsiz
+    // deb belgilanadi, lekin butun run yiqilmaydi.
+    errors = 1;
+    log(`Sharhlar olinmadi: ${error.message}`);
+  }
+
+  await store.closeSweep(sweepId, {
+    targets: productIds.size,
+    captured: written,
+    errors,
+    note: errors ? "sharh tarixi to'liq emas" : null,
+  });
 }
 
 function shiftDate(key, days) {

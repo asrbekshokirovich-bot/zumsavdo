@@ -96,6 +96,14 @@ export function loadConfig({ requireSupabase = true } = {}) {
       timeoutMs: Number(process.env.ZUMSAVDO_TIMEOUT_MS || 20000),
     },
 
+    /**
+     * Har mahsulot uchun nechta sharh sahifasi olinadi (100 tadan).
+     *
+     * Sharh oʻzgarmaydi — bir marta yigʻilsa yetarli. Birinchi toʻldirishdan
+     * keyin buni 0 ga qoʻyib soʻrovlarni tejash mumkin.
+     */
+    feedbackPages: Number(process.env.ZUMSAVDO_FEEDBACK_PAGES ?? 3),
+
     /** Sweepdan keyin nechta kunni qayta hisoblash. */
     rollbackDays: Number(process.env.ZUMSAVDO_ROLLUP_DAYS || 2),
 

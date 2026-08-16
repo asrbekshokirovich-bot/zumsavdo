@@ -7,7 +7,8 @@
     "sweep": "node --env-file-if-exists=.env run-sweep.mjs",
     "probe": "node --env-file-if-exists=.env run-sweep.mjs --probe",
     "rollup": "node --env-file-if-exists=.env run-sweep.mjs --rollup-only",
-    "shops": "node --env-file-if-exists=.env find-shops.mjs"
+    "shops": "node --env-file-if-exists=.env find-shops.mjs",
+    "setup": "node setup.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1"

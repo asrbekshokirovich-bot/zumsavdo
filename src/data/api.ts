@@ -129,7 +129,8 @@ function revenueMetric(days: ShopDay[], indexes: number[]): Metric {
 
 function shopDailyOrders(shopId: number, indexes: number[]): SeriesPoint[] {
   const days = db().shopDays.get(shopId) ?? [];
-  return indexes.map((i) => ({ date: db().dates[i], value: ordersOf(days[i]) }));
+  // Grafikda nomaʻlum kun nol qilib chizilmaydi — chiziq uziladi.
+  return indexes.map((i) => ({ date: db().dates[i], value: days[i]?.orders ?? null }));
 }
 
 // ---------------------------------------------------------------- bosh sahifa
@@ -144,7 +145,7 @@ export function marketSummary(period: Period): MarketSummary {
   const indexes = sliceIndexes(period);
   let orders = 0;
   let revenue = 0;
-  const daily = indexes.map((i) => ({ date: db().dates[i], value: 0 }));
+  const daily: SeriesPoint[] = indexes.map((i) => ({ date: db().dates[i], value: null }));
   let missing = 0;
 
   for (const shop of db().shops) {
@@ -152,11 +153,14 @@ export function marketSummary(period: Period): MarketSummary {
     indexes.forEach((i, slot) => {
       const day = days[i];
       if (!day) return;
-      const value = ordersOf(day);
-      if (day.orders === null) missing++;
-      orders += value;
-      revenue += value * day.avgPrice;
-      daily[slot].value += value;
+      if (day.orders === null) {
+        missing++;
+        return;
+      }
+      orders += day.orders;
+      revenue += day.orders * day.avgPrice;
+      // Bitta sotuvchida oʻlchov boʻlsa kun maʻlum: null dan songa oʻtadi.
+      daily[slot].value = (daily[slot].value ?? 0) + day.orders;
     });
   }
 
@@ -393,10 +397,18 @@ export function shopView(shopId: number, period: Period): ShopView | null {
   const days = db().shopDays.get(shopId) ?? [];
   const siblings = db().shopsByCategory.get(shop.categoryId) ?? [];
 
-  const categoryDaily = indexes.map((i) => {
+  const categoryDaily: SeriesPoint[] = indexes.map((i) => {
     let total = 0;
-    for (const id of siblings) total += ordersOf(db().shopDays.get(id)?.[i]);
-    return { date: db().dates[i], value: siblings.length ? total / siblings.length : 0 };
+    let known = 0;
+    for (const id of siblings) {
+      const value = db().shopDays.get(id)?.[i]?.orders;
+      if (value == null) continue;
+      total += value;
+      known++;
+    }
+    // Oʻrtacha faqat oʻlchovi bor sotuvchilar boʻyicha — yoʻqlarini nol deb
+    // sanash turkumni sunʻiy ravishda past koʻrsatadi.
+    return { date: db().dates[i], value: known ? total / known : null };
   });
 
   const productIds = db().productsByShop.get(shopId) ?? [];
@@ -535,7 +547,7 @@ export function categoryView(categoryId: number, period: Period): CategoryView |
 
   let orders = 0;
   let revenue = 0;
-  const daily = indexes.map((i) => ({ date: db().dates[i], value: 0 }));
+  const daily: SeriesPoint[] = indexes.map((i) => ({ date: db().dates[i], value: null }));
 
   const shops: RankedShop[] = shopIds
     .map((id) => {
@@ -546,10 +558,10 @@ export function categoryView(categoryId: number, period: Period): CategoryView |
       indexes.forEach((i, slot) => {
         const day = days[i];
         if (!day) return;
-        const value = ordersOf(day);
-        shopOrders += value;
-        shopRevenue += value * day.avgPrice;
-        daily[slot].value += value;
+        if (day.orders === null) return;
+        shopOrders += day.orders;
+        shopRevenue += day.orders * day.avgPrice;
+        daily[slot].value = (daily[slot].value ?? 0) + day.orders;
       });
       orders += shopOrders;
       revenue += shopRevenue;

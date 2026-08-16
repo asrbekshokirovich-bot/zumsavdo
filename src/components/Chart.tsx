@@ -71,6 +71,14 @@ function useWidth<T extends HTMLElement>() {
   return [ref, width] as const;
 }
 
+/** Oʻlchovi yoʻq kun raqam bilan emas, chiziqcha bilan koʻrsatiladi. */
+function formatOrDash(
+  value: number | null | undefined,
+  format: (n: number) => string,
+): string {
+  return value === null || value === undefined ? "—" : format(value);
+}
+
 function niceTicks(min: number, max: number, count = 4): number[] {
   if (max <= min) return [min];
   const span = max - min;
@@ -106,7 +114,9 @@ export function Chart({
   const n = dates.length;
 
   const { min, max } = useMemo(() => {
-    const values = series.flatMap((s) => s.points.map((p) => p.value));
+    const values = series
+      .flatMap((s) => s.points.map((p) => p.value))
+      .filter((v): v is number => v !== null);
     if (!values.length) return { min: 0, max: 1 };
     const lo = Math.min(...values);
     const hi = Math.max(...values);
@@ -193,7 +203,9 @@ export function Chart({
         <div className="chart-title">
           <span>{title}</span>
           {series[0]?.points[last] && (
-            <span className="cur">{format(series[0].points[last].value)}</span>
+            <span className="cur">
+              {formatOrDash(series[0].points[last].value, format)}
+            </span>
           )}
         </div>
       )}
@@ -291,28 +303,33 @@ export function Chart({
           {[...series]
             .sort((a, b) => (a.role === "ref" ? -1 : 0) - (b.role === "ref" ? -1 : 0))
             .map((s) => {
+              // Oʻlchovi yoʻq kun chiziqni uzadi: nuqtalarni bir-biriga ulash
+              // "shu kunlarda ham shunday edi" degan daʻvo boʻlardi.
+              let penDown = false;
               const d = s.points
                 .map((p, i) => {
+                  if (p.value === null) {
+                    penDown = false;
+                    return "";
+                  }
                   const px = x(i);
                   const py = y(p.value);
-                  if (i === 0) return `M ${px} ${py}`;
+                  if (!penDown) {
+                    penDown = true;
+                    return `M ${px} ${py}`;
+                  }
                   if (s.step) return `H ${px} V ${py}`;
                   return `L ${px} ${py}`;
                 })
+                .filter(Boolean)
                 .join(" ");
               const color = s.role === "ref" ? "var(--series-ref)" : "var(--series-1)";
               // Bir kunlik davrda chiziq chizilmaydi — bitta nuqta koʻrsatiladi,
               // aks holda grafik boʻsh boʻlib qoladi.
               if (n === 1) {
-                return (
-                  <circle
-                    key={s.key}
-                    cx={x(0)}
-                    cy={y(s.points[0]?.value ?? 0)}
-                    r={5}
-                    fill={color}
-                  />
-                );
+                const only = s.points[0]?.value;
+                if (only === null || only === undefined) return null;
+                return <circle key={s.key} cx={x(0)} cy={y(only)} r={5} fill={color} />;
               }
               return (
                 <path
@@ -328,6 +345,26 @@ export function Chart({
               );
             })}
 
+          {/* Ikki nomaʻlum kun orasida qolgan yolgʻiz oʻlchov — chiziqsiz
+              koʻrinmay qolardi, shuning uchun nuqta bilan chiziladi. */}
+          {series.map((s) =>
+            s.points.map((point, i) => {
+              if (point.value === null) return null;
+              const before = i > 0 ? s.points[i - 1].value : null;
+              const after = i < n - 1 ? s.points[i + 1].value : null;
+              if (before !== null || after !== null) return null;
+              return (
+                <circle
+                  key={`${s.key}-lone-${i}`}
+                  cx={x(i)}
+                  cy={y(point.value)}
+                  r={3}
+                  fill={s.role === "ref" ? "var(--series-ref)" : "var(--series-1)"}
+                />
+              );
+            }),
+          )}
+
           {/* Krossxair */}
           {active !== null && active < n && (
             <g>
@@ -341,7 +378,7 @@ export function Chart({
               />
               {series.map((s) => {
                 const point = s.points[active];
-                if (!point) return null;
+                if (!point || point.value === null) return null;
                 return (
                   <circle
                     key={s.key}
@@ -364,7 +401,7 @@ export function Chart({
             {series.map((s) => (
               <div className="t-row" key={s.key}>
                 <span>{s.label}</span>
-                <b>{format(s.points[active]?.value ?? 0)}</b>
+                <b>{formatOrDash(s.points[active]?.value, format)}</b>
               </div>
             ))}
           </div>
@@ -401,7 +438,7 @@ export function Chart({
                   <td>{formatDate(d)}</td>
                   {series.map((s) => (
                     <td className="num" key={s.key}>
-                      {format(s.points[i]?.value ?? 0)}
+                      {formatOrDash(s.points[i]?.value, format)}
                     </td>
                   ))}
                 </tr>

@@ -140,5 +140,11 @@ export interface SearchHit {
 
 export interface SeriesPoint {
   date: string; // YYYY-MM-DD
-  value: number;
+  /**
+   * `null` — oʻlchov yoʻq, javob nomaʻlum.
+   *
+   * Grafikda bunday kun nol qilib chizilmaydi: nol "sotuv boʻlmagan" degan
+   * javob, nomaʻlum esa javob emas. Chiziq oʻsha joyda uziladi.
+   */
+  value: number | null;
 }

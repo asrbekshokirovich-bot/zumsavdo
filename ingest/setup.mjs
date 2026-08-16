@@ -117,6 +117,13 @@ stdout.write(
 );
 const shops = await ask("   ZUMSAVDO_TRACK_SHOPS", current.ZUMSAVDO_TRACK_SHOPS || "");
 
+stdout.write(
+  "\n4) Mahsulot id lari (ixtiyoriy, vergul bilan)\n" +
+    "   Berilsa qidiruv uchi umuman ishlatilmaydi — u tez-tez bloklanadi.\n" +
+    "   Havoladagi oxirgi raqam: uzum.uz/uz/product/nomi-560305 → 560305\n",
+);
+const products = await ask("   ZUMSAVDO_TRACK_PRODUCTS", current.ZUMSAVDO_TRACK_PRODUCTS || "");
+
 const lines = [
   "# ZumSavdo yigʻuvchisi. Bu fayl hech qachon GitHubga tushmaydi (.gitignore).",
   `SUPABASE_URL=${url}`,
@@ -124,6 +131,9 @@ const lines = [
   "",
   "ZUMSAVDO_SOURCE=uzum-catalog",
   `ZUMSAVDO_TRACK_SHOPS=${shops}`,
+  "",
+  "# Berilsa doʻkon roʻyxati qidiruvsiz olinadi (qidiruv uchi bloklanuvchan).",
+  `ZUMSAVDO_TRACK_PRODUCTS=${products}`,
   "",
   "# Sekundiga bitta soʻrov. Tez boʻlsa Uzum 429 qaytaradi.",
   "ZUMSAVDO_RPS=1",

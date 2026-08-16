@@ -179,6 +179,16 @@ export function createCatalogSource(config, { onWait } = {}) {
      */
     async preflight() {
       await tokens.get();
+
+      // Mahsulotlar aniq berilgan boʻlsa qidiruv umuman ishlatilmaydi —
+      // uni tekshirish ham shart emas.
+      if (config.track.products.length) {
+        const data = await gqlPatient(PRODUCT_PAGE_QUERY, {
+          id: config.track.products[0],
+        });
+        return { product: data?.productPage?.product?.id ?? null };
+      }
+
       const data = await gqlPatient(SHOP_PRODUCTS_QUERY, {
         shopId: String(config.track.shops[0] ?? 1),
         offset: 0,
@@ -230,17 +240,32 @@ export function createCatalogSource(config, { onWait } = {}) {
         const dead = [];
         let listing;
 
-        try {
-          listing = await listCards(SHOP_PRODUCTS_QUERY, "shopId", shopId);
-        } catch (error) {
-          if (error instanceof AccessDeniedError) throw error;
-          yield emptyBatch(1, `doʻkon ${shopId} roʻyxati olinmadi: ${error.message}`);
-          continue;
+        if (config.track.products.length) {
+          // Mahsulotlar aniq berilgan — qidiruvga umuman tegilmaydi.
+          //
+          // Uzumning qidiruv uchi (search-gateway) mahsulot uchidan alohida
+          // cheklanadi va uzoq bloklanib qolishi mumkin. Roʻyxat kerak
+          // boʻlmaganda unga soʻrov yubormaslik — eng ishonchli yoʻl.
+          listing = {
+            cards: config.track.products.map((productId, i) => ({
+              productId,
+              title: null,
+              position: i + 1,
+            })),
+            total: config.track.products.length,
+            truncated: 0,
+          };
+        } else {
+          try {
+            listing = await listCards(SHOP_PRODUCTS_QUERY, "shopId", shopId);
+          } catch (error) {
+            if (error instanceof AccessDeniedError) throw error;
+            yield emptyBatch(1, `doʻkon ${shopId} roʻyxati olinmadi: ${error.message}`);
+            continue;
+          }
         }
 
-        const ids = config.track.products.length
-          ? listing.cards.map((c) => c.productId).filter((id) => config.track.products.includes(id))
-          : listing.cards.map((c) => c.productId);
+        const ids = listing.cards.map((c) => c.productId);
 
         const pages = await fetchProducts(ids, observedAt, dead);
 

@@ -49,7 +49,10 @@ async function main() {
     );
   }
 
-  const source = factory(config);
+  const source = factory(config, {
+    onWait: (ms, attempt) =>
+      log(`Uzum tezlik chegarasi (429) — ${ms / 1000}s kutilyapti (${attempt}-urinish)...`),
+  });
   const store = createStore(config);
   log(`Manba: ${source.describe()}`);
 

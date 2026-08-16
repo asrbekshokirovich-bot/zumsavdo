@@ -42,6 +42,28 @@ export class SourceError extends Error {
   }
 }
 
+/**
+ * Tezlik chegarasi — 200 OK ichida kelgan.
+ *
+ * Uzum "muvaffaqiyat" qaytaradi, 429 esa javob tanasida yotadi. Faqat HTTP
+ * statusiga qaralsa, bu vaqtinchalik holat butun sweepni oʻldiradi.
+ */
+export class RateLimitedError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "RateLimitedError";
+  }
+}
+
+/** Javob tanasidagi xatolar tezlik chegarasi haqidami. */
+export function looksRateLimited(errors) {
+  return (errors ?? []).some((e) => {
+    const status = e?.extensions?.http?.status;
+    if (status === 429) return true;
+    return /429|too many requests|rate.?limit/i.test(String(e?.message ?? ""));
+  });
+}
+
 const RETRYABLE = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 /**

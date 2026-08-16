@@ -1,4 +1,11 @@
-import { AccessDeniedError, SourceError, createLimiter, fetchJson } from "../lib/http.mjs";
+import {
+  AccessDeniedError,
+  RateLimitedError,
+  SourceError,
+  createLimiter,
+  fetchJson,
+  looksRateLimited,
+} from "../lib/http.mjs";
 import { createTokenProvider } from "../lib/token.mjs";
 import {
   CATEGORY_PRODUCTS_QUERY,
@@ -24,7 +31,7 @@ const PAGE_LIMIT = 100;
 /** `offset` shu qiymatdan oshsa Uzum boʻsh javob qaytaradi. */
 const OFFSET_CEILING = 10_000;
 
-export function createCatalogSource(config) {
+export function createCatalogSource(config, { onWait } = {}) {
   const limit = createLimiter(config.rateLimit.perSecond);
   const tokens = createTokenProvider(config);
   const options = {
@@ -68,9 +75,41 @@ export function createCatalogSource(config) {
 
     // 200 OK ichidagi xato — eng xavfli holat. Faqat statusga qaralmaydi.
     if (body.errors?.length) {
+      if (looksRateLimited(body.errors)) {
+        throw new RateLimitedError(body.errors[0]?.message ?? "429");
+      }
       throw new SourceError(body.errors.map((e) => e.message).join("; "));
     }
     return body.data ?? {};
+  }
+
+  /**
+   * Tezlik chegarasiga tushsa kutib qayta uradi.
+   *
+   * Uzumning qidiruv uchi bir necha daqiqa sovushi mumkin, shuning uchun
+   * kutish uzoq: 30s, 60s, 120s, 240s. Bu ataylab sabrli — hujjat "tez
+   * boʻlsa bloklaydi" deydi, demak shoshilishning maʻnosi yoʻq.
+   */
+  async function gqlPatient(query, variables) {
+    const waits = [30_000, 60_000, 120_000, 240_000];
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await gql(query, variables);
+      } catch (error) {
+        if (!(error instanceof RateLimitedError) || attempt >= waits.length) {
+          if (error instanceof RateLimitedError) {
+            throw new SourceError(
+              `Uzum tezlik chegarasi: ${waits.length} marta kutildi, hamon 429. ` +
+                "Keyinroq qayta urining.",
+            );
+          }
+          throw error;
+        }
+        const ms = waits[attempt];
+        onWait?.(ms, attempt + 1);
+        await new Promise((r) => setTimeout(r, ms));
+      }
+    }
   }
 
   /**
@@ -89,7 +128,7 @@ export function createCatalogSource(config) {
         truncated = Math.max(0, total - cards.length);
         break;
       }
-      const data = await gql(query, { [variableName]: String(id), offset, limit: PAGE_LIMIT });
+      const data = await gqlPatient(query, { [variableName]: String(id), offset, limit: PAGE_LIMIT });
       const page = parse.searchCards(data, offset);
       total = page.total;
       cards.push(...page.cards);
@@ -110,7 +149,7 @@ export function createCatalogSource(config) {
 
     if (ids.length === 1) {
       try {
-        const data = await gql(PRODUCT_PAGE_QUERY, { id: ids[0] });
+        const data = await gqlPatient(PRODUCT_PAGE_QUERY, { id: ids[0] });
         const parsed = parse.productPage(data.productPage, observedAt);
         return parsed ? [parsed] : [];
       } catch (error) {
@@ -140,7 +179,7 @@ export function createCatalogSource(config) {
      */
     async preflight() {
       await tokens.get();
-      const data = await gql(SHOP_PRODUCTS_QUERY, {
+      const data = await gqlPatient(SHOP_PRODUCTS_QUERY, {
         shopId: String(config.track.shops[0] ?? 1),
         offset: 0,
         limit: 1,

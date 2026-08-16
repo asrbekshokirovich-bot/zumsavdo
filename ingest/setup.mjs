@@ -67,9 +67,10 @@ if (url !== rawUrl.trim()) {
 stdout.write(
   "\n2) service_role kaliti\n" +
     "   Bu yerdan oling: " +
-    `https://supabase.com/dashboard/project/${projectRef(url)}/settings/api\n` +
-    "   'service_role' qatorida Reveal bosing.\n" +
-    "   DIQQAT: kalit manzil EMAS. U 'eyJ' bilan boshlanadi va juda uzun.\n",
+    `https://supabase.com/dashboard/project/${projectRef(url)}/settings/api-keys\n` +
+    "   'Secret keys' → Create new secret key, yoki 'Legacy API keys' → service_role.\n" +
+    "   Kerak: 'sb_secret_...' yoki 'service_role' (eyJ... bilan boshlanadi).\n" +
+    "   'sb_publishable_...' YARAMAYDI — u faqat oʻqiy oladi.\n",
 );
 
 let key = "";
@@ -80,8 +81,20 @@ for (let attempt = 0; attempt < 3; attempt++) {
     key = "";
     continue;
   }
-  if (key && !key.startsWith("eyJ")) {
-    stdout.write("   ⚠ Odatda kalit 'eyJ' bilan boshlanadi. Shunga qaramay yozaymi? (ha/yoʻq) ");
+  // Ochiq kalit ham `sb_` bilan boshlanadi va oson chalkashadi, lekin unda
+  // yozish huquqi yoʻq — sweep jimgina hech narsa saqlamasdi.
+  if (key.startsWith("sb_publishable_")) {
+    stdout.write(
+      "   ✗ Bu ochiq kalit (publishable) — u faqat oʻqiy oladi.\n" +
+        "     Kerak boʻlgani: 'sb_secret_...' yoki 'service_role' (eyJ...).\n",
+    );
+    key = "";
+    continue;
+  }
+  if (key.startsWith("sb_secret_") || key.startsWith("eyJ")) {
+    stdout.write("   ✓ Yozish huquqli kalit.\n");
+  } else if (key) {
+    stdout.write("   ⚠ Tanish shaklga oʻxshamadi. Shunga qaramay yozaymi? (ha/yoʻq) ");
     const yes = (await rl.question("")).trim().toLowerCase();
     if (!["ha", "h", "yes", "y"].includes(yes)) {
       key = "";

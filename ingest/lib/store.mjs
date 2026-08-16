@@ -58,6 +58,10 @@ export function createStore(config) {
           products: i === 0 ? batch.products ?? [] : [],
           shopObservations: i === 0 ? shopObs : [],
           productObservations: productObs.slice(i * CHUNK, (i + 1) * CHUNK),
+          skuObservations: i === 0 ? batch.skuObservations ?? [] : [],
+          feedbacks: i === 0 ? batch.feedbacks ?? [] : [],
+          positions: i === 0 ? batch.positions ?? [] : [],
+          ...(i === 0 && batch.coverage ? { coverage: batch.coverage } : {}),
         };
         written += (await rpc("zs_ingest_batch", {
           p_sweep_id: sweepId,

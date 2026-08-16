@@ -50,14 +50,21 @@ export function loadConfig() {
     catalog: {
       endpoint: process.env.UZUM_CATALOG_ENDPOINT || "https://graphql.uzum.uz/",
       /**
-       * Uzum katalogiga kirish uchun sarlavhalar.
-       *
-       * Bu joy ataylab bo'sh: katalog uchi ruxsatsiz so'rovni rad etadi va
-       * uni aylanib o'tish ularning himoyasini sindirish bo'ladi. Bu yerga
-       * faqat Uzumdan rasmiy olingan ruxsat qo'yiladi.
+       * Qo'shimcha sarlavhalar. Odatda kerak emas: token va standart
+       * sarlavhalar `lib/token.mjs` da avtomatik qo'yiladi.
        */
       headers: optionalJson("UZUM_CATALOG_HEADERS", {}),
-      language: process.env.UZUM_LANGUAGE || "uz",
+      language: process.env.UZUM_LANGUAGE || "uz-UZ",
+      /**
+       * Token uchi bu ikkisisiz `insufficient_headers` qaytaradi.
+       * `App-Version`/`Version` esa yuborilmasligi kerak — `unallowed_app`.
+       */
+      userAgent:
+        process.env.UZUM_USER_AGENT ||
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      /** Oʻrnatma identifikatori — har ishchi uchun barqaror boʻlishi kerak. */
+      installationId:
+        process.env.UZUM_INSTALLATION_ID || "3f1a9c22-7b64-4d18-9f0e-2c5a8e1b4d70",
     },
 
     seller: {
@@ -80,6 +87,7 @@ export function loadConfig() {
      * hojati yo'q, manbaga esa ortiqcha yuk tushmasligi kerak.
      */
     rateLimit: {
+      // 33 751 do'kon / 100 = ~338 so'rov ≈ 6 daqiqa (hujjatdagi jadval).
       perSecond: Number(process.env.ZUMSAVDO_RPS || 1),
       maxRetries: Number(process.env.ZUMSAVDO_MAX_RETRIES || 4),
       timeoutMs: Number(process.env.ZUMSAVDO_TIMEOUT_MS || 20000),

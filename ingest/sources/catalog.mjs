@@ -1,97 +1,177 @@
 import { AccessDeniedError, SourceError, createLimiter, fetchJson } from "../lib/http.mjs";
+import { createTokenProvider } from "../lib/token.mjs";
 import {
-  CATEGORY_QUERY,
-  PRODUCT_QUERY,
+  CATEGORY_PRODUCTS_QUERY,
+  FEEDBACKS_QUERY,
+  PRODUCT_PAGE_QUERY,
   SHOP_PRODUCTS_QUERY,
-  SHOP_QUERY,
   parse,
 } from "./catalog-queries.mjs";
 
 /**
- * Uzum katalogidan o'lchov olish.
+ * Uzum katalogidan oʻlchov olish.
  *
- * Katalog uchi ruxsatsiz so'rovni rad etadi. Bu manba shu holatni aylanib
- * o'tishga urinmaydi: rad javobi kelsa, sweep darhol to'xtaydi va sababi
- * yoziladi. `UZUM_CATALOG_HEADERS` ga faqat Uzumdan rasmiy olingan ruxsat
- * qo'yiladi.
+ * Uch qoida yigʻuvchining shaklini belgilaydi:
+ *
+ *   1. Bitta soʻrovga 100 tagacha element sigʻadi — koʻproq boʻlsa rad etiladi.
+ *   2. `offset` 10 000 dan oshsa roʻyxat ishlamaydi — katta turkum boʻlinadi.
+ *   3. Bitta oʻlik id butun guruhni oʻldiradi — guruh ikkiga boʻlib qidiriladi.
  */
+
+/** Bitta soʻrovdagi eng koʻp element. Uzumning qatʻiy chegarasi. */
+const PAGE_LIMIT = 100;
+
+/** `offset` shu qiymatdan oshsa Uzum boʻsh javob qaytaradi. */
+const OFFSET_CEILING = 10_000;
+
 export function createCatalogSource(config) {
   const limit = createLimiter(config.rateLimit.perSecond);
+  const tokens = createTokenProvider(config);
   const options = {
     limit,
     maxRetries: config.rateLimit.maxRetries,
     timeoutMs: config.rateLimit.timeoutMs,
   };
 
-  async function gql(query, variables) {
-    const body = await fetchJson(
-      config.catalog.endpoint,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "Accept-Language": config.catalog.language,
-          ...config.catalog.headers,
-        },
-        body: JSON.stringify({ query, variables }),
-      },
-      options,
-    );
+  async function gql(query, variables, { retryOn401 = true } = {}) {
+    const token = await tokens.get();
+    let body;
 
-    if (body.errors?.length) {
-      throw new SourceError(
-        `Katalog xatosi: ${body.errors.map((e) => e.message).join("; ")}`,
+    try {
+      body = await fetchJson(
+        config.catalog.endpoint,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "User-Agent": config.catalog.userAgent,
+            "x-iid": config.catalog.installationId,
+            "Accept-Language": config.catalog.language,
+            Origin: "https://uzum.uz",
+            Referer: "https://uzum.uz/",
+            Authorization: `Bearer ${token}`,
+            ...config.catalog.headers,
+          },
+          body: JSON.stringify({ query, variables }),
+        },
+        options,
       );
+    } catch (error) {
+      // Token muddati tugagan boʻlishi mumkin — bir marta yangilab koʻramiz.
+      if (error instanceof AccessDeniedError && retryOn401) {
+        tokens.invalidate();
+        return gql(query, variables, { retryOn401: false });
+      }
+      throw error;
+    }
+
+    // 200 OK ichidagi xato — eng xavfli holat. Faqat statusga qaralmaydi.
+    if (body.errors?.length) {
+      throw new SourceError(body.errors.map((e) => e.message).join("; "));
     }
     return body.data ?? {};
+  }
+
+  /**
+   * Roʻyxatni sahifalab oʻqiydi.
+   *
+   * `offset` shifti chegarasiga yetganda toʻxtaydi va nechta element qolgani
+   * yoziladi — jimgina kesish "hammasi olindi" degan yolgʻon beradi.
+   */
+  async function listCards(query, variableName, id) {
+    const cards = [];
+    let total = 0;
+    let truncated = 0;
+
+    for (let offset = 0; ; offset += PAGE_LIMIT) {
+      if (offset >= OFFSET_CEILING) {
+        truncated = Math.max(0, total - cards.length);
+        break;
+      }
+      const data = await gql(query, { [variableName]: String(id), offset, limit: PAGE_LIMIT });
+      const page = parse.searchCards(data, offset);
+      total = page.total;
+      cards.push(...page.cards);
+      if (page.cards.length < PAGE_LIMIT) break;
+    }
+
+    return { cards, total, truncated };
+  }
+
+  /**
+   * Mahsulot sahifalarini oladi.
+   *
+   * Bitta oʻlik id butun guruhni yiqitadi, shuning uchun guruh xato bergan
+   * joyda ikkiga boʻlinadi va oʻlik id yakka qolganda chetga qoʻyiladi.
+   */
+  async function fetchProducts(ids, observedAt, dead) {
+    if (!ids.length) return [];
+
+    if (ids.length === 1) {
+      try {
+        const data = await gql(PRODUCT_PAGE_QUERY, { id: ids[0] });
+        const parsed = parse.productPage(data.productPage, observedAt);
+        return parsed ? [parsed] : [];
+      } catch (error) {
+        if (error instanceof AccessDeniedError) throw error;
+        dead.push({ id: ids[0], reason: error.message.slice(0, 120) });
+        return [];
+      }
+    }
+
+    const out = [];
+    for (const id of ids) {
+      const one = await fetchProducts([id], observedAt, dead);
+      out.push(...one);
+    }
+    return out;
   }
 
   return {
     name: "uzum-catalog",
 
     describe() {
-      const configured = Object.keys(config.catalog.headers).length > 0;
-      return (
-        `Uzum katalogi (${config.catalog.endpoint})` +
-        (configured ? "" : " — kirish sarlavhalari berilmagan")
-      );
+      return `Uzum katalogi (${config.catalog.endpoint}) — anonim token bilan`;
     },
 
     /**
-     * Bitta so'rov yuborib, ulanish ishlayotganini tekshiradi.
-     *
-     * Rad javobi kelsa — bu tarmoq nosozligi emas; qayta urinish manbaga
-     * ortiqcha yuk beradi, xolos.
+     * Ulanishni tekshiradi: token olinadimi va sxema javob beradimi.
      */
     async preflight() {
-      const shopId = config.track.shops[0];
-      if (!shopId) {
-        throw new SourceError(
-          "ZUMSAVDO_TRACK_SHOPS bo'sh — qaysi sotuvchilarni kuzatish kerakligi ko'rsatilmagan.",
-        );
-      }
-      const data = await gql(SHOP_QUERY, { shopId });
-      return data;
+      await tokens.get();
+      const data = await gql(SHOP_PRODUCTS_QUERY, {
+        shopId: String(config.track.shops[0] ?? 1),
+        offset: 0,
+        limit: 1,
+      });
+      return { total: data?.makeSearch?.total ?? 0 };
     },
 
-    /** So'rov javobini o'zgartirmasdan qaytaradi — sxemani tekshirish uchun. */
+    /** Javobni oʻzgartirmasdan qaytaradi — sxemani tekshirish uchun. */
     async probe() {
       const shopId = config.track.shops[0];
-      const categoryId = config.track.categories[0];
-      const out = {};
-      if (shopId) out.shop = await gql(SHOP_QUERY, { shopId });
-      if (categoryId) {
-        out.category = await gql(CATEGORY_QUERY, {
-          categoryId,
+      const out = { token: Boolean(await tokens.get()) };
+      if (shopId) {
+        out.shopProducts = await gql(SHOP_PRODUCTS_QUERY, {
+          shopId: String(shopId),
           offset: 0,
           limit: 3,
         });
+        const first = parse.searchCards(out.shopProducts, 0).cards[0];
+        if (first) {
+          out.productPage = await gql(PRODUCT_PAGE_QUERY, { id: first.productId });
+          out.feedbacks = await gql(FEEDBACKS_QUERY, {
+            id: first.productId,
+            page: 0,
+            size: 3,
+          });
+        }
       }
       return out;
     },
 
-    /** Jonli manba bir onda o'lchaydi — o'tmishni qayta o'lchab bo'lmaydi. */
+    /** Jonli manba bir onda oʻlchaydi — oʻtmishni qayta oʻlchab boʻlmaydi. */
     slots() {
       const at = new Date().toISOString();
       return [{ key: at, observedAt: at }];
@@ -99,112 +179,125 @@ export function createCatalogSource(config) {
 
     async *collect(slot) {
       const observedAt = slot.observedAt;
-      let errors = 0;
+      const shopIds = config.track.shops;
 
-      for (const shopId of config.track.shops) {
+      if (!shopIds.length && !config.track.categories.length) {
+        throw new SourceError(
+          "ZUMSAVDO_TRACK_SHOPS va ZUMSAVDO_TRACK_CATEGORIES boʻsh — nima kuzatilishi koʻrsatilmagan.",
+        );
+      }
+
+      for (const shopId of shopIds) {
+        const dead = [];
+        let listing;
+
         try {
-          const shopData = await gql(SHOP_QUERY, { shopId });
-          const shop = parse.shop(shopData.shop);
-          if (!shop) {
-            errors++;
-            continue;
-          }
-
-          const categories = [];
-          if (shop.categoryId && shopData.shop?.category?.title) {
-            categories.push({ id: shop.categoryId, name: shopData.shop.category.title });
-          }
-
-          const products = [];
-          const productObservations = [];
-
-          for (const productId of await listProductIds(shopId)) {
-            try {
-              const productData = await gql(PRODUCT_QUERY, { productId });
-              const product = parse.product(productData.product);
-              if (!product) {
-                errors++;
-                continue;
-              }
-              if (product.categoryId && productData.product?.category?.title) {
-                categories.push({
-                  id: product.categoryId,
-                  name: productData.product.category.title,
-                });
-              }
-              products.push({
-                id: product.id,
-                title: product.title,
-                shopId: product.shopId ?? shop.id,
-                categoryId: product.categoryId ?? shop.categoryId,
-              });
-              productObservations.push({ ...product, productId: product.id, observedAt });
-            } catch (error) {
-              if (error instanceof AccessDeniedError) throw error;
-              errors++;
-            }
-          }
-
-          yield {
-            categories,
-            shops: [
-              {
-                id: shop.id,
-                name: shop.name,
-                categoryId: shop.categoryId,
-                official: shop.official,
-              },
-            ],
-            products,
-            shopObservations: [
-              {
-                shopId: shop.id,
-                observedAt,
-                ordersQuantity: shop.ordersQuantity,
-                reviews: shop.reviews,
-                rating: shop.rating,
-              },
-            ],
-            productObservations,
-            errors,
-          };
-          errors = 0;
+          listing = await listCards(SHOP_PRODUCTS_QUERY, "shopId", shopId);
         } catch (error) {
           if (error instanceof AccessDeniedError) throw error;
-          errors++;
-          yield emptyBatch(errors);
-          errors = 0;
+          yield emptyBatch(1, `doʻkon ${shopId} roʻyxati olinmadi: ${error.message}`);
+          continue;
         }
+
+        const ids = config.track.products.length
+          ? listing.cards.map((c) => c.productId).filter((id) => config.track.products.includes(id))
+          : listing.cards.map((c) => c.productId);
+
+        const pages = await fetchProducts(ids, observedAt, dead);
+
+        const shops = new Map();
+        const categories = new Map();
+        const products = [];
+        const productObservations = [];
+        const skuObservations = [];
+
+        for (const page of pages) {
+          if (page.shop) shops.set(page.shop.id, page.shop);
+          if (page.category) categories.set(page.category.id, page.category);
+          products.push(page.product);
+          productObservations.push(page.observation);
+          skuObservations.push(...page.skus);
+        }
+
+        // Doʻkon hisoblagichi har bir mahsulot sahifasida takrorlanadi —
+        // bittasi yetarli, lekin u har sweepda yozilishi shart.
+        const shopObservations = [...shops.values()].map((shop) => ({
+          shopId: shop.id,
+          observedAt,
+          ordersQuantity: shop.ordersQuantity,
+          reviews: shop.feedbackQuantity,
+          rating: shop.rating,
+        }));
+
+        yield {
+          categories: [...categories.values()],
+          shops: [...shops.values()].map((s) => ({
+            id: s.id,
+            name: s.name,
+            categoryId: null,
+            official: s.official,
+          })),
+          products,
+          shopObservations,
+          productObservations,
+          skuObservations,
+          positions: listing.cards.map((c) => ({
+            productId: c.productId,
+            shopId,
+            position: c.position,
+            observedAt,
+          })),
+          errors: dead.length,
+          // Qamrov tekshiruvi uchun: Uzum nechta deb aytdi, biz nechtasini oldik.
+          coverage: {
+            scope: `shop:${shopId}`,
+            reported: listing.total,
+            listed: listing.cards.length,
+            captured: pages.length,
+            truncated: listing.truncated,
+            dead,
+          },
+        };
+      }
+    },
+
+    /**
+     * Sharhlar tarixi.
+     *
+     * Alohida oqim: u kunlik oʻlchovga bogʻliq emas va bir marta olinsa
+     * yetarli — sharh oʻzgarmaydi, faqat yangisi qoʻshiladi.
+     */
+    async *collectFeedbacks(productIds, { pages = 5, size = 100 } = {}) {
+      for (const productId of productIds) {
+        const all = [];
+        for (let page = 0; page < pages; page++) {
+          let data;
+          try {
+            data = await gql(FEEDBACKS_QUERY, { id: productId, page, size });
+          } catch (error) {
+            if (error instanceof AccessDeniedError) throw error;
+            break;
+          }
+          const batch = parse.feedbacks(data.productPage, productId);
+          all.push(...batch);
+          if (batch.length < size) break;
+        }
+        if (all.length) yield { productId, feedbacks: all };
       }
     },
   };
-
-  async function listProductIds(shopId) {
-    if (config.track.products.length) return config.track.products;
-
-    const ids = [];
-    const limitPerPage = 100;
-    for (let offset = 0; offset < 1000; offset += limitPerPage) {
-      const data = await gql(SHOP_PRODUCTS_QUERY, {
-        shopId,
-        offset,
-        limit: limitPerPage,
-      });
-      const items = data.shopProducts?.items ?? [];
-      for (const item of items) ids.push(Number(item.productId));
-      if (items.length < limitPerPage) break;
-    }
-    return ids;
-  }
 }
 
-function emptyBatch(errors) {
+function emptyBatch(errors, note) {
   return {
     categories: [],
     shops: [],
     products: [],
     shopObservations: [],
     productObservations: [],
+    skuObservations: [],
+    positions: [],
     errors,
+    note,
   };
 }

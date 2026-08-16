@@ -18,6 +18,12 @@ import { AccessDeniedError } from "./lib/http.mjs";
 import { createCatalogSource } from "./sources/catalog.mjs";
 import { createSampleSource } from "./sources/sample.mjs";
 
+/** 06.7 — bajarilish ulushi shundan past boʻlsa run "xato" deb belgilanadi. */
+const MIN_COMPLETION = 0.9;
+
+/** 07 — qamrov meʻyori. */
+const MIN_COVERAGE = 0.99;
+
 const SOURCES = {
   sample: createSampleSource,
   "uzum-catalog": createCatalogSource,
@@ -71,6 +77,8 @@ async function main() {
   const touchedDates = new Set();
   let totalCaptured = 0;
   let totalErrors = 0;
+  /** 07-band: Uzum nechta dedi ↔ biz nechtasini oldik. */
+  const coverage = { reported: 0, captured: 0, truncated: 0, dead: 0 };
 
   for (const [index, slot] of slots.entries()) {
     // Dry run bazaga umuman tegmaydi — sweep ham ochilmaydi.
@@ -83,6 +91,13 @@ async function main() {
       for await (const batch of source.collect(slot)) {
         targets += batch.shops.length + batch.products.length;
         errors += batch.errors ?? 0;
+
+        if (batch.coverage) {
+          coverage.reported += batch.coverage.reported ?? 0;
+          coverage.captured += batch.coverage.captured ?? 0;
+          coverage.truncated += batch.coverage.truncated ?? 0;
+          coverage.dead += batch.coverage.dead?.length ?? batch.coverage.dead ?? 0;
+        }
 
         if (config.dryRun) {
           captured += batch.shopObservations.length + batch.productObservations.length;
@@ -108,7 +123,19 @@ async function main() {
     }
 
     if (!config.dryRun) {
-      await store.closeSweep(sweepId, { targets, captured, errors, note: null });
+      // 06.7: rejalashtirilganning 90% idan kam bajarilsa — run "xato".
+      const ratio = targets > 0 ? captured / targets : 1;
+      const note =
+        ratio < MIN_COMPLETION
+          ? `qamrov past: ${(ratio * 100).toFixed(1)}% (${captured}/${targets})`
+          : null;
+      await store.closeSweep(sweepId, {
+        targets,
+        captured,
+        errors: note ? errors + 1 : errors,
+        note,
+      });
+      if (note) log(`OGOHLANTIRISH — ${note}`);
     }
 
     totalCaptured += captured;

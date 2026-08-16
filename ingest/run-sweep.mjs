@@ -99,7 +99,7 @@ async function main() {
           coverage.reported += batch.coverage.reported ?? 0;
           coverage.captured += batch.coverage.captured ?? 0;
           coverage.truncated += batch.coverage.truncated ?? 0;
-          coverage.dead += batch.coverage.dead?.length ?? batch.coverage.dead ?? 0;
+          coverage.dead += batch.coverage.dead ?? 0;
         }
 
         if (config.dryRun) {

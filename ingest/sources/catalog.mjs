@@ -312,15 +312,18 @@ export function createCatalogSource(config, { onWait } = {}) {
             observedAt,
           })),
           errors: dead.length,
-          // Qamrov tekshiruvi uchun: Uzum nechta deb aytdi, biz nechtasini oldik.
+          // Qamrov tekshiruvi uchun: Uzum nechta deb aytdi, biz nechtasini
+          // oldik. `dead` — son: bazadagi ustun butun son, roʻyxat emas.
           coverage: {
             scope: `shop:${shopId}`,
             reported: listing.total,
             listed: listing.cards.length,
             captured: pages.length,
             truncated: listing.truncated,
-            dead,
+            dead: dead.length,
           },
+          // Qaysi id lar oʻlgani — faqat log uchun, bazaga yozilmaydi.
+          deadIds: dead,
         };
       }
     },

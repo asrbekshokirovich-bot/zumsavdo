@@ -36,13 +36,16 @@ function list(name) {
     .filter((n) => Number.isFinite(n));
 }
 
-export function loadConfig() {
+export function loadConfig({ requireSupabase = true } = {}) {
   return {
     supabase: {
-      url: required("SUPABASE_URL"),
+      // find-shops kabi yordamchilar bazaga tegmaydi — kalit talab qilinmaydi.
+      url: requireSupabase ? required("SUPABASE_URL") : process.env.SUPABASE_URL || "",
       // Yozish RLS dan o'tishi kerak, shuning uchun service role.
       // Bu kalit hech qachon brauzerga tushmasligi kerak.
-      serviceKey: required("SUPABASE_SERVICE_ROLE_KEY"),
+      serviceKey: requireSupabase
+        ? required("SUPABASE_SERVICE_ROLE_KEY")
+        : process.env.SUPABASE_SERVICE_ROLE_KEY || "",
     },
 
     source: process.env.ZUMSAVDO_SOURCE || "sample",

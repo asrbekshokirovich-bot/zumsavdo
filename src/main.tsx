@@ -38,7 +38,7 @@ bootstrap().then(async (boot) => {
   root.render(
     <React.StrictMode>
       <BrowserRouter>
-        <App demo={boot.mode === "demo"} />
+        <App />
       </BrowserRouter>
     </React.StrictMode>,
   );

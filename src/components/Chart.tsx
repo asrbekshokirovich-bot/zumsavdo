@@ -125,12 +125,19 @@ export function Chart({
     return { min: zeroBased ? 0 : lo - pad, max: hi + pad };
   }, [series, zeroBased]);
 
-  const ticks = useMemo(() => niceTicks(min, max), [min, max]);
+  // Bitta ham qiymat boʻlmasa oʻq belgilari maʻnosiz: "0, 1, 1, 1" kabi
+  // sonlar oʻlchov bordek koʻrsatadi. Bunday holda ramka boʻsh qoladi.
+  const hasValues = useMemo(
+    () => series.some((s) => s.points.some((p) => p.value !== null)),
+    [series],
+  );
+  const ticks = useMemo(() => (hasValues ? niceTicks(min, max) : []), [min, max, hasValues]);
 
   // Chap chekka yorliqning uzunligiga qarab kengayadi — aks holda "2,0 mln"
   // kabi qiymatlar grafikdan tashqariga chiqib ketadi.
   const padLeft = useMemo(() => {
     if (axisWidth) return axisWidth;
+    if (!ticks.length) return 30;
     const longest = Math.max(...ticks.map((t) => tickFormat(t).length), 1);
     return Math.min(96, Math.round(longest * CHAR_W) + 12);
   }, [ticks, tickFormat, axisWidth]);
@@ -258,6 +265,18 @@ export function Chart({
               fill="var(--fill)"
             />
           ))}
+
+          {/* Oʻlchovsiz ramka boʻsh qolmasligi uchun asos chizigʻi. */}
+          {!hasValues && (
+            <line
+              x1={padLeft}
+              x2={padLeft + plotW}
+              y1={PAD.top + plotH}
+              y2={PAD.top + plotH}
+              stroke="var(--ln3)"
+              strokeWidth={1}
+            />
+          )}
 
           {/* Setka — recessiv */}
           {ticks.map((t) => (

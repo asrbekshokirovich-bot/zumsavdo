@@ -11,7 +11,8 @@
 export type Certainty = "exact" | "approx";
 
 export interface Metric {
-  value: number;
+  /** `null` — oʻlchov yoʻq. Interfeysda chiziqcha bilan koʻrsatiladi. */
+  value: number | null;
   certainty: Certainty;
   /** Masalan "7/12 oʻlchov" — qisman kun uchun qamrov. */
   note?: string;

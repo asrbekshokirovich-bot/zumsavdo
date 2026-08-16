@@ -91,7 +91,10 @@ export function categoryCounts(categoryId: number): { products: number; shops: n
  * aks holda tushib qolgan yarim kun oʻsish yoki pasayish deb oʻqiladi.
  */
 function ordersMetric(days: ShopDay[], indexes: number[], period: Period): Metric {
-  const value = sum(indexes.map((i) => ordersOf(days[i])));
+  const known = indexes.filter((i) => days[i]?.orders != null);
+  // Bitta ham oʻlchov boʻlmasa raqam yoʻq. Nol yozish "sotuv boʻlmagan" degan
+  // javob beradi, holbuki javob nomaʻlum.
+  const value = known.length ? sum(known.map((i) => ordersOf(days[i]))) : null;
   const notes: string[] = [];
 
   if (period.id === "today") {
@@ -123,7 +126,10 @@ function countMissing(days: ShopDay[], indexes: number[]): number {
 
 /** Aylanma — TAXMINIY. Dona × narx, shuning uchun hech qachon aniq emas. */
 function revenueMetric(days: ShopDay[], indexes: number[]): Metric {
-  const value = sum(indexes.map((i) => ordersOf(days[i]) * (days[i]?.avgPrice ?? 0)));
+  const known = indexes.filter((i) => days[i]?.orders != null);
+  const value = known.length
+    ? sum(known.map((i) => ordersOf(days[i]) * (days[i]?.avgPrice ?? 0)))
+    : null;
   return { value, certainty: "approx" };
 }
 
@@ -174,9 +180,15 @@ export function marketSummary(period: Period): MarketSummary {
     notes.push(`${missing} sotuvchi-kun uchun oʻlchov yetmagan`);
   }
 
+  const known = daily.some((d) => d.value !== null);
+
   return {
-    orders: { value: orders, certainty: "exact", note: notes.join(" · ") || undefined },
-    revenue: { value: revenue, certainty: "approx" },
+    orders: {
+      value: known ? orders : null,
+      certainty: "exact",
+      note: notes.join(" · ") || undefined,
+    },
+    revenue: { value: known ? revenue : null, certainty: "approx" },
     daily,
   };
 }
@@ -604,12 +616,14 @@ export function categoryView(categoryId: number, period: Period): CategoryView |
     }
   }
 
+  const measured = daily.some((d) => d.value !== null);
+
   return {
     category,
     productCount: productIds.length,
     shopCount: shopIds.length,
-    orders: { value: orders, certainty: "exact" },
-    revenue: { value: revenue, certainty: "approx" },
+    orders: { value: measured ? orders : null, certainty: "exact" },
+    revenue: { value: measured ? revenue : null, certainty: "approx" },
     competition: productIds.length ? orders / productIds.length : 0,
     verdict: { difficulty, topFiveShare: share, reason },
     shops,

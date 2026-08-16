@@ -7,12 +7,13 @@ import { ProductPage } from "@/pages/Product";
 import { CategoryPage } from "@/pages/Category";
 import { NotFoundPage } from "@/pages/NotFound";
 import { getStatus } from "@/data/api";
+import type { BootResult } from "@/data/bootstrap";
 
 /**
  * Manzillar id boʻyicha: /sotuvchi/9103, /mahsulot/560305, /turkum/1007.
  * Nomga bogʻlanmaydi — Uzumda nom istalgan kuni oʻzgarishi mumkin, id esa yoʻq.
  */
-export function App() {
+export function App({ boot }: { boot: BootResult }) {
   const location = useLocation();
   // Ombor ulangani hech narsani isbotlamaydi: ichida namunaviy oʻlchov turgan
   // boʻlishi mumkin. Ogohlantirish ulanishga emas, maʻlumot manbaiga qaraydi.
@@ -36,6 +37,19 @@ export function App() {
       </header>
 
       <main className="wrap">
+        {/*
+          Oʻlchov yoʻqligi sahifani yashirmaydi — wireframedagi tuzilma
+          joyida qoladi, faqat raqam oʻrnida chiziqcha turadi. Nima
+          yetishmayotgani shu satrda aytiladi.
+        */}
+        {boot.mode === "empty" && (
+          <div className="callout" style={{ marginTop: 14 }}>
+            <b>Oʻlchov yigʻilmagan — raqamlar oʻrnida chiziqcha.</b>{" "}
+            {boot.reason} Sweep ishga tushgach raqamlar oʻrniga qoʻyiladi:{" "}
+            <code>ingest</code> → <code>npm run sweep</code>.
+          </div>
+        )}
+
         {sampleData && (
           <div className="callout warn" style={{ marginTop: 14 }}>
             <b>Bu namuna maʻlumot — Uzumdan olingan emas.</b> Ombordagi oxirgi

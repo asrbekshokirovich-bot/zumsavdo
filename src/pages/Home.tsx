@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Chart } from "@/components/Chart";
 import { PeriodPicker } from "@/components/PeriodPicker";
 import { SearchPanel } from "@/components/SearchPanel";
-import { MetricCard, Panel } from "@/components/ui";
+import { MetricCard, Panel, PlaceholderRows } from "@/components/ui";
 import { categoriesRanked, marketSummary, shopsRanked } from "@/data/api";
 import { formatInt, formatMoney } from "@/lib/format";
 import { usePeriod } from "@/lib/usePeriod";
@@ -48,6 +48,7 @@ export function HomePage() {
       <div className="grid-2">
         <Panel title="Top sotuvchilar" hint="Buyurtma boʻyicha">
           <div className="rows">
+            {topShops.length === 0 && <PlaceholderRows count={5} />}
             {topShops.map((row, i) => (
               <Link className="row-link" to={`/sotuvchi/${row.shop.id}`} key={row.shop.id}>
                 <span className="n">{i + 1}</span>
@@ -69,6 +70,7 @@ export function HomePage() {
 
         <Panel title="Top turkumlar" hint="Buyurtma boʻyicha">
           <div className="rows">
+            {topCategories.length === 0 && <PlaceholderRows count={5} />}
             {topCategories.map((row, i) => (
               <Link className="row-link" to={`/turkum/${row.category.id}`} key={row.category.id}>
                 <span className="n">{i + 1}</span>

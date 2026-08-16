@@ -38,10 +38,16 @@ export function MetricCard({
     <div className="metric">
       <div className="label">
         <span>{label}</span>
-        <CertaintyTag certainty={metric.certainty} />
+        {metric.value !== null && <CertaintyTag certainty={metric.certainty} />}
       </div>
       <div className={small ? "value small" : "value"}>
-        {withTilde(format(metric.value), metric.certainty)}
+        {metric.value === null ? (
+          <span style={{ color: "var(--ink3)" }} title="Oʻlchov yoʻq">
+            —
+          </span>
+        ) : (
+          withTilde(format(metric.value), metric.certainty)
+        )}
       </div>
       {metric.note && <div className="meta">{metric.note}</div>}
       {meta && <div className="meta">{meta}</div>}
@@ -146,4 +152,27 @@ export function EventList({ events }: { events: ChangeEvent[] }) {
 
 export function Empty({ children }: { children: React.ReactNode }) {
   return <p className="empty">{children}</p>;
+}
+
+/**
+ * Oʻlchov yoʻq roʻyxat.
+ *
+ * Roʻyxatni butunlay yashirish sahifaning tuzilishini buzadi va "bu yerda
+ * hech narsa yoʻq" degan taassurot beradi. Wireframedagi qatorlar joyida
+ * qoladi, faqat qiymat oʻrnida chiziqcha turadi.
+ */
+export function PlaceholderRows({ count = 5 }: { count?: number }) {
+  return (
+    <>
+      {Array.from({ length: count }, (_, i) => (
+        <div className="row-link" key={i} style={{ cursor: "default" }}>
+          <span className="n">{i + 1}</span>
+          <span style={{ color: "var(--ink3)" }}>—</span>
+          <span className="figures" style={{ color: "var(--ink3)" }}>
+            —
+          </span>
+        </div>
+      ))}
+    </>
+  );
 }

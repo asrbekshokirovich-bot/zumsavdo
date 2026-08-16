@@ -20,25 +20,11 @@ root.render(
 );
 
 bootstrap().then(async (boot) => {
-  // Oʻlchov boʻlmasa sahifalar umuman chizilmaydi: boʻsh grafik va nol
-  // kartochka "savdo yoʻq" deb oʻqiladi, bu esa yolgʻon javob.
-  if (boot.mode === "empty") {
-    const { NoDataPage } = await import("./pages/NoData");
-    root.render(
-      <React.StrictMode>
-        <main className="wrap">
-          <NoDataPage boot={boot} />
-        </main>
-      </React.StrictMode>,
-    );
-    return;
-  }
-
   const { App } = await import("./App");
   root.render(
     <React.StrictMode>
       <BrowserRouter>
-        <App />
+        <App boot={boot} />
       </BrowserRouter>
     </React.StrictMode>,
   );

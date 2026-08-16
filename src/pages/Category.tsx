@@ -89,9 +89,9 @@ export function CategoryPage() {
                 <span>
                   <span className="name">{row.shop.name}</span>
                   <span className="ctx" style={{ display: "block" }}>
-                    {view.orders.value > 0
+                    {view.orders.value && view.orders.value > 0
                       ? `ulush ${formatPercent((row.orders / view.orders.value) * 100, 1)}`
-                      : "ulush hisoblanmadi"}
+                      : "ulush —"}
                     {row.shop.official ? " · rasmiy doʻkon" : ""}
                   </span>
                 </span>

@@ -1,20 +1,52 @@
-import { setDataStart } from "@/lib/dates";
+import { addDays, setDataStart, toKey } from "@/lib/dates";
 import { setDataset } from "./dataset";
+import type { Dataset } from "./dataset";
 import { isRemoteConfigured, loadRemoteDataset } from "./remote";
 
 /**
  * Panel ochilishidan oldin ombor oʻqiladi.
  *
- * Maʻlumot boʻlmasa panel **hech qanday raqam koʻrsatmaydi**. Ilgari bu holatda
- * namuna toʻplami ishga tushardi va sahifa toʻqilgan raqamlar bilan toʻlardi;
- * ular haqiqiy oʻlchov deb oʻqilgani uchun butunlay olib tashlandi.
+ * Oʻlchov boʻlmasa ham sahifa **toʻliq chiziladi** — sarlavha, davr tugmalari,
+ * kartochkalar, qidiruv, grafik va roʻyxatlar joyida qoladi. Faqat raqam
+ * oʻrnida chiziqcha turadi.
  *
- * Boʻsh sahifa ham yolgʻon — u "sotuv yoʻq" deb oʻqiladi. Shuning uchun bu
- * holatda raqam oʻrniga nima yetishmayotgani yoziladi.
+ * Ikki narsa qilinmaydi: toʻqilgan raqam koʻrsatilmaydi va nol yozilmaydi.
+ * Nol "sotuv boʻlmagan" degan javob, chiziqcha esa "javob yoʻq" degani.
  */
 export type BootResult =
   | { mode: "ready" }
   | { mode: "empty"; reason: string; detail?: string };
+
+/**
+ * Obyektsiz toʻplam.
+ *
+ * Sanalar oʻqi saqlanadi (soʻnggi 30 kun), shunda davr tugmalari va grafik
+ * ramkasi wireframedagidek koʻrinadi.
+ */
+function emptyDataset(): Dataset {
+  const end = toKey(new Date());
+  const dates: string[] = [];
+  for (let i = 29; i >= 0; i--) dates.push(addDays(end, -i));
+
+  return {
+    categories: [],
+    shops: [],
+    products: [],
+    shopDays: new Map(),
+    productDays: new Map(),
+    productsByShop: new Map(),
+    productsByCategory: new Map(),
+    shopsByCategory: new Map(),
+    dates,
+    status: {
+      lastSweepAt: "",
+      coveragePercent: 0,
+      errors: 0,
+      source: "yoʻq",
+    },
+    sweepsPerDay: 0,
+  };
+}
 
 /**
  * Ombor shuncha vaqtda javob bermasa kutish toʻxtatiladi.
@@ -35,6 +67,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 
 export async function bootstrap(): Promise<BootResult> {
   if (!isRemoteConfigured()) {
+    setDataset(emptyDataset());
     return {
       mode: "empty",
       reason: "Ombor sozlanmagan.",
@@ -51,6 +84,7 @@ export async function bootstrap(): Promise<BootResult> {
     if (dataset.dates.length) setDataStart(dataset.dates[0]);
     return { mode: "ready" };
   } catch (error) {
+    setDataset(emptyDataset());
     return {
       mode: "empty",
       reason: "Omborda oʻlchov yoʻq.",

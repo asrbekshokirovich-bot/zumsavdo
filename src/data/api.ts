@@ -193,6 +193,90 @@ export function marketSummary(period: Period): MarketSummary {
   };
 }
 
+// ------------------------------------------------------- kunlik grafik
+
+/**
+ * Kunlik grafik nimani koʻrsatadi.
+ *
+ * Roʻyxat asoslaridan farq qiladi: bu yerda qator vaqt boʻyicha maʻnoga ega
+ * boʻlishi kerak. "Xaridor / hafta" shu sababdan yoʻq — u har kuni oʻzidan
+ * oldingi 7 kunni qamraydi, kunlik ustun sifatida oʻqilsa bir xaridor yetti
+ * kun ketma-ket sanalgandek koʻrinadi.
+ *
+ * "Sharh" esa aksincha, eng kuchli qator: sana Uzumdan oʻzi bilan keladi,
+ * shuning uchun u oʻlchov boshlanishidan ancha orqaga boradi.
+ */
+export type MarketSeries = "orders" | "feedbacks" | "units";
+
+export const MARKET_SERIES: {
+  id: MarketSeries;
+  label: string;
+  unit: string;
+  hint: string;
+  certainty: Metric["certainty"];
+}[] = [
+  {
+    id: "orders",
+    label: "Buyurtma",
+    unit: "ta",
+    hint: "Shop.ordersQuantity farqi — ikki kun chegarasi kerak",
+    certainty: "exact",
+  },
+  {
+    id: "feedbacks",
+    label: "Yangi sharh",
+    unit: "ta",
+    hint: "Sharh sanasi Uzumdan oʻzi bilan keladi — oʻlchov boshlanishidan orqaga boradi",
+    certainty: "exact",
+  },
+  {
+    id: "units",
+    label: "Sotilgan dona",
+    unit: "dona",
+    hint: "Qoldiq kamayishidan hisoblangan",
+    certainty: "approx",
+  },
+];
+
+/**
+ * Butun bozor boʻyicha kunlik qator.
+ *
+ * Kun nomaʻlum boʻlsa `null` qoladi — grafikda chiziq uziladi. Nol yozish
+ * "shu kuni hech narsa boʻlmagan" degan javob boʻlardi.
+ */
+export function marketDaily(period: Period, series: MarketSeries): SeriesPoint[] {
+  const indexes = sliceIndexes(period);
+  const out: SeriesPoint[] = indexes.map((i) => ({ date: db().dates[i], value: null }));
+
+  if (series === "orders") {
+    for (const shop of db().shops) {
+      const days = db().shopDays.get(shop.id) ?? [];
+      indexes.forEach((i, slot) => {
+        const day = days[i];
+        if (!day || day.orders === null) return;
+        out[slot].value = (out[slot].value ?? 0) + day.orders;
+      });
+    }
+    return out;
+  }
+
+  for (const product of db().products) {
+    const days = db().productDays.get(product.id) ?? [];
+    indexes.forEach((i, slot) => {
+      const day = days[i];
+      if (!day) return;
+      if (series === "feedbacks") {
+        if (day.newFeedbacks === null) return;
+        out[slot].value = (out[slot].value ?? 0) + day.newFeedbacks;
+      } else {
+        if (!day.measured) return;
+        out[slot].value = (out[slot].value ?? 0) + day.soldUnits;
+      }
+    });
+  }
+  return out;
+}
+
 /**
  * Roʻyxat nima boʻyicha saralanadi.
  *

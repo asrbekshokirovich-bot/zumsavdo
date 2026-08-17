@@ -3,12 +3,15 @@ import { Link } from "react-router-dom";
 import { Chart } from "@/components/Chart";
 import { PeriodPicker } from "@/components/PeriodPicker";
 import { SearchPanel } from "@/components/SearchPanel";
-import { BasisPicker } from "@/components/BasisPicker";
+import { BasisPicker, resolveBasis } from "@/components/BasisPicker";
 import { MetricCard, Panel, PlaceholderRows } from "@/components/ui";
 import {
+  MARKET_SERIES,
+  type MarketSeries,
   RANK_BASES,
   type RankBasis,
   categoriesRanked,
+  marketDaily,
   marketSummary,
   shopsRanked,
 } from "@/data/api";
@@ -30,14 +33,26 @@ export function HomePage() {
   }, [period]);
 
   const [chosen, setChosen] = useState<RankBasis | null>(null);
-  const basis: RankBasis =
-    chosen && available.has(chosen)
-      ? chosen
-      : (RANK_BASES.find((b) => available.has(b.id))?.id ?? "orders");
+  const basis = resolveBasis(RANK_BASES, available, chosen);
   const label = RANK_BASES.find((b) => b.id === basis)!;
 
   const topShops = shopsRanked(period, basis).slice(0, 5);
   const topCategories = categoriesRanked(period, basis).slice(0, 5);
+
+  // Kunlik grafik alohida tanlovga ega: vaqt qatori uchun maʻnoli oʻlchovlar
+  // roʻyxatnikidan farq qiladi (masalan "xaridor / hafta" bu yerda yaramaydi).
+  const seriesAvailable = useMemo(() => {
+    const set = new Set<MarketSeries>();
+    for (const m of MARKET_SERIES) {
+      if (marketDaily(period, m.id).some((p) => p.value !== null)) set.add(m.id);
+    }
+    return set;
+  }, [period]);
+
+  const [chosenSeries, setChosenSeries] = useState<MarketSeries | null>(null);
+  const series = resolveBasis(MARKET_SERIES, seriesAvailable, chosenSeries);
+  const seriesLabel = MARKET_SERIES.find((m) => m.id === series)!;
+  const dailyPoints = marketDaily(period, series);
 
   return (
     <>
@@ -63,17 +78,43 @@ export function HomePage() {
 
       <SearchPanel />
 
-      <Panel title="Kunlik grafik" hint={`Butun bozor · ${period.label}`}>
+      <Panel
+        title="Kunlik grafik"
+        hint={`Butun bozor · ${seriesLabel.label} · ${period.label}`}
+      >
+        <BasisPicker
+          options={MARKET_SERIES}
+          value={series}
+          onChange={setChosenSeries}
+          available={seriesAvailable}
+        />
         <Chart
-          series={[{ key: "orders", label: "Buyurtmalar", points: summary.daily }]}
+          series={[{ key: series, label: seriesLabel.label, points: dailyPoints }]}
           height={190}
           format={formatInt}
         />
+        <p className="note-inline">
+          {series === "feedbacks" && (
+            <>
+              Bu qator boshqalaridan uzoqroq orqaga boradi: sharh sanasi Uzumning
+              oʻzidan keladi, shuning uchun u <b>oʻlchov boshlanishini kutmaydi</b>.
+              Sharh — sotuvning oʻzi emas, uning izi: har xaridor sharh
+              qoldirmaydi.{" "}
+            </>
+          )}
+          Oxirgi nuqta har doim pastroq turadi — bugungi kun hali tugamagan,
+          shuning uchun uni tushish deb oʻqish notoʻgʻri.
+        </p>
       </Panel>
 
       <div className="grid-2">
         <Panel title="Top sotuvchilar" hint={`${label.label} boʻyicha`}>
-          <BasisPicker basis={basis} onChange={setChosen} available={available} />
+          <BasisPicker
+            options={RANK_BASES}
+            value={basis}
+            onChange={setChosen}
+            available={available}
+          />
           <div className="rows">
             {topShops.length === 0 && <PlaceholderRows count={5} />}
             {topShops.map((row, i) => (

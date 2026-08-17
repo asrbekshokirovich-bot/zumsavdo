@@ -5,11 +5,24 @@
  * `.env.example` da har biri izohlangan.
  */
 
-function required(name) {
-  const value = process.env[name];
+/**
+ * Ombor manzili va kaliti.
+ *
+ * `ZUMSAVDO_` prefiksli nom ustun turadi. Sabab amalda chiqdi: umumiy
+ * muhitda `SUPABASE_URL` boshqa loyihaga qo'yilgan bo'lishi mumkin va
+ * yig'uvchi jimgina begona bazaga yozishga urinadi. Prefiksli nom shu
+ * chalkashlikni butunlay yo'q qiladi.
+ */
+function supabaseSetting(suffix) {
+  return process.env[`ZUMSAVDO_SUPABASE_${suffix}`] || process.env[`SUPABASE_${suffix}`] || "";
+}
+
+function requiredSupabase(suffix) {
+  const value = supabaseSetting(suffix);
   if (!value) {
     throw new Error(
-      `${name} berilmagan. ingest/.env.example dan nusxa oling va to'ldiring.`,
+      `ZUMSAVDO_SUPABASE_${suffix} (yoki SUPABASE_${suffix}) berilmagan. ` +
+        "ingest/.env.example dan nusxa oling va to'ldiring.",
     );
   }
   return value;
@@ -40,12 +53,12 @@ export function loadConfig({ requireSupabase = true } = {}) {
   return {
     supabase: {
       // find-shops kabi yordamchilar bazaga tegmaydi — kalit talab qilinmaydi.
-      url: requireSupabase ? required("SUPABASE_URL") : process.env.SUPABASE_URL || "",
+      url: requireSupabase ? requiredSupabase("URL") : supabaseSetting("URL"),
       // Yozish RLS dan o'tishi kerak, shuning uchun service role.
       // Bu kalit hech qachon brauzerga tushmasligi kerak.
       serviceKey: requireSupabase
-        ? required("SUPABASE_SERVICE_ROLE_KEY")
-        : process.env.SUPABASE_SERVICE_ROLE_KEY || "",
+        ? requiredSupabase("SERVICE_ROLE_KEY")
+        : supabaseSetting("SERVICE_ROLE_KEY"),
     },
 
     source: process.env.ZUMSAVDO_SOURCE || "sample",

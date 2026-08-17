@@ -74,15 +74,24 @@ async function main() {
   // Kuzatuv ro'yxati bazada turadi (discover uni to'ldiradi). `.env` dagi
   // ro'yxat ham qo'shiladi — u qo'lda qo'yilgan, ya'ni ataylab tanlangan.
   if (!config.dryRun && config.source === "uzum-catalog") {
+    const fromEnv = config.track.products.length;
     try {
       const tracked = await store.trackedProducts();
       if (tracked.length) {
-        const merged = new Set([...config.track.products, ...tracked]);
-        config.track.products = [...merged];
+        config.track.products = [...new Set([...config.track.products, ...tracked])];
         log(`Kuzatuvda ${config.track.products.length} ta mahsulot (${tracked.length} tasi bazadan).`);
       }
     } catch (error) {
-      log(`Kuzatuv ro'yxati o'qilmadi: ${error.message}`);
+      // Ro'yxat o'qilmasa sweep qidiruv yo'liga tushib ketardi — u Uzumda
+      // tez-tez bloklanadi, natijada sabab "429" bo'lib ko'rinardi va asl
+      // sabab (baza javob bermadi) yo'qolardi.
+      if (!fromEnv) {
+        throw new Error(
+          `Kuzatuv ro'yxati o'qilmadi va .env da ham mahsulot yo'q: ${error.message}`,
+        );
+      }
+      log(`OGOHLANTIRISH — kuzatuv ro'yxati o'qilmadi (${error.message}). ` +
+          `Faqat .env dagi ${fromEnv} ta mahsulot olinadi.`);
     }
   }
 

@@ -193,12 +193,83 @@ export function marketSummary(period: Period): MarketSummary {
   };
 }
 
+/**
+ * Roʻyxat nima boʻyicha saralanadi.
+ *
+ * Buyurtma eng ishonchli, lekin u ikki kun chegarasi farqi — birinchi kuni
+ * hech kimda boʻlmaydi va roʻyxat butunlay boʻsh chiqadi. Qolgan ikkitasi
+ * birinchi oʻlchovdanoq ishlaydi, shuning uchun ular zaxira emas, teng
+ * huquqli tanlov.
+ */
+export type RankBasis = "orders" | "buyers" | "units";
+
+export const RANK_BASES: {
+  id: RankBasis;
+  label: string;
+  /** Raqamdan keyingi birlik — "142 xaridor" kabi. */
+  unit: string;
+  hint: string;
+  certainty: Metric["certainty"];
+}[] = [
+  {
+    id: "orders",
+    label: "Buyurtma",
+    unit: "ta",
+    hint: "Shop.ordersQuantity hisoblagichining kunlik farqi — ikki oʻlchov kerak",
+    certainty: "exact",
+  },
+  {
+    id: "buyers",
+    label: "Xaridor / hafta",
+    unit: "kishi · soʻnggi 7 kun",
+    hint: 'Kartochkadagi "Bu haftada N kishi sotib oldi" — doim 7 kunlik oyna, davr tugmasi buni oʻzgartirmaydi',
+    certainty: "exact",
+  },
+  {
+    id: "units",
+    label: "Sotilgan dona",
+    unit: "dona · taxminiy",
+    hint: "Qoldiq kamayishidan hisoblangan — oraliqda tovar keltirilsa bir qismi koʻrinmaydi",
+    certainty: "approx",
+  },
+];
+
 export interface RankedShop {
   shop: Shop;
   categoryName: string;
   /** `null` — davr ichida birorta ham kun uchun buyurtma farqi hisoblanmagan. */
   orders: number | null;
   revenue: number | null;
+  /** Tanlangan asos boʻyicha qiymat — roʻyxat shu boʻyicha saralanadi. */
+  value: number | null;
+}
+
+/**
+ * Mahsulot qatorlaridan tanlangan asos boʻyicha qiymat.
+ *
+ * `buyers` yigʻindi emas, oxirgi kun qiymati: manba allaqachon 7 kunlik
+ * oyna, kunlar boʻyicha qoʻshsak bir xaridorni yetti marta sanagan boʻlardik.
+ */
+function productMetric(productIds: number[], indexes: number[], basis: RankBasis): number | null {
+  if (basis === "orders") return null;
+  const last = indexes[indexes.length - 1];
+  let total = 0;
+  let known = false;
+  for (const id of productIds) {
+    const days = db().productDays.get(id) ?? [];
+    if (basis === "buyers") {
+      if (!days[last]?.measured) continue;
+      total += days[last].buyersPerWeek;
+      known = true;
+    } else {
+      for (const i of indexes) {
+        if (!days[i]?.measured) continue;
+        total += days[i].soldUnits;
+        known = true;
+      }
+    }
+  }
+  return known ? total : null;
 }
 
 /**
@@ -208,22 +279,27 @@ export interface RankedShop {
  * va raqami chiziqcha boʻlib koʻrinadi. Nol "sotuv boʻlmagan" degan javob,
  * bu yerda esa javob yoʻq.
  */
-export function shopsRanked(period: Period): RankedShop[] {
+export function shopsRanked(period: Period, basis: RankBasis = "orders"): RankedShop[] {
   const indexes = sliceIndexes(period);
-  return db().shops
-    .map((shop) => {
+  return db()
+    .shops.map((shop) => {
       const days = db().shopDays.get(shop.id) ?? [];
       const measured = indexes.filter((i) => days[i]?.orders != null);
+      const orders = measured.length ? sum(measured.map((i) => ordersOf(days[i]))) : null;
       return {
         shop,
         categoryName: getCategory(shop.categoryId)?.name ?? "",
-        orders: measured.length ? sum(measured.map((i) => ordersOf(days[i]))) : null,
+        orders,
         revenue: measured.length
           ? sum(measured.map((i) => ordersOf(days[i]) * (days[i]?.avgPrice ?? 0)))
           : null,
+        value:
+          basis === "orders"
+            ? orders
+            : productMetric(db().productsByShop.get(shop.id) ?? [], indexes, basis),
       };
     })
-    .sort((a, b) => (b.orders ?? -1) - (a.orders ?? -1));
+    .sort((a, b) => (b.value ?? -1) - (a.value ?? -1));
 }
 
 export interface RankedCategory {
@@ -232,6 +308,8 @@ export interface RankedCategory {
   orders: number | null;
   revenue: number | null;
   shopCount: number;
+  /** Tanlangan asos boʻyicha qiymat — roʻyxat shu boʻyicha saralanadi. */
+  value: number | null;
 }
 
 /**
@@ -242,7 +320,7 @@ export interface RankedCategory {
  * bizda hali oʻlchov yoʻq — ularni "top" deb koʻrsatish maʻnosiz: roʻyxat
  * boshini boʻsh turkumlar egallab, haqiqiylarini pastga surib yuborardi.
  */
-export function categoriesRanked(period: Period): RankedCategory[] {
+export function categoriesRanked(period: Period, basis: RankBasis = "orders"): RankedCategory[] {
   const indexes = sliceIndexes(period);
   return db()
     .categories.map((category) => {
@@ -260,15 +338,20 @@ export function categoriesRanked(period: Period): RankedCategory[] {
           revenue += day.orders * day.avgPrice;
         }
       }
+      const ranked = measured ? orders : null;
       return {
         category,
-        orders: measured ? orders : null,
+        orders: ranked,
         revenue: measured ? revenue : null,
         shopCount: shopIds.length,
+        value:
+          basis === "orders"
+            ? ranked
+            : productMetric(db().productsByCategory.get(category.id) ?? [], indexes, basis),
       };
     })
     .filter((row) => row.shopCount > 0)
-    .sort((a, b) => (b.orders ?? -1) - (a.orders ?? -1));
+    .sort((a, b) => (b.value ?? -1) - (a.value ?? -1));
 }
 
 // ---------------------------------------------------------------- oʻrin
@@ -627,19 +710,29 @@ export function categoryView(categoryId: number, period: Period): CategoryView |
       const days = db().shopDays.get(id) ?? [];
       let shopOrders = 0;
       let shopRevenue = 0;
+      let measured = false;
       indexes.forEach((i, slot) => {
         const day = days[i];
         if (!day) return;
         if (day.orders === null) return;
+        measured = true;
         shopOrders += day.orders;
         shopRevenue += day.orders * day.avgPrice;
         daily[slot].value = (daily[slot].value ?? 0) + day.orders;
       });
       orders += shopOrders;
       revenue += shopRevenue;
-      return { shop, categoryName: category.name, orders: shopOrders, revenue: shopRevenue };
+      // Oʻlchovi yoʻq sotuvchi nolga tenglashtirilmaydi — chiziqcha koʻrsatiladi.
+      const value = measured ? shopOrders : null;
+      return {
+        shop,
+        categoryName: category.name,
+        orders: value,
+        revenue: measured ? shopRevenue : null,
+        value,
+      };
     })
-    .sort((a, b) => b.orders - a.orders);
+    .sort((a, b) => (b.orders ?? -1) - (a.orders ?? -1));
 
   const lastIndex = indexes[indexes.length - 1] ?? db().dates.length - 1;
   const products = productIds

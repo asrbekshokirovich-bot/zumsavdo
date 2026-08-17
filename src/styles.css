@@ -811,3 +811,43 @@ td.name {
   white-space: nowrap;
   border: 0;
 }
+
+/* Roʻyxat saralash asosi. Maʻlumoti yoʻq tugma yashirilmaydi — oʻchirilgan
+   holda turadi, aks holda foydalanuvchi u umuman yoʻq deb oʻylardi. */
+.basis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 4px 10px;
+}
+
+.basis button {
+  font: 11px/1 var(--f);
+  color: var(--ink2);
+  background: var(--paper);
+  border: 1px solid var(--ln2);
+  border-radius: 3px;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+
+.basis button:hover:not(:disabled) {
+  border-color: var(--ln3);
+  color: var(--ink);
+}
+
+.basis button.on {
+  color: var(--paper);
+  background: var(--badge);
+  border-color: var(--badge);
+}
+
+.basis button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.basis .tilde {
+  margin-left: 3px;
+  opacity: 0.75;
+}

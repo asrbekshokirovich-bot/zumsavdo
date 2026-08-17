@@ -1,17 +1,43 @@
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Chart } from "@/components/Chart";
 import { PeriodPicker } from "@/components/PeriodPicker";
 import { SearchPanel } from "@/components/SearchPanel";
+import { BasisPicker } from "@/components/BasisPicker";
 import { MetricCard, Panel, PlaceholderRows } from "@/components/ui";
-import { categoriesRanked, marketSummary, shopsRanked } from "@/data/api";
+import {
+  RANK_BASES,
+  type RankBasis,
+  categoriesRanked,
+  marketSummary,
+  shopsRanked,
+} from "@/data/api";
 import { formatInt, formatMoney, orDash } from "@/lib/format";
 import { usePeriod } from "@/lib/usePeriod";
 
 export function HomePage() {
   const [period, setPeriod] = usePeriod();
   const summary = marketSummary(period);
-  const topShops = shopsRanked(period).slice(0, 5);
-  const topCategories = categoriesRanked(period).slice(0, 5);
+
+  // Qaysi asosda maʻlumot bor. Buyurtma birinchi kuni boʻsh boʻladi, shuning
+  // uchun tanlov qoʻlda emas — mavjudi oʻzi tanlanadi.
+  const available = useMemo(() => {
+    const set = new Set<RankBasis>();
+    for (const b of RANK_BASES) {
+      if (shopsRanked(period, b.id).some((r) => r.value !== null)) set.add(b.id);
+    }
+    return set;
+  }, [period]);
+
+  const [chosen, setChosen] = useState<RankBasis | null>(null);
+  const basis: RankBasis =
+    chosen && available.has(chosen)
+      ? chosen
+      : (RANK_BASES.find((b) => available.has(b.id))?.id ?? "orders");
+  const label = RANK_BASES.find((b) => b.id === basis)!;
+
+  const topShops = shopsRanked(period, basis).slice(0, 5);
+  const topCategories = categoriesRanked(period, basis).slice(0, 5);
 
   return (
     <>
@@ -46,7 +72,8 @@ export function HomePage() {
       </Panel>
 
       <div className="grid-2">
-        <Panel title="Top sotuvchilar" hint="Buyurtma boʻyicha">
+        <Panel title="Top sotuvchilar" hint={`${label.label} boʻyicha`}>
+          <BasisPicker basis={basis} onChange={setChosen} available={available} />
           <div className="rows">
             {topShops.length === 0 && <PlaceholderRows count={5} />}
             {topShops.map((row, i) => (
@@ -60,11 +87,13 @@ export function HomePage() {
                   </span>
                 </span>
                 <span className="figures">
-                  {orDash(row.orders, formatInt)}
+                  {orDash(row.value, formatInt)}
                   <span className="sub">
-                    {row.orders === null
+                    {row.value === null
                       ? " oʻlchov yoʻq"
-                      : ` ta · ~${formatMoney(row.revenue ?? 0)}`}
+                      : basis === "orders"
+                        ? ` ta · ~${formatMoney(row.revenue ?? 0)}`
+                        : ` ${label.unit}`}
                   </span>
                 </span>
               </Link>
@@ -72,7 +101,7 @@ export function HomePage() {
           </div>
         </Panel>
 
-        <Panel title="Top turkumlar" hint="Buyurtma boʻyicha">
+        <Panel title="Top turkumlar" hint={`${label.label} boʻyicha`}>
           <div className="rows">
             {topCategories.length === 0 && <PlaceholderRows count={5} />}
             {topCategories.map((row, i) => (
@@ -85,11 +114,13 @@ export function HomePage() {
                   </span>
                 </span>
                 <span className="figures">
-                  {orDash(row.orders, formatInt)}
+                  {orDash(row.value, formatInt)}
                   <span className="sub">
-                    {row.orders === null
+                    {row.value === null
                       ? " oʻlchov yoʻq"
-                      : ` ta · ~${formatMoney(row.revenue ?? 0)}`}
+                      : basis === "orders"
+                        ? ` ta · ~${formatMoney(row.revenue ?? 0)}`
+                        : ` ${label.unit}`}
                   </span>
                 </span>
               </Link>

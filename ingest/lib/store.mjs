@@ -120,6 +120,38 @@ export function createStore(config) {
       return written;
     },
 
+    // ------------------------------------------------------------ perepis
+
+    /**
+     * Keyingi id boʻlagini band qiladi.
+     *
+     * Bandlash bazada atomar boʻlgani uchun bir necha ishchi bir vaqtda
+     * ishlashi mumkin — ular bir xil boʻlakni olmaydi.
+     */
+    async censusClaim(size) {
+      const rows = await rpc("zs_census_claim", { p_size: size });
+      const row = Array.isArray(rows) ? rows[0] : rows;
+      if (!row) throw new Error("zs_census_claim boʻsh javob qaytardi.");
+      return row;
+    },
+
+    /** Perepis boʻlagini yozadi va nechta tirik mahsulot tushganini qaytaradi. */
+    async censusBatch(pass, payload) {
+      return (await rpc("zs_census_batch", { p_pass: pass, p_payload: payload })) ?? 0;
+    },
+
+    async censusStatus() {
+      const { data, error } = await db.from("zs_census_status").select("*").limit(1);
+      if (error) throw new Error(`zs_census_status oʻqilmadi: ${error.message}`);
+      return data?.[0] ?? null;
+    },
+
+    /** Perepisdan 2-qatlamni tanlaydi. */
+    async selectTracked(limit) {
+      const rows = await rpc("zs_select_tracked", { p_limit: limit });
+      return Array.isArray(rows) ? rows[0] : rows;
+    },
+
     /** Kunlik yig'indini qayta hisoblash. */
     async rollup(fromDate, toDate) {
       const rows = await rpc("zs_rollup_days", { from_date: fromDate, to_date: toDate });

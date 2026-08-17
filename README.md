@@ -162,11 +162,12 @@ npm run sweep -- --probe  # manba javobini oʻzgartirmasdan bosib chiqaradi
 npm run rollup            # faqat qayta hisoblash
 ```
 
-Manbalar `ZUMSAVDO_SOURCE` bilan tanlanadi:
+Manba bitta: **`uzum-catalog`**.
 
-- **`sample`** — namuna oʻlchovlari. Kredensialsiz ham butun quvurni (sxema,
-  farq hisobi, aniq/taxminiy ajratmasi) tekshirib koʻrish uchun.
-- **`uzum-catalog`** — Uzum katalogi. Ruxsat talab qiladi, pastga qarang.
+Ilgari `sample` nomli namuna generatori ham bor edi va u standart qiymat
+edi. `.env` boʻlmagan muhitda sweep jimgina oʻshani ishga tushirib, haqiqiy
+omborga toʻqilgan oʻlchov yozib qoʻydi. Generator butunlay olib tashlandi:
+yigʻuvchi endi faqat oʻlchay oladi, yasay olmaydi.
 
 ### Uzum katalogiga kirish — hozircha yopiq
 

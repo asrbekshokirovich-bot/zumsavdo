@@ -16,7 +16,6 @@ import { loadConfig } from "./config.mjs";
 import { createStore } from "./lib/store.mjs";
 import { AccessDeniedError } from "./lib/http.mjs";
 import { createCatalogSource } from "./sources/catalog.mjs";
-import { createSampleSource } from "./sources/sample.mjs";
 
 /** 06.7 — bajarilish ulushi shundan past boʻlsa run "xato" deb belgilanadi. */
 const MIN_COMPLETION = 0.9;
@@ -24,8 +23,12 @@ const MIN_COMPLETION = 0.9;
 /** 07 — qamrov meʻyori. */
 const MIN_COVERAGE = 0.99;
 
+/**
+ * Manbalar roʻyxati. Ataylab bitta: yigʻuvchi faqat oʻlchay oladi, yasay
+ * olmaydi. Namuna generatori olib tashlangan — u haqiqiy bazaga toʻqilgan
+ * oʻlchov yozib qoʻygan edi.
+ */
 const SOURCES = {
-  sample: createSampleSource,
   "uzum-catalog": createCatalogSource,
 };
 

@@ -61,7 +61,16 @@ export function loadConfig({ requireSupabase = true } = {}) {
         : supabaseSetting("SERVICE_ROLE_KEY"),
     },
 
-    source: process.env.ZUMSAVDO_SOURCE || "sample",
+    /**
+     * Yagona manba — Uzum katalogi.
+     *
+     * Ilgari standart qiymat "sample" edi va u toʻqilgan oʻlchov yasardi.
+     * `.env` boʻlmagan muhitda (masalan bulutdagi Routine) sweep jimgina
+     * shu generatorni ishga tushirib, haqiqiy bazaga 12 000 dan ortiq soxta
+     * oʻlchov yozib qoʻydi. Generator butunlay olib tashlandi; standart
+     * qiymat endi hech qachon maʻlumot yasamaydi.
+     */
+    source: process.env.ZUMSAVDO_SOURCE || "uzum-catalog",
 
     catalog: {
       endpoint: process.env.UZUM_CATALOG_ENDPOINT || "https://graphql.uzum.uz/",

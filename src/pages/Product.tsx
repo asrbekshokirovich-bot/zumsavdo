@@ -82,6 +82,11 @@ export function ProductPage() {
           meta="Qoldiq kamayishidan. Oraliqda tovar keltirilsa, sotuvning bir qismi koʻrinmaydi."
         />
         <MetricCard
+          label="Tovar keltirildi"
+          metric={view.restocked}
+          meta="Qoldiq oʻsishidan. Sotuvdan ayirilmaydi — bir kunda ikkalasi ham boʻlishi mumkin."
+        />
+        <MetricCard
           label="Yangi sharhlar"
           metric={view.feedbacks}
           meta="Sharh sanasi Uzumdan oʻzi bilan keladi — bu raqam oʻlchov kutmaydi."
@@ -103,8 +108,11 @@ export function ProductPage() {
         <div className="charts-4">
           <Chart
             {...shared}
-            title="Sotuv (dona, taxminiy)"
-            series={[{ key: "sold", label: "Dona", points: view.series.sold }]}
+            title="Sotuv va tovar keltirilishi (dona, taxminiy)"
+            series={[
+              { key: "sold", label: "Sotildi", points: view.series.sold },
+              { key: "restocked", label: "Keltirildi", points: view.series.restocked },
+            ]}
             shadedDates={view.outOfStockDates}
             format={formatInt}
           />

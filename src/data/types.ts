@@ -74,6 +74,14 @@ export interface ProductDay {
   buyersPerWeek: number;
   /** Qoldiq kamayishidan hisoblangan sotuv — TAXMINIY. */
   soldUnits: number;
+  /**
+   * Qoldiq oʻsishidan hisoblangan tovar keltirilishi — TAXMINIY.
+   *
+   * Sotuv bilan bir qatorda turadi va undan ayirilmaydi: bir kunda ikkalasi
+   * ham boʻlishi mumkin, ayirsak ikkala raqam ham yoʻqoladi. "5 dona
+   * sotildi" bilan "5 sotildi, 300 keltirildi" — butunlay boshqa holat.
+   */
+  restockedUnits: number;
   /** Shu kuni tovar boʻlmagan (qoldiq 0). Grafikda kulrang soya. */
   outOfStock: boolean;
   /**

@@ -495,6 +495,8 @@ export interface ProductView {
   buyersPerWeek: Metric;
   /** Qoldiq kamayishidan — TAXMINIY. */
   units: Metric;
+  /** Qoldiq oʻsishidan — TAXMINIY. Tovar keltirilgani. */
+  restocked: Metric;
   rank: Rank | null;
   price: number;
   stock: number;
@@ -503,6 +505,8 @@ export interface ProductView {
     price: SeriesPoint[];
     stock: SeriesPoint[];
     reviews: SeriesPoint[];
+    /** Kunlik tovar keltirilishi — sotuv bilan bir oʻqda. */
+    restocked: SeriesPoint[];
     /** Kunlik yangi sharhlar — sanasi Uzumdan keladi, oʻlchov kutilmaydi. */
     feedbacks: SeriesPoint[];
   };
@@ -550,6 +554,10 @@ export function productView(productId: number, period: Period): ProductView | nu
     // Davr tugmasi buni oʻzgartirmaydi — manba doim 7 kunlik oyna.
     buyersPerWeek: { value: last?.buyersPerWeek ?? 0, certainty: "exact", note: "doim 7 kunlik" },
     units: { value: sum(indexes.map((i) => series[i]?.soldUnits ?? 0)), certainty: "approx" },
+    restocked: {
+      value: sum(indexes.map((i) => series[i]?.restockedUnits ?? 0)),
+      certainty: "approx",
+    },
     rank: productRank(productId),
     price: last?.price ?? 0,
     stock: last?.stock ?? 0,
@@ -558,6 +566,7 @@ export function productView(productId: number, period: Period): ProductView | nu
       price: pick((d) => d.price),
       stock: pick((d) => d.stock),
       reviews: pick((d) => d.reviews),
+      restocked: pick((d) => d.restockedUnits),
       feedbacks: feedbackPoints,
     },
     feedbacks: { value: feedbackTotal, certainty: "exact" },

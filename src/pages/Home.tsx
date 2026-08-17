@@ -85,8 +85,12 @@ export function HomePage() {
                   </span>
                 </span>
                 <span className="figures">
-                  {formatInt(row.orders)}
-                  <span className="sub"> ta · ~{formatMoney(row.revenue)}</span>
+                  {orDash(row.orders, formatInt)}
+                  <span className="sub">
+                    {row.orders === null
+                      ? " oʻlchov yoʻq"
+                      : ` ta · ~${formatMoney(row.revenue ?? 0)}`}
+                  </span>
                 </span>
               </Link>
             ))}

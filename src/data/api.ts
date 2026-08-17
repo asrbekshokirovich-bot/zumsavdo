@@ -228,30 +228,47 @@ export function shopsRanked(period: Period): RankedShop[] {
 
 export interface RankedCategory {
   category: Category;
-  orders: number;
-  revenue: number;
+  /** `null` — davr ichida birorta ham oʻlchov yoʻq. */
+  orders: number | null;
+  revenue: number | null;
   shopCount: number;
 }
 
+/**
+ * Turkumlarni buyurtma boʻyicha saralaydi.
+ *
+ * Kuzatilayotgan sotuvchisi yoʻq turkum roʻyxatga umuman kirmaydi. Turkum
+ * daraxti Uzumdan toʻliq olinadi (yuzlab tugun), lekin ularning aksariyatida
+ * bizda hali oʻlchov yoʻq — ularni "top" deb koʻrsatish maʻnosiz: roʻyxat
+ * boshini boʻsh turkumlar egallab, haqiqiylarini pastga surib yuborardi.
+ */
 export function categoriesRanked(period: Period): RankedCategory[] {
   const indexes = sliceIndexes(period);
-  return db().categories
-    .map((category) => {
+  return db()
+    .categories.map((category) => {
       const shopIds = db().shopsByCategory.get(category.id) ?? [];
       let orders = 0;
       let revenue = 0;
+      let measured = 0;
       for (const id of shopIds) {
         const days = db().shopDays.get(id) ?? [];
         for (const i of indexes) {
           const day = days[i];
-          if (!day) continue;
-          orders += ordersOf(day);
-          revenue += ordersOf(day) * day.avgPrice;
+          if (!day || day.orders === null) continue;
+          measured++;
+          orders += day.orders;
+          revenue += day.orders * day.avgPrice;
         }
       }
-      return { category, orders, revenue, shopCount: shopIds.length };
+      return {
+        category,
+        orders: measured ? orders : null,
+        revenue: measured ? revenue : null,
+        shopCount: shopIds.length,
+      };
     })
-    .sort((a, b) => b.orders - a.orders);
+    .filter((row) => row.shopCount > 0)
+    .sort((a, b) => (b.orders ?? -1) - (a.orders ?? -1));
 }
 
 // ---------------------------------------------------------------- oʻrin

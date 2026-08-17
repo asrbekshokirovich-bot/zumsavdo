@@ -53,13 +53,24 @@ export function getDataset(): Dataset {
 const PRICE_EVENT_THRESHOLD = 0.05;
 const REVIEW_JUMP_THRESHOLD = 12;
 
-/** Mahsulot qatoridan "nima oʻzgardi" roʻyxatini yigʻadi. */
+/**
+ * Mahsulot qatoridan "nima oʻzgardi" roʻyxatini yigʻadi.
+ *
+ * Faqat ketma-ket **oʻlchangan** kunlar solishtiriladi. Oʻlchov tushmagan kun
+ * qatorda nol boʻlib turadi va uni oldingi kun bilan solishtirish "narx 100%
+ * tushdi" degan soxta hodisa yasardi.
+ */
 export function productEvents(days: ProductDay[]): ChangeEvent[] {
   const events: ChangeEvent[] = [];
+  let previousMeasured: ProductDay | null = null;
 
-  for (let i = 1; i < days.length; i++) {
-    const prev = days[i - 1];
+  for (let i = 0; i < days.length; i++) {
     const day = days[i];
+    if (!day.measured) continue;
+
+    const prev = previousMeasured;
+    previousMeasured = day;
+    if (!prev) continue;
 
     const priceDelta = (day.price - prev.price) / (prev.price || 1);
     if (Math.abs(priceDelta) >= PRICE_EVENT_THRESHOLD) {

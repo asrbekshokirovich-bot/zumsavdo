@@ -126,13 +126,38 @@ query zumsavdoFeedbacks($id: Int!, $page: Int!, $size: Int!) {
   }
 }`;
 
-/** Turkum daraxti — bolalari bilan. */
+/** Turkum daraxti — bolalari bilan. Ildiz `id: 1` ("Barcha toifalar"). */
 export const CATEGORY_QUERY = `
 query zumsavdoCategory($id: Int!) {
   category(id: $id) {
     id
     title
     children { id title }
+  }
+}`;
+
+/**
+ * Bosh sahifa karusellari — qidiruvsiz mahsulot topish yoʻli.
+ *
+ * Uzumning `search-gateway` uchi tez-tez 429 qaytaradi va uzoq bloklanadi,
+ * shuning uchun roʻyxatni undan olish ishonchsiz. Bosh sahifa boshqa
+ * subgrafdan keladi va ishlaydi. U butun katalog emas — lekin kuzatishni
+ * boshlash uchun jonli, haqiqiy mahsulotlar beradi.
+ *
+ * Kartalar `ProductCard` turida keladi va ularning `id` si mahsulot id si —
+ * `SkuGroupCard` dagidek alohida `productId` yoʻq.
+ */
+export const MAIN_PAGE_QUERY = `
+query zumsavdoMain($page: Int!, $size: Int!) {
+  main {
+    content(type: DESKTOP) {
+      __typename
+      ... on CarouselOffer {
+        id
+        title
+        products(page: $page, size: $size) { __typename id title }
+      }
+    }
   }
 }`;
 
@@ -211,6 +236,40 @@ export const parse = {
         hasContent: Boolean(f.content),
       }))
       .filter((f) => Number.isFinite(f.id) && f.createdAt);
+  },
+
+  /**
+   * Bosh sahifa karusellaridan mahsulot id lari.
+   *
+   * Bir mahsulot bir necha karuselda uchraydi — takrorlari bu yerda emas,
+   * chaqiruvchida olib tashlanadi (u qaysi karuseldan kelganini biladi).
+   */
+  mainCards(node) {
+    const out = [];
+    for (const block of node?.main?.content ?? []) {
+      if (block?.__typename !== "CarouselOffer") continue;
+      for (const card of block.products ?? []) {
+        const id = Number(card?.id);
+        if (Number.isInteger(id) && id > 0) {
+          out.push({ productId: id, title: card.title ?? null, shelf: block.title ?? null });
+        }
+      }
+    }
+    return out;
+  },
+
+  /** Turkum daraxtining bitta tuguni. */
+  category(node, parentId) {
+    const id = Number(node?.category?.id);
+    if (!Number.isInteger(id)) return null;
+    return {
+      id,
+      name: node.category.title,
+      parentId: parentId ?? null,
+      children: (node.category.children ?? [])
+        .map((c) => ({ id: Number(c.id), name: c.title }))
+        .filter((c) => Number.isInteger(c.id)),
+    };
   },
 
   /** Roʻyxatdan mahsulot id larini ajratadi, oʻrni bilan birga. */

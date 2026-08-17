@@ -71,6 +71,21 @@ async function main() {
     return;
   }
 
+  // Kuzatuv ro'yxati bazada turadi (discover uni to'ldiradi). `.env` dagi
+  // ro'yxat ham qo'shiladi — u qo'lda qo'yilgan, ya'ni ataylab tanlangan.
+  if (!config.dryRun && config.source === "uzum-catalog") {
+    try {
+      const tracked = await store.trackedProducts();
+      if (tracked.length) {
+        const merged = new Set([...config.track.products, ...tracked]);
+        config.track.products = [...merged];
+        log(`Kuzatuvda ${config.track.products.length} ta mahsulot (${tracked.length} tasi bazadan).`);
+      }
+    } catch (error) {
+      log(`Kuzatuv ro'yxati o'qilmadi: ${error.message}`);
+    }
+  }
+
   await source.preflight();
   log("Preflight o'tdi.");
 

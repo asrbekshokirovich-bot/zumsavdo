@@ -81,12 +81,17 @@ export function ProductPage() {
           metric={view.units}
           meta="Qoldiq kamayishidan. Oraliqda tovar keltirilsa, sotuvning bir qismi koʻrinmaydi."
         />
+        <MetricCard
+          label="Yangi sharhlar"
+          metric={view.feedbacks}
+          meta="Sharh sanasi Uzumdan oʻzi bilan keladi — bu raqam oʻlchov kutmaydi."
+        />
         <RankCard label="Oʻrin" rank={view.rank} />
       </div>
 
       <Panel
-        title="Toʻrt grafik — bitta vaqt oʻqi"
-        hint="Sichqonchani yuriting: vertikal chiziq toʻrtalasida birga harakatlanadi."
+        title="Besh grafik — bitta vaqt oʻqi"
+        hint="Sichqonchani yuriting: vertikal chiziq beshalasida birga harakatlanadi."
       >
         {view.outOfStockDates.length > 0 && (
           <div className="callout warn" style={{ marginBottom: 12 }}>
@@ -124,9 +129,21 @@ export function ProductPage() {
             series={[{ key: "reviews", label: "Sharhlar", points: view.series.reviews }]}
             format={formatInt}
             zeroBased={false}
+          />
+          <Chart
+            {...shared}
+            title="Yangi sharhlar (kunlik)"
+            series={[{ key: "feedbacks", label: "Sharh", points: view.series.feedbacks }]}
+            format={formatInt}
             showDates
           />
         </div>
+        <p className="note-inline">
+          Pastki grafik qolganlaridan farq qiladi: sharhning sanasi Uzumning oʻzidan
+          keladi, shuning uchun u <b>oʻlchov kutmaydi</b> — biz hech qachon oʻlchamagan
+          kunning ham javobi bor. Yuqoridagi toʻrttasi esa faqat oʻlchov tushgan
+          kunlarda chiziladi, qolgan joyda chiziq uziladi.
+        </p>
       </Panel>
 
       <Panel title="Nima oʻzgardi" hint="Sana · hodisa · raqam">

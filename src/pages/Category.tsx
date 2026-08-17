@@ -3,7 +3,7 @@ import { Chart } from "@/components/Chart";
 import { PeriodPicker } from "@/components/PeriodPicker";
 import { Crumb, MetricCard, Panel } from "@/components/ui";
 import { categoryView } from "@/data/api";
-import { formatInt, formatMoney, formatPercent, formatPrice } from "@/lib/format";
+import { formatInt, formatMoney, formatPercent, formatPrice, orDash } from "@/lib/format";
 import { usePeriod } from "@/lib/usePeriod";
 import { NotFoundPage } from "./NotFound";
 
@@ -89,15 +89,19 @@ export function CategoryPage() {
                 <span>
                   <span className="name">{row.shop.name}</span>
                   <span className="ctx" style={{ display: "block" }}>
-                    {view.orders.value && view.orders.value > 0
+                    {row.orders !== null && view.orders.value && view.orders.value > 0
                       ? `ulush ${formatPercent((row.orders / view.orders.value) * 100, 1)}`
                       : "ulush —"}
                     {row.shop.official ? " · rasmiy doʻkon" : ""}
                   </span>
                 </span>
                 <span className="figures">
-                  {formatInt(row.orders)}
-                  <span className="sub"> ta · ~{formatMoney(row.revenue)}</span>
+                  {orDash(row.orders, formatInt)}
+                  <span className="sub">
+                    {row.orders === null
+                      ? " oʻlchov yoʻq"
+                      : ` ta · ~${formatMoney(row.revenue ?? 0)}`}
+                  </span>
                 </span>
               </Link>
             ))}

@@ -196,23 +196,34 @@ export function marketSummary(period: Period): MarketSummary {
 export interface RankedShop {
   shop: Shop;
   categoryName: string;
-  orders: number;
-  revenue: number;
+  /** `null` — davr ichida birorta ham kun uchun buyurtma farqi hisoblanmagan. */
+  orders: number | null;
+  revenue: number | null;
 }
 
+/**
+ * Sotuvchilarni buyurtma boʻyicha saralaydi.
+ *
+ * Oʻlchovi yoʻq sotuvchi nolga tenglashtirilmaydi — u roʻyxat oxirida turadi
+ * va raqami chiziqcha boʻlib koʻrinadi. Nol "sotuv boʻlmagan" degan javob,
+ * bu yerda esa javob yoʻq.
+ */
 export function shopsRanked(period: Period): RankedShop[] {
   const indexes = sliceIndexes(period);
   return db().shops
     .map((shop) => {
       const days = db().shopDays.get(shop.id) ?? [];
+      const measured = indexes.filter((i) => days[i]?.orders != null);
       return {
         shop,
         categoryName: getCategory(shop.categoryId)?.name ?? "",
-        orders: sum(indexes.map((i) => ordersOf(days[i]))),
-        revenue: sum(indexes.map((i) => ordersOf(days[i]) * (days[i]?.avgPrice ?? 0))),
+        orders: measured.length ? sum(measured.map((i) => ordersOf(days[i]))) : null,
+        revenue: measured.length
+          ? sum(measured.map((i) => ordersOf(days[i]) * (days[i]?.avgPrice ?? 0)))
+          : null,
       };
     })
-    .sort((a, b) => b.orders - a.orders);
+    .sort((a, b) => (b.orders ?? -1) - (a.orders ?? -1));
 }
 
 export interface RankedCategory {
@@ -475,7 +486,11 @@ export interface ProductView {
     price: SeriesPoint[];
     stock: SeriesPoint[];
     reviews: SeriesPoint[];
+    /** Kunlik yangi sharhlar — sanasi Uzumdan keladi, oʻlchov kutilmaydi. */
+    feedbacks: SeriesPoint[];
   };
+  /** Davr ichida nechta yangi sharh — ANIQ. */
+  feedbacks: Metric;
   /** Tovar boʻlmagan kunlar — grafikda kulrang soya. */
   outOfStockDates: string[];
   events: ChangeEvent[];
@@ -492,8 +507,23 @@ export function productView(productId: number, period: Period): ProductView | nu
   const lastIndex = indexes[indexes.length - 1] ?? series.length - 1;
   const last = series[lastIndex];
 
+  // Oʻlchov tushmagan kun `null` boʻladi — grafikda chiziq uziladi.
+  // Ilgari bu yerda nol qaytarilardi va narx grafigi oʻlchovsiz kunlarda
+  // nolga tushib ketardi; nol esa "narx nolga tushdi" degan javob.
   const pick = (read: (d: ProductDay) => number): SeriesPoint[] =>
-    indexes.map((i) => ({ date: db().dates[i], value: series[i] ? read(series[i]) : 0 }));
+    indexes.map((i) => ({
+      date: db().dates[i],
+      value: series[i]?.measured ? read(series[i]) : null,
+    }));
+
+  const feedbackPoints: SeriesPoint[] = indexes.map((i) => ({
+    date: db().dates[i],
+    value: series[i]?.newFeedbacks ?? null,
+  }));
+  const feedbackTotal = feedbackPoints.reduce<number | null>(
+    (acc, p) => (p.value === null ? acc : (acc ?? 0) + p.value),
+    null,
+  );
 
   return {
     product,
@@ -511,8 +541,12 @@ export function productView(productId: number, period: Period): ProductView | nu
       price: pick((d) => d.price),
       stock: pick((d) => d.stock),
       reviews: pick((d) => d.reviews),
+      feedbacks: feedbackPoints,
     },
-    outOfStockDates: indexes.filter((i) => series[i]?.outOfStock).map((i) => db().dates[i]),
+    feedbacks: { value: feedbackTotal, certainty: "exact" },
+    outOfStockDates: indexes
+      .filter((i) => series[i]?.measured && series[i]?.outOfStock)
+      .map((i) => db().dates[i]),
     events: productEvents(series).filter((e) => e.date >= period.from && e.date <= period.to),
   };
 }
@@ -595,7 +629,7 @@ export function categoryView(categoryId: number, period: Period): CategoryView |
     })
     .sort((a, b) => b.units - a.units);
 
-  const topFive = shops.slice(0, 5).reduce((a, s) => a + s.orders, 0);
+  const topFive = shops.slice(0, 5).reduce((a, s) => a + (s.orders ?? 0), 0);
   const share = orders > 0 ? topFive / orders : null;
 
   let difficulty: EntryDifficulty = "nomaʻlum";

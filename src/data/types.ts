@@ -76,6 +76,25 @@ export interface ProductDay {
   soldUnits: number;
   /** Shu kuni tovar boʻlmagan (qoldiq 0). Grafikda kulrang soya. */
   outOfStock: boolean;
+  /**
+   * Shu kuni oʻlchov tushganmi.
+   *
+   * `false` boʻlsa yuqoridagi raqamlar **javob emas** — ular shunchaki nol.
+   * Grafik bunday kunni chizmaydi: nol "narx nolga tushdi" degan yolgʻon
+   * beradi. Yigʻindiga esa nol zarar qilmaydi, shuning uchun maydonlarning
+   * oʻzi `null` emas — faqat shu bayroq qoʻyilgan.
+   */
+  measured: boolean;
+  /**
+   * Shu kuni qoldirilgan yangi sharhlar — ANIQ.
+   *
+   * Sharhning sanasi Uzumdan oʻzi bilan keladi, shuning uchun bu yagona
+   * raqam **ikki oʻlchov kutmasdan** tarix beradi: hech qachon oʻlchamagan
+   * kunning ham javobi bor. `null` — sharh maʻlumoti umuman olinmagan.
+   */
+  newFeedbacks: number | null;
+  /** Shu kungi sharhlarning oʻrtacha bahosi. */
+  feedbackRating: number | null;
 }
 
 export type EventKind =

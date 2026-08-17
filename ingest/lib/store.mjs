@@ -73,6 +73,27 @@ export function createStore(config) {
     },
 
     /**
+     * Kuzatiladigan mahsulotlar roʻyxatiga qoʻshadi.
+     *
+     * Roʻyxat bazada turadi, `.env` da emas — u oʻsadi va har mashinada
+     * qoʻlda takrorlanmasligi kerak.
+     */
+    async trackProducts(productIds, source) {
+      if (!productIds.length) return 0;
+      return (await rpc("zs_track_products", { p_ids: productIds, p_source: source })) ?? 0;
+    },
+
+    /** Kuzatiladigan mahsulot id lari. */
+    async trackedProducts() {
+      const { data, error } = await db
+        .from("zs_tracked_product")
+        .select("product_id")
+        .eq("active", true);
+      if (error) throw new Error(`zs_tracked_product oʻqilmadi: ${error.message}`);
+      return (data ?? []).map((row) => Number(row.product_id));
+    },
+
+    /**
      * Sharhlarni yozadi.
      *
      * Alohida yo'l: sharh o'lchov emas, u tarix. Bir mahsulotda minglab

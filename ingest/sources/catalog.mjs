@@ -9,7 +9,9 @@ import {
 import { createTokenProvider } from "../lib/token.mjs";
 import {
   CATEGORY_PRODUCTS_QUERY,
+  CATEGORY_QUERY,
   FEEDBACKS_QUERY,
+  MAIN_PAGE_QUERY,
   PRODUCT_PAGE_QUERY,
   SHOP_PRODUCTS_QUERY,
   parse,
@@ -30,6 +32,15 @@ const PAGE_LIMIT = 100;
 
 /** `offset` shu qiymatdan oshsa Uzum boʻsh javob qaytaradi. */
 const OFFSET_CEILING = 10_000;
+
+/**
+ * Bir partiyada nechta mahsulot oʻlchanadi.
+ *
+ * Partiya bazaga bir chaqiruvda yoziladi, shuning uchun u juda katta
+ * boʻlmasligi kerak: yigʻish oʻrtasida uzilsa, yozilmagan qism shuncha
+ * boʻladi.
+ */
+const PRODUCTS_PER_BATCH = 40;
 
 export function createCatalogSource(config, { onWait } = {}) {
   const limit = createLimiter(config.rateLimit.perSecond);
@@ -228,104 +239,126 @@ export function createCatalogSource(config, { onWait } = {}) {
 
     async *collect(slot) {
       const observedAt = slot.observedAt;
-      const shopIds = config.track.shops;
 
-      if (!shopIds.length && !config.track.categories.length) {
+      if (
+        !config.track.products.length &&
+        !config.track.shops.length &&
+        !config.track.categories.length
+      ) {
         throw new SourceError(
-          "ZUMSAVDO_TRACK_SHOPS va ZUMSAVDO_TRACK_CATEGORIES boʻsh — nima kuzatilishi koʻrsatilmagan.",
+          "Kuzatiladigan hech narsa yoʻq. `npm run discover` bilan mahsulot toping " +
+            "yoki ZUMSAVDO_TRACK_SHOPS ni toʻldiring.",
         );
       }
 
-      for (const shopId of shopIds) {
+      // Mahsulotlar roʻyxati boʻlsa — asosiy yoʻl shu.
+      //
+      // Doʻkonlar mahsulot sahifasidan **kelib chiqadi**, oldindan berilmaydi:
+      // bitta roʻyxat oʻnlab doʻkonni qamrab olishi mumkin. Ilgari bu tsikl
+      // har doʻkon uchun bir xil mahsulotlarni qayta olardi — bir doʻkonda
+      // ishlagan, koʻpida notoʻgʻri boʻlardi.
+      if (config.track.products.length) {
+        for (const chunk of chunks(config.track.products, PRODUCTS_PER_BATCH)) {
+          const dead = [];
+          const pages = await fetchProducts(chunk, observedAt, dead);
+          yield toBatch(pages, observedAt, dead, {
+            scope: `products:${chunk[0]}…`,
+            reported: chunk.length,
+            listed: chunk.length,
+          });
+        }
+        return;
+      }
+
+      // Roʻyxat berilmagan — doʻkon mahsulotlari qidiruv orqali olinadi.
+      for (const shopId of config.track.shops) {
         const dead = [];
         let listing;
-
-        if (config.track.products.length) {
-          // Mahsulotlar aniq berilgan — qidiruvga umuman tegilmaydi.
-          //
-          // Uzumning qidiruv uchi (search-gateway) mahsulot uchidan alohida
-          // cheklanadi va uzoq bloklanib qolishi mumkin. Roʻyxat kerak
-          // boʻlmaganda unga soʻrov yubormaslik — eng ishonchli yoʻl.
-          listing = {
-            cards: config.track.products.map((productId, i) => ({
-              productId,
-              title: null,
-              position: i + 1,
-            })),
-            total: config.track.products.length,
-            truncated: 0,
-          };
-        } else {
-          try {
-            listing = await listCards(SHOP_PRODUCTS_QUERY, "shopId", shopId);
-          } catch (error) {
-            if (error instanceof AccessDeniedError) throw error;
-            yield emptyBatch(1, `doʻkon ${shopId} roʻyxati olinmadi: ${error.message}`);
-            continue;
-          }
+        try {
+          listing = await listCards(SHOP_PRODUCTS_QUERY, "shopId", shopId);
+        } catch (error) {
+          if (error instanceof AccessDeniedError) throw error;
+          yield emptyBatch(1, `doʻkon ${shopId} roʻyxati olinmadi: ${error.message}`);
+          continue;
         }
 
-        const ids = listing.cards.map((c) => c.productId);
-
-        const pages = await fetchProducts(ids, observedAt, dead);
-
-        const shops = new Map();
-        const categories = new Map();
-        const products = [];
-        const productObservations = [];
-        const skuObservations = [];
-
-        for (const page of pages) {
-          if (page.shop) shops.set(page.shop.id, page.shop);
-          if (page.category) categories.set(page.category.id, page.category);
-          products.push(page.product);
-          productObservations.push(page.observation);
-          skuObservations.push(...page.skus);
-        }
-
-        // Doʻkon hisoblagichi har bir mahsulot sahifasida takrorlanadi —
-        // bittasi yetarli, lekin u har sweepda yozilishi shart.
-        const shopObservations = [...shops.values()].map((shop) => ({
-          shopId: shop.id,
+        const pages = await fetchProducts(
+          listing.cards.map((c) => c.productId),
           observedAt,
-          ordersQuantity: shop.ordersQuantity,
-          reviews: shop.feedbackQuantity,
-          rating: shop.rating,
-        }));
+          dead,
+        );
 
-        yield {
-          categories: [...categories.values()],
-          shops: [...shops.values()].map((s) => ({
-            id: s.id,
-            name: s.name,
-            categoryId: null,
-            official: s.official,
-          })),
-          products,
-          shopObservations,
-          productObservations,
-          skuObservations,
-          positions: listing.cards.map((c) => ({
-            productId: c.productId,
-            shopId,
-            position: c.position,
-            observedAt,
-          })),
-          errors: dead.length,
-          // Qamrov tekshiruvi uchun: Uzum nechta deb aytdi, biz nechtasini
-          // oldik. `dead` — son: bazadagi ustun butun son, roʻyxat emas.
-          coverage: {
-            scope: `shop:${shopId}`,
-            reported: listing.total,
-            listed: listing.cards.length,
-            captured: pages.length,
-            truncated: listing.truncated,
-            dead: dead.length,
-          },
-          // Qaysi id lar oʻlgani — faqat log uchun, bazaga yozilmaydi.
-          deadIds: dead,
-        };
+        const batch = toBatch(pages, observedAt, dead, {
+          scope: `shop:${shopId}`,
+          reported: listing.total,
+          listed: listing.cards.length,
+          truncated: listing.truncated,
+        });
+        // Roʻyxatdagi oʻrin faqat shu yoʻlda maʻlum — qidiruv tartibi bilan.
+        batch.positions = listing.cards.map((c) => ({
+          productId: c.productId,
+          shopId,
+          position: c.position,
+          observedAt,
+        }));
+        yield batch;
       }
+    },
+
+    /**
+     * Yangi mahsulot topish — qidiruvsiz.
+     *
+     * Bosh sahifa karusellari boshqa subgrafdan keladi, shuning uchun
+     * `search-gateway` bloklangan boʻlsa ham ishlaydi. Bu butun katalog
+     * emas va shunday deb koʻrsatilmaydi ham: nechta topilgani aynan
+     * qaytariladi, "hammasi" degan daʻvo qilinmaydi.
+     */
+    async discoverProducts({ pages = 3, size = 50 } = {}) {
+      const found = new Map();
+      for (let page = 0; page < pages; page++) {
+        const data = await gqlPatient(MAIN_PAGE_QUERY, { page, size });
+        const cards = parse.mainCards(data);
+        if (!cards.length) break;
+        for (const card of cards) {
+          if (!found.has(card.productId)) found.set(card.productId, card);
+        }
+      }
+      return [...found.values()];
+    },
+
+    /**
+     * Turkum daraxti — ildizdan pastga.
+     *
+     * `category(id)` har chaqiruvda faqat bir qavat bolani beradi, shuning
+     * uchun daraxt kenglik boʻyicha aylanib chiqiladi. `maxNodes` ataylab
+     * majburiy chegara: daraxt bir necha mingta va uni toʻliq aylanish
+     * uzoq — nechtasi olingani chaqiruvchiga qaytariladi.
+     */
+    async collectCategories({ rootId = 1, maxNodes = 400 } = {}) {
+      const seen = new Map();
+      const queue = [{ id: rootId, parentId: null }];
+
+      while (queue.length && seen.size < maxNodes) {
+        const { id, parentId } = queue.shift();
+        if (seen.has(id)) continue;
+
+        let node;
+        try {
+          const data = await gqlPatient(CATEGORY_QUERY, { id });
+          node = parse.category(data, parentId);
+        } catch (error) {
+          if (error instanceof AccessDeniedError) throw error;
+          continue;
+        }
+        if (!node) continue;
+
+        seen.set(node.id, { id: node.id, name: node.name, parentId: node.parentId });
+        for (const child of node.children) {
+          if (!seen.has(child.id)) queue.push({ id: child.id, parentId: node.id });
+        }
+      }
+
+      return { categories: [...seen.values()], remaining: queue.length };
     },
 
     /**
@@ -353,6 +386,66 @@ export function createCatalogSource(config, { onWait } = {}) {
       }
     },
   };
+}
+
+/**
+ * Mahsulot sahifalarini bazaga tushadigan partiyaga aylantiradi.
+ *
+ * Doʻkon, turkum va SKU hammasi shu sahifalardan chiqadi — alohida soʻrov
+ * kerak emas.
+ */
+function toBatch(pages, observedAt, dead, coverage) {
+  const shops = new Map();
+  const categories = new Map();
+  const products = [];
+  const productObservations = [];
+  const skuObservations = [];
+
+  for (const page of pages) {
+    if (page.shop) shops.set(page.shop.id, page.shop);
+    if (page.category) categories.set(page.category.id, page.category);
+    products.push(page.product);
+    productObservations.push(page.observation);
+    skuObservations.push(...page.skus);
+  }
+
+  return {
+    categories: [...categories.values()],
+    shops: [...shops.values()].map((s) => ({
+      id: s.id,
+      name: s.name,
+      categoryId: null,
+      official: s.official,
+    })),
+    products,
+    // Doʻkon hisoblagichi har mahsulot sahifasida takrorlanadi — bittasi
+    // yetarli, lekin u har sweepda yozilishi shart (kunlik sotuv shundan).
+    shopObservations: [...shops.values()].map((shop) => ({
+      shopId: shop.id,
+      observedAt,
+      ordersQuantity: shop.ordersQuantity,
+      reviews: shop.feedbackQuantity,
+      rating: shop.rating,
+    })),
+    productObservations,
+    skuObservations,
+    positions: [],
+    errors: dead.length,
+    // Qamrov tekshiruvi uchun. `dead` — son: bazadagi ustun butun son.
+    coverage: {
+      truncated: 0,
+      ...coverage,
+      captured: pages.length,
+      dead: dead.length,
+    },
+    // Qaysi id lar oʻlgani — faqat log uchun, bazaga yozilmaydi.
+    deadIds: dead,
+  };
+}
+
+/** Roʻyxatni teng boʻlaklarga boʻladi. */
+function* chunks(items, size) {
+  for (let i = 0; i < items.length; i += size) yield items.slice(i, i + size);
 }
 
 function emptyBatch(errors, note) {

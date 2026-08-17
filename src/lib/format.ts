@@ -56,6 +56,16 @@ export function withTilde(text: string, certainty: Metric["certainty"]): string 
   return certainty === "approx" ? `~${text}` : text;
 }
 
+/**
+ * Oʻlchov yoʻq joyda chiziqcha.
+ *
+ * Panelda nol bilan "nomaʻlum" hech qachon bir xil koʻrinmasligi kerak: nol —
+ * javob ("sotuv boʻlmagan"), nomaʻlum esa javob emas.
+ */
+export function orDash(value: number | null, format: (n: number) => string): string {
+  return value === null ? "—" : format(value);
+}
+
 export function formatPercent(n: number, digits = 0): string {
   return `${decimal(n, digits)}%`;
 }

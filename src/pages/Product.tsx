@@ -111,7 +111,12 @@ export function ProductPage() {
             title="Sotuv va tovar keltirilishi (dona, taxminiy)"
             series={[
               { key: "sold", label: "Sotildi", points: view.series.sold },
-              { key: "restocked", label: "Keltirildi", points: view.series.restocked },
+              {
+                key: "restocked",
+                label: "Keltirildi",
+                points: view.series.restocked,
+                role: "secondary",
+              },
             ]}
             shadedDates={view.outOfStockDates}
             format={formatInt}

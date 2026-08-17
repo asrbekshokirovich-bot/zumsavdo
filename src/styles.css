@@ -23,9 +23,15 @@
   --badge: #111111;
   --badge-ink: #ffffff;
 
-  /* Maʻlumot ranglari. series-1 — asosiy qator, series-ref — solishtirish
-     chizigʻi (ataylab neytral: u obyekt emas, fon). */
+  /* Maʻlumot ranglari. series-1 — asosiy qator, series-2 — unga juft
+     ikkinchi qator, series-ref — solishtirish chizigʻi (ataylab neytral:
+     u obyekt emas, fon).
+
+     Koʻk ↔ toʻq sariq juftligi ataylab: qizil-yashil koʻrmaydigan odam ham
+     bu ikkisini ajrata oladi, holbuki koʻk-yashil yoki qizil-yashil juftlik
+     ularga bir xil koʻrinadi. */
   --series-1: #2a78d6;
+  --series-2: #c2620a;
   --series-ref: #8a8a8a;
   --warn: #b45309;
   --warn-bg: #fef3c7;
@@ -51,6 +57,7 @@
     --badge: #e6e6e6;
     --badge-ink: #0c0c0c;
     --series-1: #3987e5;
+    --series-2: #eb8f3d;
     --series-ref: #8f8f8f;
     --warn: #fbbf24;
     --warn-bg: #3a2c07;
@@ -73,6 +80,7 @@
   --badge: #e6e6e6;
   --badge-ink: #0c0c0c;
   --series-1: #3987e5;
+  --series-2: #eb8f3d;
   --series-ref: #8f8f8f;
   --warn: #fbbf24;
   --warn-bg: #3a2c07;

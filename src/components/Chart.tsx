@@ -17,8 +17,16 @@ export interface ChartSeries {
   key: string;
   label: string;
   points: SeriesPoint[];
-  /** `ref` — solishtirish chizigʻi: neytral va punktir. */
-  role?: "primary" | "ref";
+  /**
+   * Chiziqning roli — rangi shundan chiqadi.
+   *
+   * `primary`   — asosiy qator (koʻk)
+   * `secondary` — unga juft ikkinchi qator (toʻq sariq). Ikkalasi ham
+   *               haqiqiy oʻlchov, shuning uchun ikkalasi ham toʻliq chiziq.
+   * `ref`       — solishtirish chizigʻi: neytral kulrang va punktir, chunki
+   *               u obyekt emas, fon.
+   */
+  role?: "primary" | "secondary" | "ref";
   /** Zinapoyali chiziq — narx kabi bosqichli qiymatlar uchun. */
   step?: boolean;
 }
@@ -77,6 +85,19 @@ function formatOrDash(
   format: (n: number) => string,
 ): string {
   return value === null || value === undefined ? "—" : format(value);
+}
+
+/**
+ * Qator rangi — bitta joyda.
+ *
+ * Ilgari bu tanlov toʻrt joyda takrorlanardi va yangi rol qoʻshilganda
+ * ularning biri unutilib, afsona bilan chiziq boshqa rangda chiqishi mumkin
+ * edi.
+ */
+function seriesColor(s: ChartSeries): string {
+  if (s.role === "ref") return "var(--series-ref)";
+  if (s.role === "secondary") return "var(--series-2)";
+  return "var(--series-1)";
 }
 
 function niceTicks(min: number, max: number, count = 4): number[] {
@@ -226,7 +247,7 @@ export function Chart({
               <span
                 className="swatch"
                 style={{
-                  borderTopColor: s.role === "ref" ? "var(--series-ref)" : "var(--series-1)",
+                  borderTopColor: seriesColor(s),
                   borderTopStyle: s.role === "ref" ? "dashed" : "solid",
                 }}
               />
@@ -342,7 +363,7 @@ export function Chart({
                 })
                 .filter(Boolean)
                 .join(" ");
-              const color = s.role === "ref" ? "var(--series-ref)" : "var(--series-1)";
+              const color = seriesColor(s);
               // Bir kunlik davrda chiziq chizilmaydi — bitta nuqta koʻrsatiladi,
               // aks holda grafik boʻsh boʻlib qoladi.
               if (n === 1) {
@@ -378,7 +399,7 @@ export function Chart({
                   cx={x(i)}
                   cy={y(point.value)}
                   r={3}
-                  fill={s.role === "ref" ? "var(--series-ref)" : "var(--series-1)"}
+                  fill={seriesColor(s)}
                 />
               );
             }),
@@ -404,7 +425,7 @@ export function Chart({
                     cx={x(active)}
                     cy={y(point.value)}
                     r={4.5}
-                    fill={s.role === "ref" ? "var(--series-ref)" : "var(--series-1)"}
+                    fill={seriesColor(s)}
                     stroke="var(--paper)"
                     strokeWidth={2}
                   />

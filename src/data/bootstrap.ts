@@ -33,7 +33,7 @@ function emptyDataset(): Dataset {
     shops: [],
     products: [],
     shopDays: new Map(),
-    productDays: new Map(),
+    getProductDays: () => [],
     productsByShop: new Map(),
     productsByCategory: new Map(),
     shopsByCategory: new Map(),

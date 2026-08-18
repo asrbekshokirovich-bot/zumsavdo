@@ -290,7 +290,7 @@ export function marketDaily(period: Period, series: MarketSeries): SeriesPoint[]
   }
 
   for (const product of db().products) {
-    const days = db().productDays.get(product.id) ?? [];
+    const days = db().getProductDays(product.id);
     indexes.forEach((i, slot) => {
       const day = days[i];
       if (!day) return;
@@ -369,7 +369,7 @@ function productMetric(productIds: number[], indexes: number[], basis: RankBasis
   let total = 0;
   let known = false;
   for (const id of productIds) {
-    const days = db().productDays.get(id) ?? [];
+    const days = db().getProductDays(id);
     if (basis === "buyers") {
       if (!days[last]?.measured) continue;
       total += days[last].buyersPerWeek;
@@ -511,7 +511,7 @@ export function productRank(productId: number): Rank | null {
 
   const scored = siblings
     .map((id) => {
-      const days = db().productDays.get(id) ?? [];
+      const days = db().getProductDays(id);
       return { id, units: sum(indexes.map((i) => days[i]?.soldUnits ?? 0)) };
     })
     .sort((a, b) => b.units - a.units);
@@ -562,7 +562,7 @@ export function search(kind: SearchKind, query: string, limit = 8): SearchHit[] 
       .sort((a, b) => b.score - a.score)
       .slice(0, limit)
       .map(({ product }) => {
-        const days = db().productDays.get(product.id) ?? [];
+        const days = db().getProductDays(product.id);
         const units = sum(indexes.map((i) => days[i]?.soldUnits ?? 0));
         const revenue = sum(indexes.map((i) => (days[i]?.soldUnits ?? 0) * (days[i]?.price ?? 0)));
         return {
@@ -653,7 +653,7 @@ export function shopView(shopId: number, period: Period): ShopView | null {
   const products: ShopProductRow[] = productIds
     .map((id) => {
       const product = getProduct(id)!;
-      const series = db().productDays.get(id) ?? [];
+      const series = db().getProductDays(id);
       const last = series[lastIndex];
       return {
         product,
@@ -727,7 +727,7 @@ export function productView(productId: number, period: Period): ProductView | nu
   if (!shop) return null;
 
   const indexes = sliceIndexes(period);
-  const series = db().productDays.get(productId) ?? [];
+  const series = db().getProductDays(productId);
   const lastIndex = indexes[indexes.length - 1] ?? series.length - 1;
   const last = series[lastIndex];
 
@@ -861,7 +861,7 @@ export function categoryView(categoryId: number, period: Period): CategoryView |
   const products = productIds
     .map((id) => {
       const product = getProduct(id)!;
-      const series = db().productDays.get(id) ?? [];
+      const series = db().getProductDays(id);
       return {
         product,
         units: sum(indexes.map((i) => series[i]?.soldUnits ?? 0)),

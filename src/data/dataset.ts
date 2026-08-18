@@ -16,7 +16,18 @@ export interface Dataset {
   shops: Shop[];
   products: Product[];
   shopDays: Map<number, ShopDay[]>;
-  productDays: Map<number, ProductDay[]>;
+  /**
+   * Mahsulotning kunlik qatori — **talab boʻyicha** quriladi.
+   *
+   * Ilgari bu tayyor Map edi va yuklashda har mahsulot uchun butun vaqt
+   * oʻqi boʻylab massiv yasalardi. 81 mahsulotda bu sezilmasdi; 50 000 da
+   * esa 2,3 million obyekt degani va brauzer koʻtarmaydi.
+   *
+   * Endi xom qatorlar siyrak saqlanadi, toʻliq massiv esa faqat soʻralgan
+   * mahsulot uchun yasaladi va keshlanadi. Panel bir vaqtda bir necha
+   * oʻnta mahsulotga qaraydi, mingtasiga emas.
+   */
+  getProductDays: (productId: number) => ProductDay[];
   productsByShop: Map<number, number[]>;
   productsByCategory: Map<number, number[]>;
   shopsByCategory: Map<number, number[]>;

@@ -223,37 +223,21 @@ export async function loadRemoteDataset(): Promise<Dataset> {
     };
   }
 
-  const productDays = new Map<number, ProductDay[]>();
-  for (const product of products) {
-    productDays.set(
-      product.id,
-      dates.map((date) => ({
-        productId: product.id,
-        date,
-        price: 0,
-        discountPercent: 0,
-        stock: 0,
-        reviews: 0,
-        buyersPerWeek: 0,
-        soldUnits: 0,
-        restockedUnits: 0,
-        outOfStock: false,
-        measured: false,
-        newFeedbacks: null,
-        feedbackRating: null,
-        observedAt: null,
-        firstObservedAt: null,
-      })),
-    );
-  }
+  // Kunlik qatorlar SIYRAK saqlanadi: faqat oʻlchovi bor kun/mahsulot.
+  //
+  // Ilgari bu yerda har mahsulot uchun butun vaqt oʻqi boʻylab massiv
+  // yasalardi. 81 mahsulotda sezilmasdi, 50 000 da esa 2,3 million obyekt
+  // degani va brauzer koʻtarmasdi. Toʻliq massiv endi faqat soʻralgan
+  // mahsulot uchun quriladi (`getProductDays`) va keshlanadi.
+  const sparse = new Map<number, Map<string, Partial<ProductDay>>>();
+  const put = (productId: number, date: string, patch: Partial<ProductDay>) => {
+    let byDate = sparse.get(productId);
+    if (!byDate) sparse.set(productId, (byDate = new Map()));
+    byDate.set(date, { ...byDate.get(date), ...patch });
+  };
+
   for (const row of productDayRows) {
-    const slot = index.get(row.date);
-    const series = productDays.get(row.product_id);
-    if (slot === undefined || !series) continue;
-    series[slot] = {
-      ...series[slot],
-      productId: row.product_id,
-      date: row.date,
+    put(row.product_id, row.date, {
       price: row.price ?? 0,
       discountPercent: row.discount_percent ?? 0,
       stock: row.stock ?? 0,
@@ -265,31 +249,54 @@ export async function loadRemoteDataset(): Promise<Dataset> {
       measured: true,
       observedAt: row.observed_at,
       firstObservedAt: row.first_observed_at,
-    };
+    });
   }
 
-  // Sharhlar oʻlchovdan mustaqil: oʻsha kuni sweep boʻlmagan boʻlsa ham
-  // sharh sanasi maʻlum, shuning uchun `measured` ga tegilmaydi.
-  //
-  // Tarix boshlangan kundan keyin sharhsiz kun — NOL, chunki roʻyxat toʻliq.
-  // Undan oldingi kun esa NOMAʻLUM: biz shunchaki u qadar orqaga olmaganmiz.
-  for (const span of feedbackSpanRows) {
-    const series = productDays.get(span.product_id);
-    if (!series) continue;
-    for (let i = 0; i < dates.length; i++) {
-      if (dates[i] >= span.first_date) series[i] = { ...series[i], newFeedbacks: 0 };
-    }
-  }
+  // Sharh tarixi boshlangan kundan keyin sharhsiz kun — NOL, undan oldingisi
+  // NOMAʻLUM. Ikkisini farqlamasak grafik "sharh boʻlmagan" deb yolgʻon aytadi.
+  const firstFeedback = new Map(feedbackSpanRows.map((r) => [r.product_id, r.first_date]));
   for (const row of feedbackDayRows) {
-    const slot = index.get(row.date);
-    const series = productDays.get(row.product_id);
-    if (slot === undefined || !series) continue;
-    series[slot] = {
-      ...series[slot],
+    put(row.product_id, row.date, {
       newFeedbacks: row.feedbacks,
       feedbackRating: row.avg_rating,
-    };
+    });
   }
+
+  const blank = (productId: number, date: string): ProductDay => ({
+    productId,
+    date,
+    price: 0,
+    discountPercent: 0,
+    stock: 0,
+    reviews: 0,
+    buyersPerWeek: 0,
+    soldUnits: 0,
+    restockedUnits: 0,
+    outOfStock: false,
+    measured: false,
+    newFeedbacks: null,
+    feedbackRating: null,
+    observedAt: null,
+    firstObservedAt: null,
+  });
+
+  const cache = new Map<number, ProductDay[]>();
+  const getProductDays = (productId: number): ProductDay[] => {
+    const hit = cache.get(productId);
+    if (hit) return hit;
+
+    const byDate = sparse.get(productId);
+    const since = firstFeedback.get(productId);
+    const series = dates.map((date) => {
+      const day = blank(productId, date);
+      // Sharh tarixi ichidagi kun — nol, undan oldingisi nomaʻlum.
+      if (since && date >= since) day.newFeedbacks = 0;
+      return Object.assign(day, byDate?.get(date));
+    });
+
+    cache.set(productId, series);
+    return series;
+  };
 
   const productsByShop = groupBy(products, (p) => p.shopId);
   const productsByCategory = groupBy(products, (p) => p.categoryId);
@@ -300,7 +307,7 @@ export async function loadRemoteDataset(): Promise<Dataset> {
     shops,
     products,
     shopDays,
-    productDays,
+    getProductDays,
     productsByShop,
     productsByCategory,
     shopsByCategory,

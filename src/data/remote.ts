@@ -397,48 +397,68 @@ async function callRpc<T>(name: string, args: Record<string, unknown>): Promise<
   return data as T;
 }
 
-export async function fetchMarketSummary(from: string, to: string): Promise<MarketSummaryRow> {
-  const rows = await callRpc<MarketSummaryRow[]>("zs_market_summary", {
+/**
+ * Bozor sahifasining hamma raqami — **bitta** soʻrovda.
+ *
+ * Ilgari sahifa 10 ta RPC yuborardi: yigʻindi, grafik, ikki reyting va
+ * "qaysi asosda maʻlumot bor" degan olti zondlovchi. Ularning ustiga har
+ * daqiqada butun toʻplam qayta oʻqilardi. Brauzer bu portlashni koʻtara
+ * olmay soʻrovlarning bir qismini serverga **yubormasdan** tashlardi va
+ * panel `TypeError: Failed to fetch` deb yozardi. Server jurnalida esa
+ * hammasi 200 boʻlib turardi — tashlangan soʻrov u yerga yetib bormagan,
+ * shuning uchun bu xato bazaning hajmiga umuman bogʻliq emas edi.
+ */
+export interface PanelOverview {
+  summary: MarketSummaryRow;
+  daily: { date: string; value: number | null }[];
+  shops: RankRow[];
+  categories: RankRow[];
+  rank_available: Record<string, boolean>;
+  series_available: Record<string, boolean>;
+}
+
+const EMPTY_SUMMARY: MarketSummaryRow = {
+  orders: null,
+  revenue: null,
+  shops_measured: 0,
+  shop_days_missing: 0,
+  window_min_hours: null,
+  window_max_hours: null,
+  sweeps: null,
+  sweeps_expected: null,
+};
+
+export async function fetchPanelOverview(
+  from: string,
+  to: string,
+  basis: string,
+  series: string,
+  limit = 5,
+): Promise<PanelOverview> {
+  const data = await callRpc<PanelOverview | null>("zs_panel_overview", {
     p_from: from,
     p_to: to,
+    p_basis: basis,
+    p_series: series,
+    p_limit: limit,
   });
-  return rows?.[0] ?? {
-    orders: null,
-    revenue: null,
-    shops_measured: 0,
-    shop_days_missing: 0,
-    window_min_hours: null,
-    window_max_hours: null,
-    sweeps: null,
-    sweeps_expected: null,
+  // Bazadan boʻsh javob kelsa ham sahifa chizilishi kerak: ramka joyida
+  // qoladi, raqam oʻrnida chiziqcha turadi.
+  return {
+    summary: data?.summary ?? EMPTY_SUMMARY,
+    daily: data?.daily ?? [],
+    shops: data?.shops ?? [],
+    categories: data?.categories ?? [],
+    rank_available: data?.rank_available ?? {},
+    series_available: data?.series_available ?? {},
   };
 }
 
-export async function fetchMarketDaily(
-  from: string,
-  to: string,
-  series: string,
-): Promise<{ date: string; value: number | null }[]> {
-  return callRpc("zs_market_daily", { p_from: from, p_to: to, p_series: series });
-}
-
-export async function fetchShopRank(
-  from: string,
-  to: string,
-  basis: string,
-  limit: number,
-): Promise<RankRow[]> {
-  return callRpc("zs_shop_rank", { p_from: from, p_to: to, p_basis: basis, p_limit: limit });
-}
-
-export async function fetchCategoryRank(
-  from: string,
-  to: string,
-  basis: string,
-  limit: number,
-): Promise<RankRow[]> {
-  return callRpc("zs_category_rank", { p_from: from, p_to: to, p_basis: basis, p_limit: limit });
-}
+// Ilgari bu yerda `fetchMarketSummary`, `fetchMarketDaily`, `fetchShopRank`
+// va `fetchCategoryRank` alohida turardi. Ular endi `zs_panel_overview`
+// ichida, bazada chaqiriladi. Brauzer tomonidagi nusxalari olib tashlandi:
+// ishlatilmaydigan ikkinchi yoʻl vaqt oʻtib birinchisidan ajralib ketadi va
+// qaysi biri toʻgʻri ekanini aytib boʻlmay qoladi.
 
 /**
  * Bitta mahsulotning xom oʻlchovlari — har biri alohida qator.

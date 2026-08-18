@@ -6,14 +6,7 @@ import { SearchPanel } from "@/components/SearchPanel";
 import { BasisPicker, resolveBasis } from "@/components/BasisPicker";
 import { MetricCard, Panel, PlaceholderRows } from "@/components/ui";
 import { MARKET_SERIES, type MarketSeries, RANK_BASES, type RankBasis } from "@/data/api";
-import {
-  type MarketSummaryRow,
-  type RankRow,
-  fetchCategoryRank,
-  fetchMarketDaily,
-  fetchMarketSummary,
-  fetchShopRank,
-} from "@/data/remote";
+import { type MarketSummaryRow, type RankRow, fetchPanelOverview } from "@/data/remote";
 import { useDataVersion } from "@/data/refresh";
 import { formatInt, formatMoney, orDash } from "@/lib/format";
 import { usePeriod } from "@/lib/usePeriod";
@@ -38,7 +31,27 @@ interface MarketData {
   seriesAvailable: Set<MarketSeries>;
 }
 
-/** Yigʻindilarni bazadan oladi. Davr yoki asos oʻzgarsa qayta soʻraydi. */
+/** `{orders: true, units: false}` → `Set(["orders"])`. */
+function availableSet<T extends string>(
+  options: readonly { id: T }[],
+  flags: Record<string, boolean>,
+): Set<T> {
+  return new Set(options.filter((o) => flags[o.id]).map((o) => o.id));
+}
+
+/**
+ * Yigʻindilarni bazadan oladi — **bitta** soʻrovda.
+ *
+ * Ilgari bu yerda 10 ta parallel soʻrov bor edi: toʻrttasi koʻrsatiladigan
+ * raqamlar uchun, oltitasi esa "qaysi tugma yonsin" degan savol uchun.
+ * Oxirgi oltitasi butun reytingni hisoblatib, javobidan faqat "boʻsh emasmi"
+ * degan bitta bitni olardi.
+ *
+ * Bu portlash panelni buzardi: brauzer bir vaqtda kelgan soʻrovlarning bir
+ * qismini serverga yubormasdan tashlab yuborardi va ekranda
+ * `TypeError: Failed to fetch` chiqardi. Endi soʻrov bitta va tashlanadigan
+ * narsaning oʻzi yoʻq.
+ */
 function useMarket(period: Period, basis: RankBasis, series: MarketSeries, version: number) {
   const [data, setData] = useState<MarketData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -49,37 +62,15 @@ function useMarket(period: Period, basis: RankBasis, series: MarketSeries, versi
 
     (async () => {
       try {
-        const [summary, daily, shops, categories, rankProbe, seriesProbe] = await Promise.all([
-          fetchMarketSummary(period.from, period.to),
-          fetchMarketDaily(period.from, period.to, series),
-          fetchShopRank(period.from, period.to, basis, 5),
-          fetchCategoryRank(period.from, period.to, basis, 5),
-          // Qaysi asosda maʻlumot borligini bilish uchun har biridan bittadan.
-          Promise.all(
-            RANK_BASES.map((b) =>
-              fetchShopRank(period.from, period.to, b.id, 1).then((rows) => ({
-                id: b.id,
-                has: rows.some((r) => r.value !== null),
-              })),
-            ),
-          ),
-          Promise.all(
-            MARKET_SERIES.map((m) =>
-              fetchMarketDaily(period.from, period.to, m.id).then((rows) => ({
-                id: m.id,
-                has: rows.some((r) => r.value !== null),
-              })),
-            ),
-          ),
-        ]);
+        const o = await fetchPanelOverview(period.from, period.to, basis, series, 5);
         if (cancelled) return;
         setData({
-          summary,
-          daily: daily.map((r) => ({ date: r.date, value: r.value })),
-          shops,
-          categories,
-          rankAvailable: new Set(rankProbe.filter((p) => p.has).map((p) => p.id)),
-          seriesAvailable: new Set(seriesProbe.filter((p) => p.has).map((p) => p.id)),
+          summary: o.summary,
+          daily: o.daily.map((r) => ({ date: r.date, value: r.value })),
+          shops: o.shops,
+          categories: o.categories,
+          rankAvailable: availableSet(RANK_BASES, o.rank_available),
+          seriesAvailable: availableSet(MARKET_SERIES, o.series_available),
         });
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e));

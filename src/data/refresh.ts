@@ -31,6 +31,19 @@ const INTERVAL_MS = 60_000;
  */
 const REFRESH_TIMEOUT_MS = 30_000;
 
+/**
+ * Ikki yangilanish orasidagi eng qisqa masofa.
+ *
+ * Sahifa fon oynasida ochilsa, dastlabki yuklash tugagan zahoti
+ * `visibilitychange` kelib omborni **yana** oʻqitardi — ikkita bir xil
+ * yuklash bir necha soniya ichida. Ular Bozor soʻrovi bilan qoʻshilib
+ * brauzerni bosardi. Yangi maʻlumot bir necha soatda bir marta keladi,
+ * shuning uchun besh soniyalik masofa hech narsani kechiktirmaydi.
+ */
+const MIN_GAP_MS = 5_000;
+
+let lastAttemptAt = 0;
+
 let version = 0;
 let refreshing = false;
 let lastRefreshAt: string | null = null;
@@ -56,6 +69,7 @@ export function getLastRefreshAt(): string | null {
 /** Dastlabki yuklash ham oʻqish — uni ham vaqt sifatida belgilaymiz. */
 export function markRefreshed(): void {
   lastRefreshAt = new Date().toISOString();
+  lastAttemptAt = performance.now();
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
@@ -74,8 +88,11 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
  * tashlash — eng yomon javob. Eski raqam qolaveradi, keyingi urinishda
  * yangilanadi.
  */
-export async function refreshNow(): Promise<void> {
+export async function refreshNow(force = false): Promise<void> {
   if (refreshing) return;
+  const now = performance.now();
+  if (!force && lastAttemptAt && now - lastAttemptAt < MIN_GAP_MS) return;
+  lastAttemptAt = now;
   refreshing = true;
   try {
     const dataset = await withTimeout(loadRemoteDataset(), REFRESH_TIMEOUT_MS);

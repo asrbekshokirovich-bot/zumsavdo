@@ -84,9 +84,24 @@ export function formatDate(key: string): string {
   ].join(".");
 }
 
+/**
+ * Vaqt DOIM Toshkent zonasida koʻrsatiladi.
+ *
+ * Sabab: kun chegaralari bazada `Asia/Tashkent` boʻyicha qoʻyilgan. Agar
+ * vaqtni brauzer zonasida chizsak, boshqa zonadagi odam "18.08" sanasi
+ * yonida "17.08 22:06" vaqtini koʻradi — sana bilan vaqt bir-biriga zid
+ * boʻlib qoladi.
+ */
 export function formatDateTime(iso: string): string {
-  const d = new Date(iso);
-  const hh = String(d.getHours()).padStart(2, "0");
-  const mm = String(d.getMinutes()).padStart(2, "0");
-  return `${formatDate(toKey(d))} ${hh}:${mm}`;
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Tashkent",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(new Date(iso));
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+  return `${get("day")}.${get("month")}.${get("year")} ${get("hour")}:${get("minute")}`;
 }

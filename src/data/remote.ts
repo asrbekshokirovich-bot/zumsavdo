@@ -117,10 +117,12 @@ export async function loadRemoteDataset(): Promise<Dataset> {
         restocked_units: number | null;
         out_of_stock: boolean;
         sweeps: number;
+        observed_at: string | null;
+        first_observed_at: string | null;
       }>(
         db,
         "zs_product_day",
-        "product_id,date,price,discount_percent,stock,reviews,buyers_per_week,sold_units,restocked_units,out_of_stock,sweeps",
+        "product_id,date,price,discount_percent,stock,reviews,buyers_per_week,sold_units,restocked_units,out_of_stock,sweeps,observed_at,first_observed_at",
         ["product_id", "date"],
         (q) => q.gte("date", sinceKey),
       ),
@@ -239,6 +241,8 @@ export async function loadRemoteDataset(): Promise<Dataset> {
         measured: false,
         newFeedbacks: null,
         feedbackRating: null,
+        observedAt: null,
+        firstObservedAt: null,
       })),
     );
   }
@@ -259,6 +263,8 @@ export async function loadRemoteDataset(): Promise<Dataset> {
       restockedUnits: row.restocked_units ?? 0,
       outOfStock: row.out_of_stock,
       measured: true,
+      observedAt: row.observed_at,
+      firstObservedAt: row.first_observed_at,
     };
   }
 

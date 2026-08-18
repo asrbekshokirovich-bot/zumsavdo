@@ -5,6 +5,7 @@ import { PeriodPicker } from "@/components/PeriodPicker";
 import { Crumb, EventList, MetricCard, Panel, RankCard } from "@/components/ui";
 import { productView } from "@/data/api";
 import { formatInt, formatMoney, formatMoneyShort, formatPercent, formatPrice } from "@/lib/format";
+import { formatDateTime } from "@/lib/dates";
 import { usePeriod } from "@/lib/usePeriod";
 import { NotFoundPage } from "./NotFound";
 
@@ -58,6 +59,11 @@ export function ProductPage() {
             <span>{formatPrice(view.price)}</span>
             {view.discountPercent > 0 && (
               <span className="pill">chegirma {formatPercent(view.discountPercent)}</span>
+            )}
+            {/* Narx qachon koʻrilgani — usiz ekrandagi raqam "hozirgi" deb
+                oʻqiladi, holbuki u soatlar oldin olingan boʻlishi mumkin. */}
+            {view.observedAt && (
+              <span className="ctx">oʻlchangan {formatDateTime(view.observedAt)}</span>
             )}
           </div>
         </div>

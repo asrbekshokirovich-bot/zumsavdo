@@ -696,6 +696,13 @@ export interface ProductView {
   rank: Rank | null;
   price: number;
   stock: number;
+  /**
+   * Ekrandagi narx va qoldiq aynan qachon oʻlchangani (ISO).
+   *
+   * Sana yetarli emas: "18.08.2026" turgani bilan oʻlchov oʻsha kuni 03:06 da
+   * olingan boʻlishi mumkin va soat 13:00 da bu 10 soatlik eski raqam.
+   */
+  observedAt: string | null;
   series: {
     sold: SeriesPoint[];
     price: SeriesPoint[];
@@ -730,11 +737,13 @@ export function productView(productId: number, period: Period): ProductView | nu
   const pick = (read: (d: ProductDay) => number): SeriesPoint[] =>
     indexes.map((i) => ({
       date: db().dates[i],
+      at: series[i]?.observedAt ?? null,
       value: series[i]?.measured ? read(series[i]) : null,
     }));
 
   const feedbackPoints: SeriesPoint[] = indexes.map((i) => ({
     date: db().dates[i],
+    // Sharh sanasi kunning oʻzi — soat maʻlum emas va kerak ham emas.
     value: series[i]?.newFeedbacks ?? null,
   }));
   const feedbackTotal = feedbackPoints.reduce<number | null>(
@@ -757,6 +766,7 @@ export function productView(productId: number, period: Period): ProductView | nu
     rank: productRank(productId),
     price: last?.price ?? 0,
     stock: last?.stock ?? 0,
+    observedAt: last?.observedAt ?? null,
     series: {
       sold: pick((d) => d.soldUnits),
       price: pick((d) => d.price),

@@ -113,6 +113,10 @@ export interface ProductDay {
   newFeedbacks: number | null;
   /** Shu kungi sharhlarning oʻrtacha bahosi. */
   feedbackRating: number | null;
+  /** Kun yakunidagi oʻlchov vaqti — narx va qoldiq aynan shunda koʻrilgan. */
+  observedAt: string | null;
+  /** Kunning birinchi oʻlchovi. Sotuv shu ikki vaqt orasida toʻplangan. */
+  firstObservedAt: string | null;
 }
 
 export type EventKind =
@@ -186,6 +190,15 @@ export interface SearchHit {
 
 export interface SeriesPoint {
   date: string; // YYYY-MM-DD
+  /**
+   * Oʻlchov aynan qachon olingani (ISO). `null` — vaqt maʻlum emas.
+   *
+   * Sana kunni bildiradi, oʻlchov vaqtini emas. Ekranda "18.08.2026" turgani
+   * bilan raqam oʻsha kuni 03:06 da olingan boʻlishi mumkin — soat 13:00 da
+   * qaragan odam uni "hozirgi" deb oʻqiydi. Shuning uchun vaqt qator bilan
+   * birga tashiladi.
+   */
+  at?: string | null;
   /**
    * `null` — oʻlchov yoʻq, javob nomaʻlum.
    *

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SeriesPoint } from "@/data/types";
-import { formatDate, formatDayMonth } from "@/lib/dates";
+import { formatDate, formatDateTime, formatDayMonth } from "@/lib/dates";
 
 /**
  * Chiziqli grafik.
@@ -132,6 +132,9 @@ export function Chart({
 
   const active = hoverIndex !== undefined ? hoverIndex : localHover;
   const dates = series[0]?.points.map((p) => p.date) ?? [];
+  // Oʻlchov vaqtlari — sana bilan bir qatorda. Sana kunni bildiradi, raqam
+  // esa oʻsha kunning maʻlum bir onida olingan.
+  const times = series[0]?.points.map((p) => p.at ?? null) ?? [];
   const n = dates.length;
 
   const { min, max } = useMemo(() => {
@@ -441,7 +444,13 @@ export function Chart({
 
         {active !== null && active < n && (
           <div className="tooltip" style={{ left: tooltipLeft, top: 4 }}>
-            <div className="t-date">{dates[active] ? formatDate(dates[active]) : ""}</div>
+            <div className="t-date">
+              {times[active]
+                ? formatDateTime(times[active] as string)
+                : dates[active]
+                  ? formatDate(dates[active])
+                  : ""}
+            </div>
             {series.map((s) => (
               <div className="t-row" key={s.key}>
                 <span>{s.label}</span>
@@ -468,7 +477,7 @@ export function Chart({
           <table>
             <thead>
               <tr>
-                <th>Sana</th>
+                <th>Oʻlchov vaqti</th>
                 {series.map((s) => (
                   <th className="num" key={s.key}>
                     {s.label}
@@ -479,7 +488,9 @@ export function Chart({
             <tbody>
               {dates.map((d, i) => (
                 <tr key={d}>
-                  <td>{formatDate(d)}</td>
+                  {/* Sana emas, oʻlchov vaqti: raqam kunning qaysi onida
+                      olingani muhim. Vaqt maʻlum boʻlmasa sana qoladi. */}
+                  <td>{times[i] ? formatDateTime(times[i] as string) : formatDate(d)}</td>
                   {series.map((s) => (
                     <td className="num" key={s.key}>
                       {formatOrDash(s.points[i]?.value, format)}

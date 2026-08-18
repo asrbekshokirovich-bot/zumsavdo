@@ -432,3 +432,40 @@ export async function fetchCategoryRank(
 ): Promise<RankRow[]> {
   return callRpc("zs_category_rank", { p_from: from, p_to: to, p_basis: basis, p_limit: limit });
 }
+
+/**
+ * Bitta mahsulotning xom oʻlchovlari — har biri alohida qator.
+ *
+ * Kunlik jadval kunni yigʻadi va kun yakunini koʻrsatadi. Bu esa oʻlchov
+ * jurnali: qaysi raqam aynan qachon koʻrilgani. Oʻlchov faqat oʻzgarganda
+ * yoziladi (06.5), shuning uchun ikki qator orasidagi boʻshliq "oʻzgarmagan"
+ * degani — maʻlumot yoʻqligi emas.
+ */
+export interface ObservationRow {
+  observed_at: string;
+  price: number | null;
+  full_price: number | null;
+  discount_percent: number | null;
+  stock: number | null;
+  reviews: number | null;
+  buyers_per_week: number | null;
+  available: boolean | null;
+}
+
+export async function fetchProductObservations(
+  productId: number,
+  from: string,
+  to: string,
+): Promise<ObservationRow[]> {
+  const { data, error } = await client()
+    .from("zs_product_observation")
+    .select("observed_at,price,full_price,discount_percent,stock,reviews,buyers_per_week,available")
+    .eq("product_id", productId)
+    .gte("observed_at", `${from}T00:00:00+05:00`)
+    // Kun oxirigacha: chegara sanasining ertasi, Toshkent zonasida.
+    .lt("observed_at", `${to}T23:59:59.999+05:00`)
+    .order("observed_at", { ascending: false })
+    .limit(500);
+  if (error) throw new Error(`zs_product_observation oʻqilmadi: ${error.message}`);
+  return (data ?? []) as ObservationRow[];
+}

@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { Chart } from "@/components/Chart";
 import { PeriodPicker } from "@/components/PeriodPicker";
 import { Crumb, EventList, MetricCard, Panel, RankCard } from "@/components/ui";
+import { ObservationLog } from "@/components/ObservationLog";
 import { productView } from "@/data/api";
 import { formatInt, formatMoney, formatMoneyShort, formatPercent, formatPrice } from "@/lib/format";
 import { formatDateTime } from "@/lib/dates";
@@ -163,6 +164,13 @@ export function ProductPage() {
           kunning ham javobi bor. Yuqoridagi toʻrttasi esa faqat oʻlchov tushgan
           kunlarda chiziladi, qolgan joyda chiziq uziladi.
         </p>
+      </Panel>
+
+      <Panel
+        title="Oʻlchovlar jurnali"
+        hint="Har bir oʻlchov alohida — kunlik jadval buni yigʻib koʻrsatadi"
+      >
+        <ObservationLog productId={view.product.id} from={period.from} to={period.to} />
       </Panel>
 
       <Panel title="Nima oʻzgardi" hint="Sana · hodisa · raqam">

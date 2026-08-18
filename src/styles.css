@@ -307,6 +307,10 @@ h1 {
   color: var(--ink3);
 }
 
+.panel > header .panel-action {
+  margin-left: auto;
+}
+
 .panel .body {
   padding: 13px;
 }
@@ -850,4 +854,56 @@ td.name {
 .basis .tilde {
   margin-left: 3px;
   opacity: 0.75;
+}
+
+/* ------------------------------------------------------------ sahifalash */
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 4px 2px;
+  border-top: 1px solid var(--ln3);
+  margin-top: 8px;
+}
+
+.pager button {
+  font: 11px/1 var(--f);
+  color: var(--ink2);
+  background: var(--paper);
+  border: 1px solid var(--ln2);
+  border-radius: 3px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.pager button:hover:not(:disabled) {
+  border-color: var(--ln3);
+  color: var(--ink);
+}
+
+.pager button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pager-at {
+  font: 11px/1 var(--f);
+  color: var(--ink3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Panel sarlavhasidagi "hammasi" havolasi. */
+.see-all {
+  font: 11px/1 var(--f);
+  color: var(--ink3);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ln2);
+  white-space: nowrap;
+}
+
+.see-all:hover {
+  color: var(--ink);
+  border-color: var(--ln3);
 }

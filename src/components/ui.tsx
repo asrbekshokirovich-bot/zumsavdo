@@ -106,10 +106,13 @@ export function Crumb({ items }: { items: { label: string; to?: string }[] }) {
 export function Panel({
   title,
   hint,
+  action,
   children,
 }: {
   title: string;
   hint?: React.ReactNode;
+  /** Oʻng chekkadagi havola — masalan "hammasi". */
+  action?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
@@ -117,6 +120,7 @@ export function Panel({
       <header>
         <h2>{title}</h2>
         {hint && <span className="hint">{hint}</span>}
+        {action && <span className="panel-action">{action}</span>}
       </header>
       <div className="body">{children}</div>
     </section>

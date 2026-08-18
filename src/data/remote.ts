@@ -387,8 +387,15 @@ export interface RankRow {
   shop_count?: number;
   official?: boolean;
   value: number | null;
-  orders: number | null;
+  orders?: number | null;
   revenue: number | null;
+  // Mahsulot qatorlarida keladi.
+  product_id?: number;
+  title?: string;
+  units?: number | null;
+  buyers?: number | null;
+  price?: number | null;
+  stock?: number | null;
 }
 
 async function callRpc<T>(name: string, args: Record<string, unknown>): Promise<T> {
@@ -413,8 +420,11 @@ export interface PanelOverview {
   daily: { date: string; value: number | null }[];
   shops: RankRow[];
   categories: RankRow[];
+  products: RankRow[];
   rank_available: Record<string, boolean>;
   series_available: Record<string, boolean>;
+  /** Roʻyxatlarda jami nechtadan bor — "hammasi" havolasi yonida turadi. */
+  totals: { shops: number; categories: number; products: number };
 }
 
 const EMPTY_SUMMARY: MarketSummaryRow = {
@@ -449,8 +459,55 @@ export async function fetchPanelOverview(
     daily: data?.daily ?? [],
     shops: data?.shops ?? [],
     categories: data?.categories ?? [],
+    products: data?.products ?? [],
     rank_available: data?.rank_available ?? {},
     series_available: data?.series_available ?? {},
+    totals: data?.totals ?? { shops: 0, categories: 0, products: 0 },
+  };
+}
+
+/**
+ * Sahifalangan toʻliq roʻyxat.
+ *
+ * Panel faqat beshtasini koʻrsatardi va qolganiga yoʻl yoʻq edi: oʻlchangan
+ * 76 doʻkonning 71 tasi, 81 mahsulotning 76 tasi ekranda umuman
+ * koʻrinmasdi. Maʻlumot bor edi, chiqish joyi yoʻq edi.
+ *
+ * Sahifalash bazada: roʻyxat kuzatuv boʻyicha oʻsadi va uni butunlay
+ * brauzerga tashlab boʻlmaydi.
+ */
+export interface RankPage {
+  /** Roʻyxatdagi jami obyekt (oʻlchovsizlari ham). */
+  total: number;
+  /** Shundan raqami borlari. Qolganida chiziqcha turadi. */
+  measured: number;
+  offset: number;
+  rows: RankRow[];
+}
+
+export type RankKind = "shop" | "category" | "product";
+
+export async function fetchRankPage(
+  kind: RankKind,
+  from: string,
+  to: string,
+  basis: string,
+  limit: number,
+  offset: number,
+): Promise<RankPage> {
+  const data = await callRpc<RankPage | null>("zs_rank_page", {
+    p_kind: kind,
+    p_from: from,
+    p_to: to,
+    p_basis: basis,
+    p_limit: limit,
+    p_offset: offset,
+  });
+  return {
+    total: data?.total ?? 0,
+    measured: data?.measured ?? 0,
+    offset: data?.offset ?? offset,
+    rows: data?.rows ?? [],
   };
 }
 

@@ -27,8 +27,10 @@ interface MarketData {
   daily: SeriesPoint[];
   shops: RankRow[];
   categories: RankRow[];
+  products: RankRow[];
   rankAvailable: Set<RankBasis>;
   seriesAvailable: Set<MarketSeries>;
+  totals: { shops: number; categories: number; products: number };
 }
 
 /** `{orders: true, units: false}` → `Set(["orders"])`. */
@@ -69,8 +71,10 @@ function useMarket(period: Period, basis: RankBasis, series: MarketSeries, versi
           daily: o.daily.map((r) => ({ date: r.date, value: r.value })),
           shops: o.shops,
           categories: o.categories,
+          products: o.products,
           rankAvailable: availableSet(RANK_BASES, o.rank_available),
           seriesAvailable: availableSet(MARKET_SERIES, o.series_available),
+          totals: o.totals,
         });
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e));
@@ -203,8 +207,56 @@ export function HomePage() {
         </p>
       </Panel>
 
+      <Panel
+        title="Eng koʻp sotilgan mahsulotlar"
+        hint={effectiveBasis === "buyers" ? "Haftalik xaridor boʻyicha" : "Sotilgan dona boʻyicha"}
+        action={
+          <Link className="see-all" to="/royxat/mahsulot">
+            hammasi{data ? ` (${formatInt(data.totals.products)})` : ""} →
+          </Link>
+        }
+      >
+        <div className="rows">
+          {!data?.products.length && <PlaceholderRows count={5} />}
+          {data?.products.map((row, i) => (
+            <Link className="row-link" to={`/mahsulot/${row.product_id}`} key={row.product_id}>
+              <span className="n">{i + 1}</span>
+              <span>
+                <span className="name">{row.title}</span>
+                <span className="ctx" style={{ display: "block" }}>
+                  {[row.shop_name, row.category_name].filter(Boolean).join(" · ")}
+                </span>
+              </span>
+              <span className="figures">
+                {orDash(row.value, formatInt)}
+                <span className="sub">
+                  {row.value === null
+                    ? " oʻlchov yoʻq"
+                    : effectiveBasis === "buyers"
+                      ? " xaridor / hafta"
+                      : ` dona · ~${formatMoney(row.revenue ?? 0)}`}
+                </span>
+              </span>
+            </Link>
+          ))}
+        </div>
+        <p className="note-inline">
+          Buyurtma <code>ordersQuantity</code> doʻkon oʻlchovi, shuning uchun
+          mahsulot u boʻyicha saralanmaydi — bu roʻyxat qoldiq kamayishidan
+          hisoblangan <b>taxminiy</b> dona boʻyicha.
+        </p>
+      </Panel>
+
       <div className="grid-2">
-        <Panel title="Top sotuvchilar" hint={`${basisLabel.label} boʻyicha`}>
+        <Panel
+          title="Top sotuvchilar"
+          hint={`${basisLabel.label} boʻyicha`}
+          action={
+            <Link className="see-all" to="/royxat/sotuvchi">
+              hammasi{data ? ` (${formatInt(data.totals.shops)})` : ""} →
+            </Link>
+          }
+        >
           <BasisPicker
             options={RANK_BASES}
             value={effectiveBasis}
@@ -238,7 +290,15 @@ export function HomePage() {
           </div>
         </Panel>
 
-        <Panel title="Top turkumlar" hint={`${basisLabel.label} boʻyicha`}>
+        <Panel
+          title="Top turkumlar"
+          hint={`${basisLabel.label} boʻyicha`}
+          action={
+            <Link className="see-all" to="/royxat/turkum">
+              hammasi{data ? ` (${formatInt(data.totals.categories)})` : ""} →
+            </Link>
+          }
+        >
           <div className="rows">
             {!data?.categories.length && <PlaceholderRows count={5} />}
             {data?.categories.map((row, i) => (

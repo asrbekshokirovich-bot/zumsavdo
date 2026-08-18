@@ -5,6 +5,7 @@ import { HomePage } from "@/pages/Home";
 import { ShopPage } from "@/pages/Shop";
 import { ProductPage } from "@/pages/Product";
 import { CategoryPage } from "@/pages/Category";
+import { RankingPage } from "@/pages/Ranking";
 import { NotFoundPage } from "@/pages/NotFound";
 import { getStatus } from "@/data/api";
 import { startAutoRefresh, useDataVersion } from "@/data/refresh";
@@ -69,6 +70,8 @@ export function App({ boot }: { boot: BootResult }) {
           <Route path="/sotuvchi/:id" element={<ShopPage />} />
           <Route path="/mahsulot/:id" element={<ProductPage />} />
           <Route path="/turkum/:id" element={<CategoryPage />} />
+          {/* Toʻliq roʻyxat: /royxat/sotuvchi, /royxat/turkum, /royxat/mahsulot */}
+          <Route path="/royxat/:kind" element={<RankingPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
 

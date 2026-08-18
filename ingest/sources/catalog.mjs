@@ -149,31 +149,33 @@ export function createCatalogSource(config, { onWait } = {}) {
     return { cards, total, truncated };
   }
 
+  /** Bitta mahsulot sahifasi. Oʻlik id butun sweepni toʻxtatmaydi. */
+  async function fetchOne(id, observedAt, dead) {
+    try {
+      const data = await gqlPatient(PRODUCT_PAGE_QUERY, { id });
+      return parse.productPage(data.productPage, observedAt);
+    } catch (error) {
+      if (error instanceof AccessDeniedError) throw error;
+      dead.push({ id, reason: error.message.slice(0, 120) });
+      return null;
+    }
+  }
+
   /**
-   * Mahsulot sahifalarini oladi.
+   * Mahsulot sahifalarini oladi — parallel.
    *
-   * Bitta oʻlik id butun guruhni yiqitadi, shuning uchun guruh xato bergan
-   * joyda ikkiga boʻlinadi va oʻlik id yakka qolganda chetga qoʻyiladi.
+   * Nega parallel: kuzatuv roʻyxati perepisdan toʻlgach 50 000 ga chiqdi.
+   * Ketma-ket, sekundiga bitta soʻrov bilan bu 14 soat degani — sweep
+   * hech qachon tugamasdi. 12 parallel soʻrovda ~26 soʻrov/sek chiqadi va
+   * oʻsha ish 35 daqiqaga tushadi. 12 raqami oʻlchangan: shu darajada
+   * Uzum 429 qaytarmadi.
    */
   async function fetchProducts(ids, observedAt, dead) {
-    if (!ids.length) return [];
-
-    if (ids.length === 1) {
-      try {
-        const data = await gqlPatient(PRODUCT_PAGE_QUERY, { id: ids[0] });
-        const parsed = parse.productPage(data.productPage, observedAt);
-        return parsed ? [parsed] : [];
-      } catch (error) {
-        if (error instanceof AccessDeniedError) throw error;
-        dead.push({ id: ids[0], reason: error.message.slice(0, 120) });
-        return [];
-      }
-    }
-
     const out = [];
-    for (const id of ids) {
-      const one = await fetchProducts([id], observedAt, dead);
-      out.push(...one);
+    for (let i = 0; i < ids.length; i += config.concurrency) {
+      const chunk = ids.slice(i, i + config.concurrency);
+      const results = await Promise.all(chunk.map((id) => fetchOne(id, observedAt, dead)));
+      for (const r of results) if (r) out.push(r);
     }
     return out;
   }

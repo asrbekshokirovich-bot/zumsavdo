@@ -94,6 +94,17 @@ export function createStore(config) {
     },
 
     /**
+     * Sharhi hali yigʻilmagan kuzatuv mahsulotlari.
+     *
+     * Sharh oʻzgarmaydi — bir marta yigʻilsa yetarli. 50 000 mahsulotdan
+     * har sweepda qayta soʻrash 150 000 keraksiz soʻrov degani.
+     */
+    async feedbackBacklog(limit) {
+      const rows = await rpc("zs_feedback_backlog", { p_limit: limit });
+      return (rows ?? []).map((r) => Number(r.product_id));
+    },
+
+    /**
      * Sharhlarni yozadi.
      *
      * Alohida yo'l: sharh o'lchov emas, u tarix. Bir mahsulotda minglab

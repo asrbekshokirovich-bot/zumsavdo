@@ -106,14 +106,16 @@ export function loadConfig({ requireSupabase = true } = {}) {
     },
 
     /**
-     * So'rov tezligi. Standart — sekundiga bitta.
+     * Soʻrov tezligining YUQORI chegarasi.
      *
-     * Bu chegara ataylab past: panel kuniga 12 marta o'lchaydi, shoshilishning
-     * hojati yo'q, manbaga esa ortiqcha yuk tushmasligi kerak.
+     * Ilgari standart 1 edi va u parallellikni butunlay bekor qilardi:
+     * 12 ta soʻrov bir vaqtda yuborilsa ham limiter ularni sekundiga
+     * bittaga tushirardi. 30 — oʻlchangan 26 soʻrov/sek dan biroz yuqori,
+     * yaʻni haqiqiy tezlikni `ZUMSAVDO_CONCURRENCY` belgilaydi, bu esa
+     * faqat xavfsizlik toʻsigʻi boʻlib qoladi.
      */
     rateLimit: {
-      // 33 751 do'kon / 100 = ~338 so'rov ≈ 6 daqiqa (hujjatdagi jadval).
-      perSecond: Number(process.env.ZUMSAVDO_RPS || 1),
+      perSecond: Number(process.env.ZUMSAVDO_RPS || 30),
       maxRetries: Number(process.env.ZUMSAVDO_MAX_RETRIES || 4),
       timeoutMs: Number(process.env.ZUMSAVDO_TIMEOUT_MS || 20000),
     },
@@ -125,6 +127,24 @@ export function loadConfig({ requireSupabase = true } = {}) {
      * keyin buni 0 ga qoʻyib soʻrovlarni tejash mumkin.
      */
     feedbackPages: Number(process.env.ZUMSAVDO_FEEDBACK_PAGES ?? 3),
+
+    /**
+     * Bir sweepda nechta mahsulotdan sharh olinadi.
+     *
+     * Roʻyxat 50 000 boʻlgani uchun hammasini birdan olish mumkin emas.
+     * Har sweep navbatdan shuncha oladi, roʻyxat asta toʻladi va toʻlgach
+     * qayta soʻralmaydi.
+     */
+    feedbackBatch: Number(process.env.ZUMSAVDO_FEEDBACK_BATCH ?? 300),
+
+    /**
+     * Bir vaqtda nechta mahsulot soʻraladi.
+     *
+     * Kuzatuv roʻyxati 50 000 ga chiqqach ketma-ket yigʻish 14 soat boʻldi.
+     * 12 parallel soʻrov ~26 soʻrov/sek beradi va bu daraja oʻlchab
+     * koʻrilgan: Uzum 429 qaytarmadi.
+     */
+    concurrency: Number(process.env.ZUMSAVDO_CONCURRENCY || 12),
 
     /** Sweepdan keyin nechta kunni qayta hisoblash. */
     rollbackDays: Number(process.env.ZUMSAVDO_ROLLUP_DAYS || 2),

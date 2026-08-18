@@ -49,152 +49,159 @@ const args = process.argv.slice(2);
 const config = loadConfig();
 const store = createStore(config);
 
-if (args.includes("--status")) {
-  const status = await store.censusStatus();
-  log(JSON.stringify(status));
-  process.exit(0);
-}
-
-if (args.includes("--select")) {
-  const limit = flag(args, "--select", 50000);
-  const result = await store.selectTracked(limit);
-  log(`2-qatlam tanlandi: ${JSON.stringify(result)}`);
-  process.exit(0);
-}
-
-const tokens = createTokenProvider(config);
-
 /**
- * Bitta id ni tekshiradi.
+ * Qisqa buyruqlar — holat va tanlov.
  *
- * Xato yutilmaydi, lekin toʻxtatmaydi ham: 2,7 mln id da bir nechtasi
- * javob bermasligi muqarrar. Ular sanaladi va oxirida yoziladi — jimgina
- * tashlab yuborilsa qamrov notoʻgʻri koʻrinardi.
+ * `process.exit()` ataylab ishlatilmaydi: u ochiq turgan ulanishlarni
+ * yarim yopilgan holda uzadi va Windows da libuv "Assertion failed:
+ * UV_HANDLE_CLOSING" deb yiqiladi. Ish tugagan, lekin ekranda xato
+ * koʻrinadi va u haqiqiy nosozlikni yashiradi. Shuning uchun bu yerda
+ * shunchaki qaytiladi va jarayon oʻzi tugaydi.
  */
-async function probe(id, observedAt) {
-  const token = await tokens.get();
-  try {
-    const response = await fetch(config.catalog.endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "User-Agent": config.catalog.userAgent,
-        "x-iid": config.catalog.installationId,
-        "Accept-Language": config.catalog.language,
-        Origin: "https://uzum.uz",
-        Referer: "https://uzum.uz/",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ query: CENSUS_QUERY, variables: { id } }),
-      signal: AbortSignal.timeout(config.rateLimit.timeoutMs),
+if (args.includes("--status")) {
+  log(JSON.stringify(await store.censusStatus()));
+} else if (args.includes("--select")) {
+  const result = await store.selectTracked(flag(args, "--select", 50000));
+  log(`2-qatlam tanlandi: ${JSON.stringify(result)}`);
+} else {
+  await crawl();
+}
+
+async function crawl() {
+  const tokens = createTokenProvider(config);
+
+  /**
+   * Bitta id ni tekshiradi.
+   *
+   * Xato yutilmaydi, lekin toʻxtatmaydi ham: 2,7 mln id da bir nechtasi
+   * javob bermasligi muqarrar. Ular sanaladi va oxirida yoziladi — jimgina
+   * tashlab yuborilsa qamrov notoʻgʻri koʻrinardi.
+   */
+  async function probe(id, observedAt) {
+    const token = await tokens.get();
+    try {
+      const response = await fetch(config.catalog.endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": config.catalog.userAgent,
+          "x-iid": config.catalog.installationId,
+          "Accept-Language": config.catalog.language,
+          Origin: "https://uzum.uz",
+          Referer: "https://uzum.uz/",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ query: CENSUS_QUERY, variables: { id } }),
+        signal: AbortSignal.timeout(config.rateLimit.timeoutMs),
+      });
+
+      if (response.status === 401) {
+        tokens.invalidate();
+        return { retry: true };
+      }
+
+      const body = await response.json();
+      if (body.errors?.length) {
+        const text = JSON.stringify(body.errors);
+        if (/429|Too Many/i.test(text)) return { rateLimited: true };
+        // Oʻchirilgan yoki mavjud boʻlmagan id — bu xato emas, javob.
+        return { missing: true };
+      }
+      const parsed = parseCensus(body.data?.productPage, observedAt);
+      return parsed ? { parsed } : { missing: true };
+    } catch {
+      return { failed: true };
+    }
+  }
+
+  /** Toʻplangan natijalarni bazaga yozadi va toʻplamni boʻshatadi. */
+  async function flush(pass, batch, seen) {
+    if (!batch.length && !seen) return 0;
+    const shops = new Map();
+    const categories = new Map();
+    const products = [];
+    const census = [];
+
+    for (const item of batch) {
+      if (item.shop) shops.set(item.shop.id, item.shop);
+      if (item.category) categories.set(item.category.id, item.category);
+      products.push(item.product);
+      census.push(item.census);
+    }
+
+    return store.censusBatch(pass, {
+      categories: [...categories.values()],
+      shops: [...shops.values()],
+      products,
+      census,
+      seen,
     });
-
-    if (response.status === 401) {
-      tokens.invalidate();
-      return { retry: true };
-    }
-
-    const body = await response.json();
-    if (body.errors?.length) {
-      const text = JSON.stringify(body.errors);
-      if (/429|Too Many/i.test(text)) return { rateLimited: true };
-      // Oʻchirilgan yoki mavjud boʻlmagan id — bu xato emas, javob.
-      return { missing: true };
-    }
-    const parsed = parseCensus(body.data?.productPage, observedAt);
-    return parsed ? { parsed } : { missing: true };
-  } catch {
-    return { failed: true };
-  }
-}
-
-/** Toʻplangan natijalarni bazaga yozadi va toʻplamni boʻshatadi. */
-async function flush(pass, batch, seen) {
-  if (!batch.length && !seen) return 0;
-  const shops = new Map();
-  const categories = new Map();
-  const products = [];
-  const census = [];
-
-  for (const item of batch) {
-    if (item.shop) shops.set(item.shop.id, item.shop);
-    if (item.category) categories.set(item.category.id, item.category);
-    products.push(item.product);
-    census.push(item.census);
   }
 
-  return store.censusBatch(pass, {
-    categories: [...categories.values()],
-    shops: [...shops.values()],
-    products,
-    census,
-    seen,
-  });
-}
+  const size = flag(args, "--size", 200000);
+  const minutes = flag(args, "--minutes", 0);
+  const deadline = minutes ? Date.now() + minutes * 60_000 : null;
 
-const size = flag(args, "--size", 200000);
-const minutes = flag(args, "--minutes", 0);
-const deadline = minutes ? Date.now() + minutes * 60_000 : null;
+  let totalLive = 0;
+  let totalSeen = 0;
+  let totalMissing = 0;
+  let totalFailed = 0;
+  let rateLimitHits = 0;
 
-let totalLive = 0;
-let totalSeen = 0;
-let totalMissing = 0;
-let totalFailed = 0;
-let rateLimitHits = 0;
+  for (;;) {
+    const claim = await store.censusClaim(size);
+    const { pass, from_id: fromId, to_id: toId } = claim;
+    log(`Boʻlak: pass ${pass} · id ${fromId}…${toId} (${toId - fromId + 1} ta)`);
 
-for (;;) {
-  const claim = await store.censusClaim(size);
-  const { pass, from_id: fromId, to_id: toId } = claim;
-  log(`Boʻlak: pass ${pass} · id ${fromId}…${toId} (${toId - fromId + 1} ta)`);
+    const observedAt = new Date().toISOString();
+    let batch = [];
+    let seen = 0;
+    const started = Date.now();
 
-  const observedAt = new Date().toISOString();
-  let batch = [];
-  let seen = 0;
-  const started = Date.now();
+    for (let id = fromId; id <= toId; id += CONCURRENCY) {
+      const ids = [];
+      for (let k = 0; k < CONCURRENCY && id + k <= toId; k++) ids.push(id + k);
 
-  for (let id = fromId; id <= toId; id += CONCURRENCY) {
-    const ids = [];
-    for (let k = 0; k < CONCURRENCY && id + k <= toId; k++) ids.push(id + k);
+      const results = await Promise.all(ids.map((x) => probe(x, observedAt)));
+      seen += ids.length;
+      totalSeen += ids.length;
 
-    const results = await Promise.all(ids.map((x) => probe(x, observedAt)));
-    seen += ids.length;
-    totalSeen += ids.length;
+      for (const r of results) {
+        if (r.parsed) batch.push(r.parsed);
+        else if (r.missing) totalMissing++;
+        else if (r.failed) totalFailed++;
+        else if (r.rateLimited) rateLimitHits++;
+      }
 
-    for (const r of results) {
-      if (r.parsed) batch.push(r.parsed);
-      else if (r.missing) totalMissing++;
-      else if (r.failed) totalFailed++;
-      else if (r.rateLimited) rateLimitHits++;
+      // Uzum tezlik chegarasiga tushsa — sekinlashamiz. Bu yerda toʻxtash
+      // notoʻgʻri boʻlardi: boʻlak yarim yozilgan holda qolib ketardi.
+      if (results.some((r) => r.rateLimited)) {
+        log(`Tezlik chegarasi — 30s kutilyapti (jami ${rateLimitHits} marta).`);
+        await new Promise((r) => setTimeout(r, 30_000));
+      }
+
+      if (batch.length >= FLUSH_EVERY) {
+        totalLive += await flush(pass, batch, seen);
+        batch = [];
+        seen = 0;
+        const done = id - fromId + CONCURRENCY;
+        const rate = done / ((Date.now() - started) / 1000);
+        log(
+          `  ${done}/${toId - fromId + 1} · tirik ${totalLive} · ` +
+            `${rate.toFixed(1)} id/sek`,
+        );
+      }
     }
 
-    // Uzum tezlik chegarasiga tushsa — sekinlashamiz. Bu yerda toʻxtash
-    // notoʻgʻri boʻlardi: boʻlak yarim yozilgan holda qolib ketardi.
-    if (results.some((r) => r.rateLimited)) {
-      log(`Tezlik chegarasi — 30s kutilyapti (jami ${rateLimitHits} marta).`);
-      await new Promise((r) => setTimeout(r, 30_000));
-    }
+    totalLive += await flush(pass, batch, seen);
+    log(
+      `Boʻlak tugadi: ${totalSeen} tekshirildi · ${totalLive} tirik · ` +
+        `${totalMissing} yoʻq · ${totalFailed} xato · ${rateLimitHits} marta 429`,
+    );
 
-    if (batch.length >= FLUSH_EVERY) {
-      totalLive += await flush(pass, batch, seen);
-      batch = [];
-      seen = 0;
-      const done = id - fromId + CONCURRENCY;
-      const rate = done / ((Date.now() - started) / 1000);
-      log(
-        `  ${done}/${toId - fromId + 1} · tirik ${totalLive} · ` +
-          `${rate.toFixed(1)} id/sek`,
-      );
-    }
+    if (!deadline || Date.now() >= deadline) break;
   }
 
-  totalLive += await flush(pass, batch, seen);
-  log(
-    `Boʻlak tugadi: ${totalSeen} tekshirildi · ${totalLive} tirik · ` +
-      `${totalMissing} yoʻq · ${totalFailed} xato · ${rateLimitHits} marta 429`,
-  );
-
-  if (!deadline || Date.now() >= deadline) break;
+  const status = await store.censusStatus();
+  log(`Holat: ${status.foiz}% (pass ${status.pass}, ${status.next_id}/${status.max_id})`);
 }
-
-const status = await store.censusStatus();
-log(`Holat: ${status.foiz}% (pass ${status.pass}, ${status.next_id}/${status.max_id})`);

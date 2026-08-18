@@ -201,7 +201,7 @@ async function main() {
     return;
   }
 
-  await collectFeedbackHistory(config, source, store, seenProducts);
+  await collectFeedbackHistory(config, source, store);
 
   // Yig'indi tegilgan kunlardan bir kun oldin boshlanadi: kunlik farq oldingi
   // kun yakuniga tayanadi.
@@ -223,8 +223,18 @@ async function main() {
  * Sharh o'zgarmaydi, faqat yangisi qo'shiladi — takroriy sweep hech narsani
  * ikkilantirmaydi (kalit — sharh id si).
  */
-async function collectFeedbackHistory(config, source, store, productIds) {
-  if (!config.feedbackPages || !productIds.size || !source.collectFeedbacks) return;
+async function collectFeedbackHistory(config, source, store) {
+  if (!config.feedbackPages || !source.collectFeedbacks) return;
+
+  // Sweepda koʻrilganlar emas, SHARHI YOʻQLAR olinadi. Sabab: sharh
+  // oʻzgarmaydi, bir marta yigʻilsa yetarli — har safar 50 000 mahsulotdan
+  // qayta soʻrash 150 000 keraksiz soʻrov boʻlardi.
+  const productIds = new Set(await store.feedbackBacklog(config.feedbackBatch));
+  if (!productIds.size) {
+    log("Sharh navbati boʻsh — hammasining tarixi yigʻilgan.");
+    return;
+  }
+  log(`Sharh navbati: ${productIds.size} mahsulot.`);
 
   const sweepId = await store.openSweep(source.name, "sharh tarixi");
   let written = 0;

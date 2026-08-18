@@ -10,7 +10,9 @@
     "discover": "node --env-file-if-exists=.env discover.mjs",
     "shops": "node --env-file-if-exists=.env find-shops.mjs",
     "setup": "node setup.mjs",
-    "census": "node --env-file-if-exists=.env census.mjs"
+    "census": "node --env-file-if-exists=.env census.mjs",
+    "build": "cd .. && npm run build",
+    "dev": "cd .. && npm run dev"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1"

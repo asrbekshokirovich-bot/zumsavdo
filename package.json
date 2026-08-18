@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -b --noEmit"
+    "typecheck": "tsc -b --noEmit",
+    "sweep": "cd ingest && npm run sweep --",
+    "census": "cd ingest && npm run census --",
+    "probe": "cd ingest && npm run probe --"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",

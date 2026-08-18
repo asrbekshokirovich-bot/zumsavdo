@@ -22,6 +22,23 @@ npm run preview    # yigʻilgan versiyani koʻrish
 npm run typecheck  # TypeScript tekshiruvi
 ```
 
+### Qaysi buyruq qaysi papkada
+
+Omborda ikkita `package.json` bor: ildizda — panel, `ingest/` da — yigʻuvchi.
+Notoʻgʻri papkada `npm run build` yozilsa `Missing script: "build"` chiqadi va
+bu xato buyruqni emas, papkani koʻrsatadi.
+
+Shuning uchun **ikkala papkada ham hammasi ishlaydi** — har biri
+ikkinchisiga yoʻnaltiradi:
+
+| Buyruq | Asl joyi | Boshqa papkadan ham |
+|---|---|---|
+| `npm run build`, `npm run dev` | ildiz | `ingest/` dan |
+| `npm run sweep`, `npm run census`, `npm run probe` | `ingest/` | ildizdan |
+
+Bayroqlar ham oʻtadi: ildizdan `npm run census -- --minutes 60` yozsangiz,
+u `ingest/` ichida oʻsha bayroq bilan ishga tushadi va `ingest/.env` oʻqiladi.
+
 ## Vercel'ga joylash
 
 Vercel panelida: **Add New → Project** → shu omborni tanlang. Sozlamalarni
@@ -160,7 +177,12 @@ cp .env.example .env      # toʻldiring
 npm run sweep             # oʻlchov oling va kunlik yigʻindini yangilang
 npm run sweep -- --probe  # manba javobini oʻzgartirmasdan bosib chiqaradi
 npm run rollup            # faqat qayta hisoblash
+npm run census            # katalogni id boʻyicha aylanib chiqish
+npm run census -- --status  # perepis qayerga yetgani
 ```
+
+`sweep`, `census` va `probe` ni ildizdan ham chaqirsa boʻladi — ular oʻzi
+`ingest/` ga oʻtadi.
 
 Manba bitta: **`uzum-catalog`**.
 

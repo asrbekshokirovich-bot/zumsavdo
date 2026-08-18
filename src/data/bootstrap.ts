@@ -54,13 +54,19 @@ function emptyDataset(): Dataset {
  * Cheklovsiz kutish eng yomon holat: soʻrov osilib qolsa, foydalanuvchi abadiy
  * yuklanish ekranini koʻradi va nima boʻlganini bilmaydi.
  */
-const LOAD_TIMEOUT_MS = 15_000;
+const LOAD_TIMEOUT_MS = 20_000;
+
+/** Yuklash uzilganini "maʻlumot yoʻq" dan ajratish uchun. */
+class LoadFailed extends Error {}
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return Promise.race([
     promise,
     new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error(`Ombor ${ms / 1000} soniyada javob bermadi.`)), ms),
+      setTimeout(
+        () => reject(new LoadFailed(`Ombor ${ms / 1000} soniyada javob bermadi.`)),
+        ms,
+      ),
     ),
   ]);
 }
@@ -85,10 +91,18 @@ export async function bootstrap(): Promise<BootResult> {
     return { mode: "ready" };
   } catch (error) {
     setDataset(emptyDataset());
-    return {
-      mode: "empty",
-      reason: "Omborda oʻlchov yoʻq.",
-      detail: error instanceof Error ? error.message : String(error),
-    };
+    const detail = error instanceof Error ? error.message : String(error);
+    // "Yuklanmadi" bilan "maʻlumot yoʻq" ni aralashtirmaslik kerak. Ilgari
+    // ikkalasi ham "Omborda oʻlchov yoʻq" deb koʻrsatilardi va yuklash
+    // uzilganda foydalanuvchi maʻlumot yoʻqolgan deb oʻylardi — u esa
+    // joyida turgan boʻlardi.
+    if (error instanceof LoadFailed) {
+      return {
+        mode: "empty",
+        reason: "Ombor javob bermadi — maʻlumot yoʻqolgani emas.",
+        detail: `${detail} Sahifani yangilab koʻring.`,
+      };
+    }
+    return { mode: "empty", reason: "Omborda oʻlchov yoʻq.", detail };
   }
 }

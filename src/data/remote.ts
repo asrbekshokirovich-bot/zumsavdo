@@ -76,16 +76,16 @@ export async function loadRemoteDataset(): Promise<Dataset> {
     feedbackSpanRows,
     sweepRows,
   ] = await Promise.all([
-      selectAll<{ id: number; name: string }>(db, "zs_category", "id,name", ["id"]),
+      selectAll<{ id: number; name: string }>(db, "zs_panel_category", "id,name", ["id"]),
       selectAll<{ id: number; name: string; category_id: number | null; official: boolean }>(
         db,
-        "zs_shop",
+        "zs_panel_shop",
         "id,name,category_id,official",
         ["id"],
       ),
       selectAll<{ id: number; title: string; shop_id: number | null; category_id: number | null }>(
         db,
-        "zs_product",
+        "zs_panel_product",
         "id,title,shop_id,category_id",
         ["id"],
       ),

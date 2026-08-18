@@ -56,6 +56,16 @@ export interface ShopDay {
   /** Shu kuni nechta sweep tushgani va nechtasi kutilgani. */
   sweeps: number;
   sweepsExpected: number;
+  /**
+   * Farq QAYSI ORALIQNI qamragani (soat). `null` — farq hisoblanmagan.
+   *
+   * "Kunlik buyurtma" nomi chalgʻitishi mumkin: kun yakuni yarim tun emas,
+   * oʻsha kundagi oxirgi oʻlchov. Oʻlchov kuniga bir marta tushsa oraliq
+   * ~24 soat boʻladi, lekin jadval buzilsa 10 soat ham boʻlishi mumkin —
+   * va uning bir qismi oldingi kunga tegishli boʻladi. Raqamning oʻzi
+   * haqiqiy, lekin uni "bir kunlik" deb oʻqish notoʻgʻri.
+   */
+  windowHours: number | null;
 }
 
 /** Bitta mahsulotning bitta kundagi oʻlchovi. */

@@ -107,6 +107,9 @@ function ordersMetric(days: ShopDay[], indexes: number[], period: Period): Metri
     notes.push(`${missing} kun uchun oʻlchov yetmagan — u yigʻindiga kirmadi`);
   }
 
+  const window = windowNote(days, known);
+  if (window) notes.push(window);
+
   return { value, certainty: "exact", note: notes.join(" · ") || undefined };
 }
 
@@ -118,6 +121,26 @@ function ordersMetric(days: ShopDay[], indexes: number[], period: Period): Metri
  */
 function ordersOf(day: ShopDay | undefined): number {
   return day?.orders ?? 0;
+}
+
+/**
+ * Farq qaysi oraliqni qamraganini aytadi.
+ *
+ * "Kunlik buyurtma" nomi aniqlikni oshirib koʻrsatishi mumkin: kun yakuni
+ * yarim tun emas, oʻsha kundagi oxirgi oʻlchov. Sweep jadvali buzilsa
+ * oraliq 24 soatdan ancha qisqa boʻladi va uning bir qismi oldingi kunga
+ * tegishli boʻlib qoladi. Raqam haqiqiy, lekin buni aytmaslik — jim
+ * turib notoʻgʻri xulosaga yoʻl ochish.
+ */
+function windowNote(days: ShopDay[], known: number[]): string | undefined {
+  const hours = known.map((i) => days[i]?.windowHours).filter((h): h is number => h != null);
+  if (!hours.length) return undefined;
+  const min = Math.min(...hours);
+  const max = Math.max(...hours);
+  // 24 soatga yaqin boʻlsa aytishning hojati yoʻq — kutilgan holat shu.
+  if (min >= 22 && max <= 26) return undefined;
+  const text = min === max ? `${min}` : `${min}–${max}`;
+  return `oraliq ${text} soat, bir kun emas`;
 }
 
 function countMissing(days: ShopDay[], indexes: number[]): number {
@@ -179,6 +202,12 @@ export function marketSummary(period: Period): MarketSummary {
   if (missing > 0) {
     notes.push(`${missing} sotuvchi-kun uchun oʻlchov yetmagan`);
   }
+
+  // Oraliq butun bozor uchun ham aytiladi — u har sotuvchida bir xil,
+  // chunki sweep hammasini bir vaqtda oʻlchaydi.
+  const anyDays = db().shopDays.get(db().shops[0]?.id ?? 0) ?? [];
+  const window = windowNote(anyDays, indexes.filter((i) => anyDays[i]?.orders != null));
+  if (window) notes.push(window);
 
   const known = daily.some((d) => d.value !== null);
 

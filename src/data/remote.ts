@@ -97,10 +97,11 @@ export async function loadRemoteDataset(): Promise<Dataset> {
         avg_price: number | null;
         sweeps: number;
         sweeps_expected: number;
+        window_hours: number | null;
       }>(
         db,
         "zs_shop_day",
-        "shop_id,date,orders,orders_certain,avg_price,sweeps,sweeps_expected",
+        "shop_id,date,orders,orders_certain,avg_price,sweeps,sweeps_expected,window_hours",
         ["shop_id", "date"],
         (q) => q.gte("date", sinceKey),
       ),
@@ -200,6 +201,7 @@ export async function loadRemoteDataset(): Promise<Dataset> {
         avgPrice: 0,
         sweeps: 0,
         sweepsExpected: 12,
+        windowHours: null,
       })),
     );
   }
@@ -215,6 +217,7 @@ export async function loadRemoteDataset(): Promise<Dataset> {
       avgPrice: row.avg_price ?? 0,
       sweeps: row.sweeps,
       sweepsExpected: row.sweeps_expected,
+      windowHours: row.window_hours,
     };
   }
 

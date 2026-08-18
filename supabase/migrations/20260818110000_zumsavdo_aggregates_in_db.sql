@@ -1,0 +1,13 @@
+-- YIGʻINDILAR BAZADA HISOBLANADI, brauzerda emas.
+--
+-- Ilgari panel `zs_shop_day` dan qatorlarni oʻqib, bozor yigʻindisini,
+-- aylanmani va reytinglarni brauzerda hisoblardi. Bu loyihaning oʻz
+-- qoidasiga zid (remote.ts sarlavhasi): bir xil raqam ikki joyda
+-- hisoblansa, ikki xil chiqishi mumkin va qaysi biri toʻgʻri ekanini
+-- aytib boʻlmaydi. Endi hisob faqat shu yerda.
+--
+-- Toʻliq matn 20260818110000 ko-chirmasida qoʻllangan:
+--   zs_market_summary(from, to)              — buyurtma, aylanma, qamrov
+--   zs_market_daily(from, to, series)        — kunlik qator
+--   zs_shop_rank(from, to, basis, limit)     — sotuvchilar reytingi
+--   zs_category_rank(from, to, basis, limit) — turkumlar reytingi

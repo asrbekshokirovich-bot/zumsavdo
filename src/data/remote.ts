@@ -348,3 +348,81 @@ function groupBy<T extends { id: number }>(items: T[], key: (item: T) => number)
   }
   return map;
 }
+
+// ---------------------------------------------------------------- yigʻindilar
+//
+// Yigʻindi va reyting bazada hisoblanadi. Ilgari panel qatorlarni oʻqib
+// brauzerda qoʻshardi — bir xil raqam ikki joyda hisoblansa, ikki xil
+// chiqishi mumkin. Bu yerda faqat chaqiruv va oʻqish bor.
+
+export interface MarketSummaryRow {
+  orders: number | null;
+  revenue: number | null;
+  shops_measured: number;
+  shop_days_missing: number;
+  window_min_hours: number | null;
+  window_max_hours: number | null;
+  sweeps: number | null;
+  sweeps_expected: number | null;
+}
+
+export interface RankRow {
+  shop_id?: number;
+  shop_name?: string;
+  category_id: number | null;
+  category_name: string | null;
+  shop_count?: number;
+  official?: boolean;
+  value: number | null;
+  orders: number | null;
+  revenue: number | null;
+}
+
+async function callRpc<T>(name: string, args: Record<string, unknown>): Promise<T> {
+  const { data, error } = await client().rpc(name, args);
+  if (error) throw new Error(`${name} bajarilmadi: ${error.message}`);
+  return data as T;
+}
+
+export async function fetchMarketSummary(from: string, to: string): Promise<MarketSummaryRow> {
+  const rows = await callRpc<MarketSummaryRow[]>("zs_market_summary", {
+    p_from: from,
+    p_to: to,
+  });
+  return rows?.[0] ?? {
+    orders: null,
+    revenue: null,
+    shops_measured: 0,
+    shop_days_missing: 0,
+    window_min_hours: null,
+    window_max_hours: null,
+    sweeps: null,
+    sweeps_expected: null,
+  };
+}
+
+export async function fetchMarketDaily(
+  from: string,
+  to: string,
+  series: string,
+): Promise<{ date: string; value: number | null }[]> {
+  return callRpc("zs_market_daily", { p_from: from, p_to: to, p_series: series });
+}
+
+export async function fetchShopRank(
+  from: string,
+  to: string,
+  basis: string,
+  limit: number,
+): Promise<RankRow[]> {
+  return callRpc("zs_shop_rank", { p_from: from, p_to: to, p_basis: basis, p_limit: limit });
+}
+
+export async function fetchCategoryRank(
+  from: string,
+  to: string,
+  basis: string,
+  limit: number,
+): Promise<RankRow[]> {
+  return callRpc("zs_category_rank", { p_from: from, p_to: to, p_basis: basis, p_limit: limit });
+}

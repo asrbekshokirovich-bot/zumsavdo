@@ -210,7 +210,11 @@ export function Chart({
   const multi = series.length > 1;
 
   const dateLabelIndexes = useMemo(() => {
-    if (n <= 1) return [0];
+    // Nuqta yoʻq boʻlsa yorliq ham yoʻq. Ilgari bu yerda `[0]` qaytarilardi
+    // va mavjud boʻlmagan sana formatlanib butun sahifa yiqilardi — maʻlumot
+    // hali kelmagan bir necha yuz millisekundda ham shu sodir boʻlardi.
+    if (n === 0) return [];
+    if (n === 1) return [0];
     const wanted = Math.max(2, Math.min(6, Math.floor(plotW / 95)));
     const step = Math.max(1, Math.floor((n - 1) / (wanted - 1)));
     const out: number[] = [];
@@ -335,7 +339,7 @@ export function Chart({
                 fill="var(--ink3)"
                 fontFamily="var(--f)"
               >
-                {formatDayMonth(dates[i])}
+                {dates[i] ? formatDayMonth(dates[i]) : ""}
               </text>
             ))}
 
@@ -437,7 +441,7 @@ export function Chart({
 
         {active !== null && active < n && (
           <div className="tooltip" style={{ left: tooltipLeft, top: 4 }}>
-            <div className="t-date">{formatDate(dates[active])}</div>
+            <div className="t-date">{dates[active] ? formatDate(dates[active]) : ""}</div>
             {series.map((s) => (
               <div className="t-row" key={s.key}>
                 <span>{s.label}</span>

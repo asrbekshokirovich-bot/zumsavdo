@@ -7,6 +7,7 @@ import { ProductPage } from "@/pages/Product";
 import { CategoryPage } from "@/pages/Category";
 import { NotFoundPage } from "@/pages/NotFound";
 import { getStatus } from "@/data/api";
+import { startAutoRefresh, useDataVersion } from "@/data/refresh";
 import type { BootResult } from "@/data/bootstrap";
 
 /**
@@ -15,6 +16,11 @@ import type { BootResult } from "@/data/bootstrap";
  */
 export function App({ boot }: { boot: BootResult }) {
   const location = useLocation();
+  // Maʻlumot yangilanganda butun daraxt qayta chiziladi — sahifalar
+  // `getDataset()` ni chizish paytida oʻqiydi, shuning uchun shu yetarli.
+  useDataVersion();
+
+  useEffect(startAutoRefresh, []);
   // Ombor ulangani hech narsani isbotlamaydi: ichida namunaviy oʻlchov turgan
   // boʻlishi mumkin. Ogohlantirish ulanishga emas, maʻlumot manbaiga qaraydi.
   const sampleData = getStatus().source === "sample";

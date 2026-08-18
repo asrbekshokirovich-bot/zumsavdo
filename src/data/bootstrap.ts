@@ -1,6 +1,7 @@
 import { addDays, setDataStart, toKey } from "@/lib/dates";
 import { setDataset } from "./dataset";
 import type { Dataset } from "./dataset";
+import { markRefreshed } from "./refresh";
 import { isRemoteConfigured, loadRemoteDataset } from "./remote";
 
 /**
@@ -86,6 +87,7 @@ export async function bootstrap(): Promise<BootResult> {
   try {
     const dataset = await withTimeout(loadRemoteDataset(), LOAD_TIMEOUT_MS);
     setDataset(dataset);
+    markRefreshed();
     // Davr tanlagich eng eski oʻlchovdan orqaga chiqmasligi kerak.
     if (dataset.dates.length) setDataStart(dataset.dates[0]);
     return { mode: "ready" };

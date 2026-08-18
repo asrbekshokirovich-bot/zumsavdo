@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { type ObservationRow, fetchProductObservations } from "@/data/remote";
+import { useDataVersion } from "@/data/refresh";
 import { formatDateTime } from "@/lib/dates";
 import { formatInt, formatPercent, formatPrice } from "@/lib/format";
 
@@ -25,6 +26,7 @@ export function ObservationLog({
 }) {
   const [rows, setRows] = useState<ObservationRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const version = useDataVersion();
 
   useEffect(() => {
     let cancelled = false;
@@ -36,7 +38,7 @@ export function ObservationLog({
     return () => {
       cancelled = true;
     };
-  }, [productId, from, to]);
+  }, [productId, from, to, version]);
 
   if (error) return <p className="note-inline">Jurnal olinmadi: {error}</p>;
   if (!rows) return <p className="note-inline">Yuklanmoqda…</p>;

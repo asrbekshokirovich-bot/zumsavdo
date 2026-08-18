@@ -14,6 +14,7 @@ import {
   fetchMarketSummary,
   fetchShopRank,
 } from "@/data/remote";
+import { useDataVersion } from "@/data/refresh";
 import { formatInt, formatMoney, orDash } from "@/lib/format";
 import { usePeriod } from "@/lib/usePeriod";
 import type { Period } from "@/lib/period";
@@ -38,7 +39,7 @@ interface MarketData {
 }
 
 /** Yigʻindilarni bazadan oladi. Davr yoki asos oʻzgarsa qayta soʻraydi. */
-function useMarket(period: Period, basis: RankBasis, series: MarketSeries) {
+function useMarket(period: Period, basis: RankBasis, series: MarketSeries, version: number) {
   const [data, setData] = useState<MarketData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -88,7 +89,7 @@ function useMarket(period: Period, basis: RankBasis, series: MarketSeries) {
     return () => {
       cancelled = true;
     };
-  }, [period.from, period.to, basis, series]);
+  }, [period.from, period.to, basis, series, version]);
 
   return { data, error };
 }
@@ -125,7 +126,7 @@ export function HomePage() {
     chosenSeries,
   );
 
-  const { data, error } = useMarket(period, basis, series);
+  const { data, error } = useMarket(period, basis, series, useDataVersion());
 
   const effectiveBasis = data ? resolveBasis(RANK_BASES, data.rankAvailable, chosenBasis) : basis;
   const effectiveSeries = data

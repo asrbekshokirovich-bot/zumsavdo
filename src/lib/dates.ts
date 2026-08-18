@@ -105,3 +105,18 @@ export function formatDateTime(iso: string): string {
   const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
   return `${get("day")}.${get("month")}.${get("year")} ${get("hour")}:${get("minute")}`;
 }
+
+/**
+ * Faqat soat:daqiqa — oʻsha Toshkent zonasida.
+ *
+ * Bugungi voqea uchun toʻliq sana ortiqcha: satr uzayadi, yangilik esa
+ * faqat oxirgi ikki raqamda boʻladi.
+ */
+export function formatTime(iso: string): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Tashkent",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(new Date(iso));
+}

@@ -525,7 +525,13 @@ async function callRpc<T>(name: string, args: Record<string, unknown>): Promise<
  */
 export interface PanelOverview {
   summary: MarketSummaryRow;
-  daily: { date: string; value: number | null }[];
+  daily: {
+    date: string;
+    value: number | null;
+    contributors: number | null;
+    watched: number | null;
+    hours: number | null;
+  }[];
   shops: RankRow[];
   categories: RankRow[];
   products: RankRow[];

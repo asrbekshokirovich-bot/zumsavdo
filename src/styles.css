@@ -907,3 +907,10 @@ td.name {
   color: var(--ink);
   border-color: var(--ln3);
 }
+
+/* Ogohlantiruvchi izoh — oddiy izohdan ajralib tursin, lekin xato emas. */
+.note-inline.warn-inline {
+  color: var(--ink2);
+  border-left: 2px solid var(--warn);
+  padding-left: 8px;
+}

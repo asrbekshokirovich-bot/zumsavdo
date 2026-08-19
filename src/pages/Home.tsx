@@ -10,6 +10,7 @@ import { MARKET_SERIES, type MarketSeries, RANK_BASES, type RankBasis } from "@/
 import { type MarketSummaryRow, type RankRow, fetchPanelOverview } from "@/data/remote";
 import { useDataVersion } from "@/data/refresh";
 import { useScope } from "@/data/scope";
+import { formatDayMonth } from "@/lib/dates";
 import { formatInt, formatMoney, orDash } from "@/lib/format";
 import { usePeriod } from "@/lib/usePeriod";
 import type { Period } from "@/lib/period";
@@ -70,7 +71,13 @@ function useMarket(period: Period, basis: RankBasis, series: MarketSeries, versi
         if (cancelled) return;
         setData({
           summary: o.summary,
-          daily: o.daily.map((r) => ({ date: r.date, value: r.value })),
+          daily: o.daily.map((r) => ({
+            date: r.date,
+            value: r.value,
+            contributors: r.contributors,
+            watched: r.watched,
+            hours: r.hours,
+          })),
           shops: o.shops,
           categories: o.categories,
           products: o.products,
@@ -89,6 +96,61 @@ function useMarket(period: Period, basis: RankBasis, series: MarketSeries, versi
   }, [period.from, period.to, basis, series, version]);
 
   return { data, error };
+}
+
+/**
+ * Qoʻshni kunlar solishtirsa boʻladigan holdami — shuni tekshiradi.
+ *
+ * Ikki xil buzilish bor va ikkalasi ham grafikni yolgʻon qiladi.
+ *
+ * **Oyna uzunligi.** Buyurtma hisoblagichning ikki oʻlchov orasidagi farqi,
+ * shuning uchun u oynaga toʻgʻridan-toʻgʻri bogʻliq. Aynan shu holat
+ * kuzatildi: 18-avgust 4 779 (oyna 10,4 soat), 19-avgust 8 547 (oyna
+ * 27,8 soat). Grafikda bu "sotuv ikki barobar oshdi" boʻlib koʻrinadi,
+ * soatiga esa 460 dan 307 ga **tushgan**. Sotuvchilar toʻplami esa deyarli
+ * bir xil — yaʻni qamrovga qarab bu xatoni topib boʻlmasdi.
+ *
+ * **Toʻplam.** Ikki kunda butunlay boshqa obyektlar oʻlchangan boʻlsa,
+ * ularning yigʻindisini solishtirish maʻnosiz.
+ *
+ * Chegara 20%: kundan kunga kichik tebranish odatiy va har safar
+ * ogohlantirish chiqaversa, u oʻqilmay qoladi.
+ */
+function comparabilityWarning(points: SeriesPoint[]): string | null {
+  const measured = points.filter((p) => p.value !== null);
+  if (measured.length < 2) return null;
+
+  for (let i = 1; i < measured.length; i++) {
+    const prev = measured[i - 1];
+    const now = measured[i];
+
+    const a = prev.hours;
+    const b = now.hours;
+    if (typeof a === "number" && typeof b === "number" && a > 0 && b > 0) {
+      if (Math.abs(b - a) / a >= 0.2) {
+        return (
+          `Oynalar teng emas: ${formatDayMonth(prev.date)} — ${a} soat, ` +
+          `${formatDayMonth(now.date)} — ${b} soat. Buyurtma ikki oʻlchov ` +
+          `farqidan chiqadi, shuning uchun uzunroq oyna kattaroq raqam beradi. ` +
+          `Soatiga: ${formatInt(Math.round((prev.value as number) / a))} va ` +
+          `${formatInt(Math.round((now.value as number) / b))}.`
+        );
+      }
+    }
+
+    const pc = prev.contributors;
+    const nc = now.contributors;
+    if (typeof pc === "number" && typeof nc === "number" && pc > 0) {
+      if (Math.abs(nc - pc) / pc >= 0.2) {
+        return (
+          `Qatorlar bir xil toʻplam emas: ${formatDayMonth(prev.date)} da ` +
+          `${formatInt(pc)} obyekt, ${formatDayMonth(now.date)} da ${formatInt(nc)}. ` +
+          `Oʻzgarish bozornikimi yoki qamrovnikimi — ayirib boʻlmaydi.`
+        );
+      }
+    }
+  }
+  return null;
 }
 
 /** Izohlar bazadan kelgan qamrov raqamlaridan yigʻiladi. */
@@ -199,6 +261,18 @@ export function HomePage() {
           height={190}
           format={formatInt}
         />
+        {data && comparabilityWarning(data.daily) && (
+          <p className="note-inline warn-inline">{comparabilityWarning(data.daily)}</p>
+        )}
+        {data?.daily.some((p) => p.watched != null && p.contributors != null
+                                 && p.watched > p.contributors) && (
+          <p className="note-inline">
+            Kuzatilayotgan obyektlarning bir qismida raqam hali yoʻq: buyurtma
+            ikki oʻlchov <b>farqidan</b> chiqadi, shuning uchun yangi
+            qoʻshilganida u birinchi kuni boʻsh boʻladi va ikkinchi sweepdan
+            keyin paydo boʻladi.
+          </p>
+        )}
         <p className="note-inline">
           {effectiveSeries === "feedbacks" && (
             <>

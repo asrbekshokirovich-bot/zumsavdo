@@ -200,6 +200,26 @@ export interface SeriesPoint {
    */
   at?: string | null;
   /**
+   * Shu nuqtaga nechta obyekt hissa qoʻshgani.
+   *
+   * Qoʻshni kunlar bir xil toʻplam boʻlmasa, ularni solishtirib boʻlmaydi:
+   * 74 sotuvchi 4 779 ta, 67 sotuvchi 8 547 ta bergan boʻlsa, oʻsish
+   * bozorniki emas, toʻplamniki boʻlishi mumkin. Shuning uchun bu son
+   * qator bilan birga tashiladi va panel farqni yozib qoʻyadi.
+   */
+  contributors?: number | null;
+  /** Shu kuni umuman nechtasi kuzatilgani — farqi hali raqami chiqmaganlar. */
+  watched?: number | null;
+  /**
+   * Oʻlchov oynasi necha soat.
+   *
+   * Buyurtma hisoblagichning ikki oʻlchov orasidagi farqi, shuning uchun
+   * raqam oyna uzunligiga toʻgʻridan-toʻgʻri bogʻliq. 10 soatlik oynadagi
+   * 4 779 va 28 soatlik oynadagi 8 547 — bu oʻsish emas, sekinlashish.
+   * Oynani yozmasdan kunlarni solishtirib boʻlmaydi.
+   */
+  hours?: number | null;
+  /**
    * `null` — oʻlchov yoʻq, javob nomaʻlum.
    *
    * Grafikda bunday kun nol qilib chizilmaydi: nol "sotuv boʻlmagan" degan

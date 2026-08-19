@@ -10,7 +10,8 @@
     "typecheck": "tsc -b --noEmit",
     "sweep": "cd ingest && npm run sweep --",
     "census": "cd ingest && npm run census --",
-    "probe": "cd ingest && npm run probe --"
+    "probe": "cd ingest && npm run probe --",
+    "frontier": "cd ingest && npm run frontier --"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",

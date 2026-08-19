@@ -216,6 +216,10 @@ async function main() {
   // paytida emas.
   const shops = await store.refreshShopCategories();
   log(`Do'kon turkumi yangilandi: ${shops} ta`);
+
+  // Kunlik o'sish: nechta mahsulot, do'kon va sharh qo'shildi.
+  const growth = await store.recordMarketDay();
+  log(`Kunlik o'sish: ${JSON.stringify(growth)}`);
 }
 
 /**

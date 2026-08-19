@@ -613,6 +613,40 @@ export interface SearchRow {
   revenue: number;
 }
 
+/**
+ * Kunlik oʻsish — bozorga nechta mahsulot, doʻkon va sharh qoʻshilgani.
+ *
+ * `trusted` — shu kunning raqamiga ishonsa boʻladimi. Boshlangʻich sanadan
+ * oldingi kunlarda mahsulot va doʻkon soni **kashfiyot** raqami: perepis
+ * 18.08 da ishlagani uchun oʻsha kunga 630 743 mahsulot "qoʻshilgan" boʻlib
+ * chiqadi. Panel bunday kunga raqam emas, chiziqcha qoʻyadi.
+ *
+ * `id_added` — Uzum bergan yangi id lar soni. Id lar ketma-ket beriladi,
+ * shuning uchun ikki kunlik chegara farqi kuniga nechta mahsulot
+ * yaratilganini kuzatuvdan mustaqil koʻrsatadi.
+ */
+export interface GrowthRow {
+  date: string;
+  new_products: number | null;
+  new_shops: number | null;
+  new_feedbacks: number | null;
+  id_frontier: number | null;
+  id_added: number | null;
+  trusted: boolean;
+  baseline: string | null;
+}
+
+export interface Growth {
+  baseline: string | null;
+  note: string | null;
+  rows: GrowthRow[];
+}
+
+export async function fetchGrowth(from: string, to: string): Promise<Growth> {
+  const data = await callRpc<Growth | null>("zs_market_growth", { p_from: from, p_to: to });
+  return { baseline: data?.baseline ?? null, note: data?.note ?? null, rows: data?.rows ?? [] };
+}
+
 export async function fetchSearch(
   kind: string,
   query: string,

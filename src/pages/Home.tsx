@@ -4,6 +4,7 @@ import { Chart } from "@/components/Chart";
 import { PeriodPicker } from "@/components/PeriodPicker";
 import { SearchPanel } from "@/components/SearchPanel";
 import { BasisPicker, resolveBasis } from "@/components/BasisPicker";
+import { GrowthPanel } from "@/components/GrowthPanel";
 import { MetricCard, Panel, PlaceholderRows } from "@/components/ui";
 import { MARKET_SERIES, type MarketSeries, RANK_BASES, type RankBasis } from "@/data/api";
 import { type MarketSummaryRow, type RankRow, fetchPanelOverview } from "@/data/remote";
@@ -211,6 +212,8 @@ export function HomePage() {
           shuning uchun uni tushish deb oʻqish notoʻgʻri.
         </p>
       </Panel>
+
+      <GrowthPanel period={period} />
 
       <Panel
         title="Eng koʻp sotilgan mahsulotlar"

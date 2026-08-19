@@ -179,6 +179,27 @@ export function createStore(config) {
     async refreshShopCategories() {
       return rpc("zs_refresh_shop_categories", { p_only_measured: true });
     },
+
+    /** Chegara zondi qayerdan boshlashi — eng katta ma'lum id. */
+    async frontierStart() {
+      return rpc("zs_frontier_start", {});
+    },
+
+    /** O'lchangan katalog chegarasini yozadi. */
+    async recordFrontier(frontier) {
+      return rpc("zs_record_frontier", { p_frontier: frontier });
+    },
+
+    /**
+     * Kunlik o'sish qatorini yozadi.
+     *
+     * `first_seen_at` bu savolga o'zi javob bermaydi — u crawler qachon
+     * ko'rganini bildiradi. Shuning uchun raqam alohida jadvalga, boshlang'ich
+     * sanadan keyingi kunlar uchungina yoziladi.
+     */
+    async recordMarketDay(date = null) {
+      return rpc("zs_record_market_day", { p_date: date });
+    },
   };
 }
 

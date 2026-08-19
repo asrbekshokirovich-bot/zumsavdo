@@ -401,7 +401,7 @@ interface PanelShopRow {
   id: number;
   name: string;
   category_id: number | null;
-  official: boolean;
+  official: boolean | null;
 }
 
 interface PanelProductRow {
@@ -493,7 +493,7 @@ export interface RankRow {
   category_id: number | null;
   category_name: string | null;
   shop_count?: number;
-  official?: boolean;
+  official?: boolean | null;
   value: number | null;
   orders?: number | null;
   revenue: number | null;

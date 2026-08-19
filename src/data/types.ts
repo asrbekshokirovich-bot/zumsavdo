@@ -27,8 +27,14 @@ export interface Shop {
   id: number;
   name: string;
   categoryId: number;
-  /** Uzumdagi rasmiy doʻkon belgisi. */
-  official: boolean;
+  /**
+   * Uzumdagi rasmiy doʻkon belgisi.
+   *
+   * `null` — oʻlchanmagan. Amalda hozir DOIM `null`: Uzum bu maydonni
+   * toʻldirmaydi (2026-08-19 da jonli tekshirilgan). `false` deb
+   * koʻrsatish yolgʻon boʻlardi — "rasmiy emas" degan oʻlchov yoʻq.
+   */
+  official: boolean | null;
 }
 
 export interface Product {

@@ -191,7 +191,11 @@ export const parse = {
         ? {
             id: Number(product.shop.id),
             name: product.shop.title ?? `Sotuvchi ${product.shop.id}`,
-            official: Boolean(product.shop.official),
+            // Uzum bu maydonni toʻldirmaydi (2026-08-19 da jonli tekshirilgan:
+            // Artel Brand Shop, ARTEL_OFFICIAL, Яшкино — hammasi false).
+            // `Boolean(...)` boʻsh javobni `false` ga aylantirardi, yaʼni
+            // "bilmadim" "yoʻq" boʻlib yozilardi. Xom holida uzatamiz.
+            official: toBool(product.shop.official),
             ordersQuantity: toInt(product.shop.ordersQuantity),
             feedbackQuantity: toInt(product.shop.feedbackQuantity),
             rating: toNumber(product.shop.rating),
@@ -320,6 +324,17 @@ export function buyersFromActions(actions) {
     }
   }
   return null;
+}
+
+/**
+ * "Yoʻq" bilan "bilmadim" ni ajratadi.
+ *
+ * `Boolean(undefined)` → `false`. Shu bitta jimgina almashtirish
+ * oʻlchanmagan maydonni oʻlchangan qilib koʻrsatadi. Bunday qiymat
+ * bazaga tushsa, keyin uni oʻlchovdan ajratib boʻlmaydi.
+ */
+function toBool(value) {
+  return typeof value === "boolean" ? value : null;
 }
 
 function toInt(value) {

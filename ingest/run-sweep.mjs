@@ -13,6 +13,8 @@
  */
 
 import { loadConfig } from "./config.mjs";
+import { createFrontierProbe } from "./lib/frontier.mjs";
+import { createTokenProvider } from "./lib/token.mjs";
 import { createStore } from "./lib/store.mjs";
 import { AccessDeniedError } from "./lib/http.mjs";
 import { createCatalogSource } from "./sources/catalog.mjs";
@@ -220,6 +222,19 @@ async function main() {
   // Kunlik o'sish: nechta mahsulot, do'kon va sharh qo'shildi.
   const growth = await store.recordMarketDay();
   log(`Kunlik o'sish: ${JSON.stringify(growth)}`);
+
+  // Katalog chegarasi. Sweep bilan birga o'lchanadi, chunki qo'lda eslab
+  // turish kerak bo'lsa u o'lchanmay qoladi va tezlik hech qachon chiqmaydi.
+  // Xatosi butun sweepni yiqitmaydi: o'lchov tushib qolgani — asosiy
+  // ish tushib qolganidan ancha arzon.
+  try {
+    const measure = createFrontierProbe(config, createTokenProvider(config), (m) => log(m));
+    const frontier = await measure(await store.frontierStart());
+    log(`Katalog chegarasi: ${frontier}`);
+    await store.recordFrontier(frontier);
+  } catch (error) {
+    log(`Chegara o'lchanmadi: ${error.message}`);
+  }
 }
 
 /**

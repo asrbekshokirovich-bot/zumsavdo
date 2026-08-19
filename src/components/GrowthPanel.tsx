@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type Growth, fetchGrowth } from "@/data/remote";
+import { type FrontierRate, type Growth, fetchFrontierRate, fetchGrowth } from "@/data/remote";
 import { useDataVersion } from "@/data/refresh";
 import { formatDayMonth } from "@/lib/dates";
 import { formatInt, orDash } from "@/lib/format";
@@ -30,13 +30,18 @@ import type { Period } from "@/lib/period";
  */
 export function GrowthPanel({ period }: { period: Period }) {
   const [data, setData] = useState<Growth | null>(null);
+  const [rate, setRate] = useState<FrontierRate | null>(null);
   const [error, setError] = useState<string | null>(null);
   const version = useDataVersion();
 
   useEffect(() => {
     let cancelled = false;
-    fetchGrowth(period.from, period.to)
-      .then((g) => !cancelled && setData(g))
+    Promise.all([fetchGrowth(period.from, period.to), fetchFrontierRate()])
+      .then(([g, r]) => {
+        if (cancelled) return;
+        setData(g);
+        setRate(r);
+      })
       .catch((e) => !cancelled && setError(e instanceof Error ? e.message : String(e)));
     return () => {
       cancelled = true;
@@ -48,6 +53,32 @@ export function GrowthPanel({ period }: { period: Period }) {
   return (
     <Panel title="Kunlik oʻsish" hint="Bozorga nima qoʻshilyapti">
       {error && <p className="note-inline">Oʻsish olinmadi: {error}</p>}
+
+      {/*
+        Tezlik jadvaldan alohida turadi: u kun chegarasiga bogʻlanmagan va
+        ikki oʻlchov bir necha soat oraliqda boʻlsa oʻsha kuniyoq chiqadi.
+      */}
+      <p className="note-inline">
+        {rate?.ids_per_day != null ? (
+          <>
+            Hozirgi tezlik: <b>kuniga ~{formatInt(rate.ids_per_day)} yangi id</b>
+            {rate.hours != null && <> ({rate.hours} soatlik oraliqdan)</>}. Chegara{" "}
+            <b>{formatInt(rate.frontier ?? 0)}</b>.
+          </>
+        ) : (
+          <>
+            Tezlik hali oʻlchanmagan
+            {rate?.frontier != null && (
+              <>
+                {" "}— chegara <b>{formatInt(rate.frontier)}</b> deb oʻlchandi, lekin
+                tezlik uchun <b>ikki</b> nuqta kerak
+              </>
+            )}
+            . Kamida ikki soat oraliqdagi ikkinchi oʻlchovdan keyin chiqadi:{" "}
+            <code>npm run frontier</code>.
+          </>
+        )}
+      </p>
 
       <div className="table-scroll">
         <table>

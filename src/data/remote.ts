@@ -652,6 +652,35 @@ export interface Growth {
   rows: GrowthRow[];
 }
 
+/**
+ * Hozirgi tezlik — ikki chegara oʻlchovi orasidagi id/kun.
+ *
+ * Kunni kutmaydi: bir necha soat oraliqdagi ikki oʻlchov ham javob beradi.
+ * Lekin oraliq juda qisqa boʻlsa raqam shovqinga aylanadi — 3 daqiqalik
+ * oraliqdan "kuniga 10 301" chiqqani oʻlchandi — shuning uchun baza eng
+ * kamida ikki soat talab qiladi va oraliqni javob bilan birga qaytaradi.
+ */
+export interface FrontierRate {
+  frontier: number | null;
+  measured_at: string | null;
+  from_at: string | null;
+  hours: number | null;
+  ids_per_day: number | null;
+  probes: number;
+}
+
+export async function fetchFrontierRate(): Promise<FrontierRate> {
+  const d = await callRpc<FrontierRate | null>("zs_frontier_rate", { p_min_hours: 2 });
+  return {
+    frontier: d?.frontier ?? null,
+    measured_at: d?.measured_at ?? null,
+    from_at: d?.from_at ?? null,
+    hours: d?.hours ?? null,
+    ids_per_day: d?.ids_per_day ?? null,
+    probes: d?.probes ?? 0,
+  };
+}
+
 export async function fetchGrowth(from: string, to: string): Promise<Growth> {
   const data = await callRpc<Growth | null>("zs_market_growth", { p_from: from, p_to: to });
   return { baseline: data?.baseline ?? null, note: data?.note ?? null, rows: data?.rows ?? [] };

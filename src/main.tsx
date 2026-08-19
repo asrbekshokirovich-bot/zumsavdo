@@ -23,7 +23,12 @@ bootstrap().then(async (boot) => {
   const { App } = await import("./App");
   root.render(
     <React.StrictMode>
-      <BrowserRouter>
+      {/*
+        Manzillar `base` ostida: Pages da /zumsavdo/sotuvchi/9103, ildizda
+        esa /sotuvchi/9103. `basename` boʻlmasa Pages da hamma ichki havola
+        404 berardi.
+      */}
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <App boot={boot} />
       </BrowserRouter>
     </React.StrictMode>,

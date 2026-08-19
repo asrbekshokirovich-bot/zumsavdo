@@ -1,0 +1,90 @@
+# Panelni GitHub Pages ga chiqarish.
+#
+# `main` ga har surilganda qayta yigʻiladi va joylanadi. Qoʻlda ham ishga
+# tushirsa boʻladi (workflow_dispatch) — masalan kalit almashtirilgandan
+# keyin qayta yigʻish kerak boʻlsa.
+name: Panelni joylash
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Pages ga yozish uchun shu ikkisi kerak.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Bir vaqtda bitta joylash. Ketma-ket ikki surish boʻlsa, oxirgisi
+# yakunlanadi — oʻrtadagisi bekor qilinadi, chunki u baribir eskirgan.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Kalitlar omborning Secrets boʻlimidan olinadi.
+      #
+      # Ular yoʻq boʻlsa yigʻish TOʻXTATILADI. Aks holda panel joylanadi,
+      # lekin ombor manzilisiz — ekranda "Ombor sozlanmagan" turadi va
+      # sababi koʻrinmaydi. Xato shu yerda, aniq matn bilan chiqqani
+      # yaxshiroq.
+      - name: Kalitlar borligini tekshirish
+        env:
+          URL: ${{ secrets.VITE_SUPABASE_URL }}
+          KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$URL" ] || [ -z "$KEY" ]; then
+            echo "::error::VITE_SUPABASE_URL yoki VITE_SUPABASE_ANON_KEY qoʻyilmagan."
+            echo "Settings → Secrets and variables → Actions → New repository secret"
+            exit 1
+          fi
+
+      - name: Yigʻish
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          # Pages loyihani `/<ombor-nomi>/` ostida beradi.
+          ZUMSAVDO_BASE: /${{ github.event.repository.name }}/
+        run: npm run build
+
+      # Pages statik server: `/sotuvchi/9103` degan fayl yoʻq va u 404
+      # qaytaradi. SPA da bu manzilni brauzerning oʻzi hal qiladi, shuning
+      # uchun 404 sahifasi ham oʻsha ilovaning oʻzi boʻlishi kerak.
+      - name: SPA uchun 404 sahifasi
+        run: cp dist/index.html dist/404.html
+
+      # Jekyll `_` bilan boshlanadigan fayllarni tashlab yuboradi.
+      - run: touch dist/.nojekyll
+
+      - uses: actions/configure-pages@v5
+        with:
+          # Pages hali yoqilmagan boʻlsa workflow oʻzi yoqadi — sozlamalarga
+          # kirib tugma bosish shart emas.
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

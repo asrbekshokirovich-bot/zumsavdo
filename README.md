@@ -39,6 +39,48 @@ ikkinchisiga yoʻnaltiradi:
 Bayroqlar ham oʻtadi: ildizdan `npm run census -- --minutes 60` yozsangiz,
 u `ingest/` ichida oʻsha bayroq bilan ishga tushadi va `ingest/.env` oʻqiladi.
 
+## Internetga chiqarish (GitHub Pages)
+
+Panel `main` ga har surilganda avtomatik yigʻiladi va joylanadi.
+Manzil: `https://<foydalanuvchi>.github.io/zumsavdo/`
+
+Bir marta qilinadigan sozlama — ikkita kalit:
+
+**Settings → Secrets and variables → Actions → New repository secret**
+
+```
+VITE_SUPABASE_URL       = https://<project-ref>.supabase.co
+VITE_SUPABASE_ANON_KEY  = <anon / publishable key>
+```
+
+Kalitlar qoʻyilmasa yigʻish ataylab **toʻxtatiladi**. Aks holda panel
+joylanardi-yu, ombor manzilisiz — ekranda "Ombor sozlanmagan" turardi va
+sababi koʻrinmasdi.
+
+Pages sozlamasini workflow oʻzi yoqadi (`enablement: true`).
+
+### Nega anon kalitni ochiq qoʻyish mumkin
+
+U brauzerga baribir tushadi va yashirib boʻlmaydi. Xavfsizlik kalitda
+emas, **huquqlarda**: baza shunday yopilganki, bu kalit bilan faqat
+panelga kerakli yigʻindilarni oʻqish mumkin.
+
+Tekshirilgan holat:
+
+| | anon kalit bilan |
+|---|---|
+| `zumsavdo` xom jadvallari (perepis, kuzatuv roʻyxati, xom oʻlchov) | yopiq |
+| Yozadigan funksiyalar (`zs_ingest_batch`, `zs_record_frontier`, …) | yopiq |
+| Panel koʻrinishlari va yigʻindi funksiyalari | oʻqish uchun ochiq |
+
+Yigʻuvchi `service_role` kaliti bilan ishlaydi va u **hech qachon**
+brauzerga yoki GitHubga tushmaydi — faqat `ingest/.env` da.
+
+Yangi funksiya qoʻshilganda u oʻzi ochilib qolmaydi: `public` sxemasida
+standart huquqlar olib tashlangan, har biriga ataylab `grant` kerak.
+Unutilsa panel darhol ishlamay qoladi va bu koʻrinadi — teskarisi esa
+koʻrinmasdi.
+
 ## Vercel'ga joylash
 
 Vercel panelida: **Add New → Project** → shu omborni tanlang. Sozlamalarni

@@ -62,3 +62,9 @@ export const RANK_WINDOW_DAYS = 30;
 export function rankPeriod(): Period {
   return makePeriod("30d");
 }
+
+/** Oʻsha oyna, faqat sanalar — bazaga yuborish uchun. */
+export function rankPeriodRange(): { from: string; to: string } {
+  const p = rankPeriod();
+  return { from: p.from, to: p.to };
+}

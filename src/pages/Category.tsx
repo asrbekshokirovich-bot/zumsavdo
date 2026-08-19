@@ -5,13 +5,18 @@ import { Crumb, MetricCard, Panel } from "@/components/ui";
 import { categoryView } from "@/data/api";
 import { formatInt, formatMoney, formatPercent, formatPrice, orDash } from "@/lib/format";
 import { usePeriod } from "@/lib/usePeriod";
+import { useScope } from "@/data/scope";
 import { NotFoundPage } from "./NotFound";
 
 export function CategoryPage() {
   const { id } = useParams();
   const [period, setPeriod] = usePeriod();
-  const view = categoryView(Number(id), period);
+  // Faqat shu turkumdagi sotuvchilar va mahsulotlar oʻqiladi.
+  const { ready, error } = useScope({ kind: "category", id: Number(id) });
+  const view = ready ? categoryView(Number(id), period) : null;
 
+  if (error) return <div className="callout warn">Turkum oʻqilmadi: {error}</div>;
+  if (!ready) return <p className="note-inline">Yuklanmoqda…</p>;
   if (!view) return <NotFoundPage what="Turkum" />;
 
   const known = view.verdict.difficulty !== "nomaʻlum";

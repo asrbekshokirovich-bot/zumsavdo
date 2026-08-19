@@ -8,6 +8,7 @@ import { MetricCard, Panel, PlaceholderRows } from "@/components/ui";
 import { MARKET_SERIES, type MarketSeries, RANK_BASES, type RankBasis } from "@/data/api";
 import { type MarketSummaryRow, type RankRow, fetchPanelOverview } from "@/data/remote";
 import { useDataVersion } from "@/data/refresh";
+import { useScope } from "@/data/scope";
 import { formatInt, formatMoney, orDash } from "@/lib/format";
 import { usePeriod } from "@/lib/usePeriod";
 import type { Period } from "@/lib/period";
@@ -121,6 +122,10 @@ export function HomePage() {
     chosenSeries,
   );
 
+  // Bosh sahifaga qator kerak emas — undagi har bir raqam bazada
+  // hisoblanadi. Qamrov "status" ga qaytariladi, aks holda sotuvchi
+  // sahifasidan qaytgach avtomatik yangilanish oʻsha sotuvchini tortaverardi.
+  useScope({ kind: "status" });
   const { data, error } = useMarket(period, basis, series, useDataVersion());
 
   const effectiveBasis = data ? resolveBasis(RANK_BASES, data.rankAvailable, chosenBasis) : basis;

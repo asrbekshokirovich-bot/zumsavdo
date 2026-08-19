@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { search } from "@/data/api";
+import { type SearchRow, fetchSearch } from "@/data/remote";
 import type { SearchKind } from "@/data/types";
 import { MIN_QUERY_LENGTH } from "@/lib/normalize";
-import { formatInt, formatMoney, formatRankShort } from "@/lib/format";
+import { rankPeriodRange } from "@/lib/period";
+import { formatInt, formatMoney } from "@/lib/format";
 
 const KINDS: { id: SearchKind; label: string; path: string }[] = [
   { id: "shop", label: "Sotuvchi", path: "/sotuvchi" },
@@ -11,22 +12,58 @@ const KINDS: { id: SearchKind; label: string; path: string }[] = [
   { id: "category", label: "Turkum", path: "/turkum" },
 ];
 
+/** Yozishni toʻxtatgandan keyin shuncha kutiladi. */
+const DEBOUNCE_MS = 250;
+
 /**
  * Qidiruv.
  *
  * Avval tur tanlanadi — "iPhone" soʻzi sotuvchi nomida ham, mahsulot nomida
  * ham uchraydi va aralash roʻyxat foydasiz boʻladi.
  *
- * Solishtirish normalizatsiyadan keyin: lotin/kirill va apostrofning toʻrt xil
- * koʻrinishi bitta soʻzga keltiriladi.
+ * Qidiruv **bazada** bajariladi. Ilgari panel butun lugʻatni brauzerga
+ * yuklab olib oʻsha yerda qidirardi; kuzatuv 50 000 ga chiqqach lugʻatning
+ * oʻzi panelni yiqitadigan hajmga aylandi. Lotin/kirill va apostrofning
+ * toʻrt koʻrinishini bir xillashtirish bazada ham aynan shu qoida boʻyicha
+ * bajariladi.
  */
 export function SearchPanel() {
   const [kind, setKind] = useState<SearchKind>("shop");
   const [query, setQuery] = useState("");
+  const [hits, setHits] = useState<SearchRow[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  const hits = useMemo(() => search(kind, query), [kind, query]);
+  const trimmed = query.trim();
+  const tooShort = trimmed.length > 0 && trimmed.length < MIN_QUERY_LENGTH;
   const basePath = KINDS.find((k) => k.id === kind)!.path;
-  const tooShort = query.trim().length > 0 && query.trim().length < MIN_QUERY_LENGTH;
+
+  useEffect(() => {
+    if (trimmed.length < MIN_QUERY_LENGTH) {
+      setHits([]);
+      setError(null);
+      return;
+    }
+    let cancelled = false;
+    setBusy(true);
+    // Har harfda soʻrov yubormaslik uchun: yozish tugagandan keyin bittasi.
+    const timer = setTimeout(() => {
+      const { from, to } = rankPeriodRange();
+      fetchSearch(kind, trimmed, from, to)
+        .then((rows) => {
+          if (cancelled) return;
+          setHits(rows);
+          setError(null);
+        })
+        .catch((e) => !cancelled && setError(e instanceof Error ? e.message : String(e)))
+        .finally(() => !cancelled && setBusy(false));
+    }, DEBOUNCE_MS);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [kind, trimmed]);
 
   return (
     <div className="panel">
@@ -59,13 +96,17 @@ export function SearchPanel() {
           />
         </div>
 
-        {tooShort && (
-          <p className="note-inline">Kamida {MIN_QUERY_LENGTH} ta harf kiriting.</p>
-        )}
+        {tooShort && <p className="note-inline">Kamida {MIN_QUERY_LENGTH} ta harf kiriting.</p>}
 
-        {!tooShort && query.trim().length >= MIN_QUERY_LENGTH && (
+        {error && <p className="note-inline">Qidiruv bajarilmadi: {error}</p>}
+
+        {!tooShort && !error && trimmed.length >= MIN_QUERY_LENGTH && (
           <div className="results">
-            {hits.length === 0 ? (
+            {busy && !hits.length ? (
+              <p className="empty" style={{ padding: 12 }}>
+                Qidirilmoqda…
+              </p>
+            ) : hits.length === 0 ? (
               <p className="empty" style={{ padding: 12 }}>
                 Hech narsa topilmadi.
               </p>
@@ -78,9 +119,6 @@ export function SearchPanel() {
                       <span className="name">{hit.name}</span>
                       <span className="ctx" style={{ display: "block" }}>
                         {hit.context}
-                        {hit.rank
-                          ? ` · ${formatRankShort(hit.rank.position, hit.rank.outOf)} ${hit.rank.basis}`
-                          : ""}
                       </span>
                     </span>
                     <span className="figures">

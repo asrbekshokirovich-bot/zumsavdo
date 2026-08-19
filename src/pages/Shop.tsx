@@ -6,13 +6,19 @@ import { Crumb, EventList, MetricCard, Panel, RankCard } from "@/components/ui";
 import { type ShopProductRow, shopView } from "@/data/api";
 import { formatInt, formatMoney, formatPrice } from "@/lib/format";
 import { usePeriod } from "@/lib/usePeriod";
+import { useScope } from "@/data/scope";
 import { NotFoundPage } from "./NotFound";
 
 export function ShopPage() {
   const { id } = useParams();
   const [period, setPeriod] = usePeriod();
-  const view = shopView(Number(id), period);
+  // Bu sahifa oʻz qismini oʻzi oladi: shu sotuvchi, uning mahsulotlari va
+  // turkumdoshlarining kunlik qatori. Butun baza yuklanmaydi.
+  const { ready, error } = useScope({ kind: "shop", id: Number(id) });
+  const view = ready ? shopView(Number(id), period) : null;
 
+  if (error) return <div className="callout warn">Sotuvchi oʻqilmadi: {error}</div>;
+  if (!ready) return <p className="note-inline">Yuklanmoqda…</p>;
   if (!view) return <NotFoundPage what="Sotuvchi" />;
 
   const columns: Column<ShopProductRow>[] = [

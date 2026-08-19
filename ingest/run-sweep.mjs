@@ -210,6 +210,12 @@ async function main() {
   const to = dates[dates.length - 1] ?? from;
   const rows = await store.rollup(from, to);
   log(`Rollup ${from}…${to}: ${JSON.stringify(rows)}`);
+
+  // Do'kon turkumi mahsulotlardan kelib chiqadi va yangi mahsulot qo'shilsa
+  // siljiydi. Uni shu yerda — o'lchovdan keyin — yangilaymiz, panel so'rovi
+  // paytida emas.
+  const shops = await store.refreshShopCategories();
+  log(`Do'kon turkumi yangilandi: ${shops} ta`);
 }
 
 /**

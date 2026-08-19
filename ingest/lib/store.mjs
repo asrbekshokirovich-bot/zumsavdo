@@ -168,6 +168,17 @@ export function createStore(config) {
       const rows = await rpc("zs_rollup_days", { from_date: fromDate, to_date: toDate });
       return Array.isArray(rows) ? rows[0] : rows;
     },
+
+    /**
+     * Do'konning asosiy turkumi — mahsulotlaridan aniqlanadi va saqlanadi.
+     *
+     * Uzum do'kon uchun turkum bermaydi. Ilgari bu har panel so'rovida
+     * qaytadan hisoblanardi va bitta reyting so'rovining uchdan ikki qismi
+     * aynan shunga ketardi. Endi u o'lchov bilan birga yangilanadi.
+     */
+    async refreshShopCategories() {
+      return rpc("zs_refresh_shop_categories", { p_only_measured: true });
+    },
   };
 }
 

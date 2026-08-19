@@ -1,4 +1,5 @@
 import type { Category, ChangeEvent, Product, ProductDay, Shop, ShopDay, SweepStatus } from "./types";
+import type { DatasetScope } from "./remote";
 
 /**
  * Faol maʻlumot toʻplami va undan hodisa ajratish.
@@ -32,6 +33,27 @@ export interface Dataset {
   productsByCategory: Map<number, number[]>;
   shopsByCategory: Map<number, number[]>;
   dates: string[];
+  /**
+   * Toʻplam qaysi qism uchun oʻqilgani.
+   *
+   * Panel butun bazani yuklamaydi: bosh sahifaga qator kerak emas, sotuvchi
+   * sahifasiga esa faqat oʻsha sotuvchi va turkumdoshlari kerak. Sahifa
+   * oʻzinikini soʻraganini bilishi uchun qamrov shu yerda yozib qoʻyiladi.
+   */
+  scope: DatasetScope;
+  /** Roʻyxat cheklovga urilganmi — sahifa buni yozib qoʻyadi, jimgina kesilmaydi. */
+  truncated: boolean;
+  /** Butun bazada nechta obyekt oʻlchangani — qamrovdagisi emas. */
+  measured: { shops: number; products: number };
+  /**
+   * Eng eski oʻlchov sanasi — davr tanlagichning chegarasi.
+   *
+   * Bu vaqt oʻqining boshi emas: oʻq 45 kun bilan chegaralangan, chunki uzun
+   * oʻqni har sotuvchi uchun massivga aylantirish brauzerni bosadi. Tanlagich
+   * esa undan orqaga chiqa oladi — bosh sahifadagi raqamlar bazada
+   * hisoblanadi va u yerda cheklov yoʻq.
+   */
+  firstDay: string | null;
   status: SweepStatus;
   /** Bir kunda kutilayotgan sweeplar soni. */
   sweepsPerDay: number;

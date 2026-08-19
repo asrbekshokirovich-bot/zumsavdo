@@ -8,6 +8,7 @@ import { productView } from "@/data/api";
 import { formatInt, formatMoney, formatMoneyShort, formatPercent, formatPrice } from "@/lib/format";
 import { formatDateTime } from "@/lib/dates";
 import { usePeriod } from "@/lib/usePeriod";
+import { useScope } from "@/data/scope";
 import { NotFoundPage } from "./NotFound";
 
 /**
@@ -22,8 +23,13 @@ export function ProductPage() {
   const { id } = useParams();
   const [period, setPeriod] = usePeriod();
   const [hover, setHover] = useState<number | null>(null);
-  const view = productView(Number(id), period);
+  // Faqat shu mahsulot oʻqiladi. Sharh tarixi uchun vaqt oʻqi ham shu
+  // sahifada uzayadi — boshqa sahifalarda 45 kun bilan cheklangan.
+  const { ready, error } = useScope({ kind: "product", id: Number(id) });
+  const view = ready ? productView(Number(id), period) : null;
 
+  if (error) return <div className="callout warn">Mahsulot oʻqilmadi: {error}</div>;
+  if (!ready) return <p className="note-inline">Yuklanmoqda…</p>;
   if (!view) return <NotFoundPage what="Mahsulot" />;
 
   const shared = {

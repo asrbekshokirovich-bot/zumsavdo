@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
-import { rangeKeys, toKey } from "@/lib/dates";
+import { addDays, rangeKeys, toKey } from "@/lib/dates";
 import type { Dataset } from "./dataset";
-import type { Category, Product, ProductDay, Shop, ShopDay, SweepStatus } from "./types";
+import type { Category, Product, ProductDay, Shop, ShopDay } from "./types";
 
 /**
  * Ombordan oʻqish.
@@ -59,120 +59,199 @@ async function selectAll<T>(
   return out;
 }
 
-export async function loadRemoteDataset(): Promise<Dataset> {
+/**
+ * Panel qaysi qismni oʻqishi.
+ *
+ * Ilgari bunday tanlov yoʻq edi: ochilishda **butun** lugʻat va barcha
+ * kunlik qatorlar yuklanardi. 81 mahsulotda bu sezilmasdi. Sweep 50 000 ga
+ * chiqqach esa oʻn minglab qator degani boʻldi, ular 1000 tadan sahifalanib
+ * oʻnlab soʻrovga boʻlindi va brauzer ularning bir qismini yuborishdan bosh
+ * tortdi — ekranda bu "TypeError: Failed to fetch" va butunlay boʻsh panel
+ * boʻlib koʻrindi.
+ *
+ * Endi har sahifa oʻziga keragini oladi. Bosh sahifaga umuman qator kerak
+ * emas: uning hamma raqami bazada hisoblanadi.
+ */
+export type DatasetScope =
+  | { kind: "status" }
+  | { kind: "shop"; id: number }
+  | { kind: "category"; id: number }
+  | { kind: "product"; id: number };
+
+/**
+ * Bitta turkumdan koʻpi bilan shuncha mahsulot oʻqiladi.
+ *
+ * Cheklov jimgina qoʻyilmaydi: kesilgan boʻlsa `truncated` bayrogʻi koʻtariladi
+ * va sahifa buni yozib qoʻyadi. Jimgina kesish "turkumda shuncha mahsulot bor"
+ * degan yolgʻon javob berardi.
+ */
+const CATEGORY_PRODUCT_CAP = 1000;
+
+/**
+ * Turkumdoshlar chegarasi — sotuvchi sahifasidagi punktir chiziq uchun.
+ *
+ * Oʻrtacha sotuvchini hisoblash uchun turkumdagi hamma sotuvchi kerak, lekin
+ * yirik turkumda ular minglab boʻlishi mumkin. Shuncha sotuvchining kunlik
+ * qatorini tortish sahifani oʻldiradi; oʻrtacha esa 500 tadan keyin sezilarli
+ * oʻzgarmaydi.
+ */
+const SIBLING_CAP = 500;
+
+interface Bounds {
+  source: string | null;
+  last_sweep_at: string | null;
+  errors: number;
+  coverage_percent: number;
+  first_day: string | null;
+  last_day: string | null;
+  sweeps_per_day: number | null;
+  measured: { shops: number; products: number };
+}
+
+/** Ochilish uchun kerak boʻlgan eng kichik maʻlumot — bitta soʻrov. */
+export async function fetchBounds(): Promise<Bounds> {
+  const data = await callRpc<Bounds | null>("zs_panel_bounds", {});
+  return {
+    source: data?.source ?? null,
+    last_sweep_at: data?.last_sweep_at ?? null,
+    errors: data?.errors ?? 0,
+    coverage_percent: data?.coverage_percent ?? 0,
+    first_day: data?.first_day ?? null,
+    last_day: data?.last_day ?? null,
+    sweeps_per_day: data?.sweeps_per_day ?? null,
+    measured: data?.measured ?? { shops: 0, products: 0 },
+  };
+}
+
+export async function loadRemoteDataset(scope: DatasetScope = { kind: "status" }): Promise<Dataset> {
   const db = client();
+  const bounds = await fetchBounds();
 
-  const since = new Date();
-  since.setDate(since.getDate() - WINDOW_DAYS);
-  const sinceKey = toKey(since);
-
-  const [
-    categoryRows,
-    shopRows,
-    productRows,
-    shopDayRows,
-    productDayRows,
-    feedbackDayRows,
-    feedbackSpanRows,
-    sweepRows,
-  ] = await Promise.all([
-      selectAll<{ id: number; name: string }>(db, "zs_panel_category", "id,name", ["id"]),
-      selectAll<{ id: number; name: string; category_id: number | null; official: boolean }>(
-        db,
-        "zs_panel_shop",
-        "id,name,category_id,official",
-        ["id"],
-      ),
-      selectAll<{ id: number; title: string; shop_id: number | null; category_id: number | null }>(
-        db,
-        "zs_panel_product",
-        "id,title,shop_id,category_id",
-        ["id"],
-      ),
-      selectAll<{
-        shop_id: number;
-        date: string;
-        orders: number | null;
-        orders_certain: boolean;
-        avg_price: number | null;
-        sweeps: number;
-        sweeps_expected: number;
-        window_hours: number | null;
-      }>(
-        db,
-        "zs_shop_day",
-        "shop_id,date,orders,orders_certain,avg_price,sweeps,sweeps_expected,window_hours",
-        ["shop_id", "date"],
-        (q) => q.gte("date", sinceKey),
-      ),
-      selectAll<{
-        product_id: number;
-        date: string;
-        price: number | null;
-        discount_percent: number | null;
-        stock: number | null;
-        reviews: number | null;
-        buyers_per_week: number | null;
-        sold_units: number | null;
-        restocked_units: number | null;
-        out_of_stock: boolean;
-        sweeps: number;
-        observed_at: string | null;
-        first_observed_at: string | null;
-      }>(
-        db,
-        "zs_product_day",
-        "product_id,date,price,discount_percent,stock,reviews,buyers_per_week,sold_units,restocked_units,out_of_stock,sweeps,observed_at,first_observed_at",
-        ["product_id", "date"],
-        (q) => q.gte("date", sinceKey),
-      ),
-      // Sharh kunlari — yagona qator oʻlchovsiz ham tarix beradi.
-      selectAll<{
-        product_id: number;
-        date: string;
-        feedbacks: number;
-        avg_rating: number | null;
-      }>(
-        db,
-        "zs_feedback_day",
-        "product_id,date,feedbacks,avg_rating",
-        ["product_id", "date"],
-        (q) => q.gte("date", sinceKey),
-      ),
-      // Tarix qaysi sanadan boshlanishi — "nol" bilan "nomaʻlum" ni ajratish uchun.
-      selectAll<{ product_id: number; first_date: string }>(
-        db,
-        "zs_feedback_span",
-        "product_id,first_date",
-        ["product_id"],
-      ),
-      selectAll<{
-        source: string;
-        started_at: string;
-        finished_at: string | null;
-        targets: number;
-        captured: number;
-        errors: number;
-      }>(db, "zs_sweep", "source,started_at,finished_at,targets,captured,errors", [], (q) =>
-        q.order("started_at", { ascending: false }).limit(1),
-      ),
-    ]);
-
-  if (!shopDayRows.length && !feedbackDayRows.length) {
+  if (!bounds.last_sweep_at) {
     throw new Error(
       "Omborda hali kunlik oʻlchov yoʻq. Avval sweep ishga tushirilishi kerak: " +
         "ingest/ → npm run sweep",
     );
   }
 
-  // Vaqt oʻqiga sharh kunlari ham kiradi. Sabab: oʻlchov bugundan boshlanadi,
-  // sharh esa oylar orqaga boradi — oʻqni faqat oʻlchovdan qursak, mavjud
-  // tarix koʻrinmay qolardi.
-  const dates = buildDateAxis([
-    ...shopDayRows.map((r) => r.date),
-    ...feedbackDayRows.map((r) => r.date),
+  // ------------------------------------------------------------- vaqt oʻqi
+  //
+  // Oʻq davr oynasi bilan chegaralanadi. `first_day` sharh tarixidan kelib
+  // yillar orqaga ketishi mumkin va oʻsha uzunlikdagi oʻqni har sotuvchi
+  // uchun massivga aylantirsak, 640 sotuvchida yuz minglab obyekt chiqadi.
+  // Mahsulot sahifasi istisno: u sharh tarixini butunlay koʻrsatadi.
+  const today = toKey(new Date());
+  const windowStart = addDays(today, -WINDOW_DAYS);
+  let axisFrom = windowStart;
+  if (scope.kind === "product" && bounds.first_day && bounds.first_day < windowStart) {
+    axisFrom = bounds.first_day;
+  }
+  const dates = rangeKeys(axisFrom, today);
+
+  // ------------------------------------------------------------ qamrov
+  //
+  // Qaysi obyektlar oʻqilishi shu yerda hal boʻladi. Bosh sahifa hech
+  // qanday obyekt soʻramaydi — undagi har bir raqam bazada hisoblanadi.
+  let shopRows: PanelShopRow[] = [];
+  let productRows: PanelProductRow[] = [];
+  let truncated = false;
+
+  if (scope.kind === "product") {
+    productRows = await selectAll<PanelProductRow>(
+      db, "zs_panel_product", "id,title,shop_id,category_id", ["id"],
+      (q) => q.eq("id", scope.id),
+    );
+    const shopId = productRows[0]?.shop_id;
+    if (shopId != null) {
+      shopRows = await selectAll<PanelShopRow>(
+        db, "zs_panel_shop", "id,name,category_id,official", ["id"],
+        (q) => q.eq("id", shopId),
+      );
+    }
+  } else if (scope.kind === "shop") {
+    const self = await selectAll<PanelShopRow>(
+      db, "zs_panel_shop", "id,name,category_id,official", ["id"],
+      (q) => q.eq("id", scope.id),
+    );
+    // Turkumdagi qoʻshnilar ham kerak: sahifadagi punktir chiziq —
+    // shu turkumdagi oʻrtacha sotuvchi. Ulardan faqat kunlik qatori
+    // olinadi, mahsuloti emas.
+    const categoryId = self[0]?.category_id;
+    const siblings = categoryId == null ? [] : await selectAll<PanelShopRow>(
+      db, "zs_panel_shop", "id,name,category_id,official", ["id"],
+      (q) => q.eq("category_id", categoryId).limit(SIBLING_CAP),
+    );
+    if (siblings.length >= SIBLING_CAP) truncated = true;
+    shopRows = dedupeById([...self, ...siblings]);
+    productRows = await selectAll<PanelProductRow>(
+      db, "zs_panel_product", "id,title,shop_id,category_id", ["id"],
+      (q) => q.eq("shop_id", scope.id),
+    );
+  } else if (scope.kind === "category") {
+    shopRows = await selectAll<PanelShopRow>(
+      db, "zs_panel_shop", "id,name,category_id,official", ["id"],
+      (q) => q.eq("category_id", scope.id),
+    );
+    productRows = await selectAll<PanelProductRow>(
+      db, "zs_panel_product", "id,title,shop_id,category_id", ["id"],
+      (q) => q.eq("category_id", scope.id).limit(CATEGORY_PRODUCT_CAP),
+    );
+    truncated = productRows.length >= CATEGORY_PRODUCT_CAP;
+  }
+
+  const shopIds = shopRows.map((s) => s.id);
+  const productIds = productRows.map((p) => p.id);
+
+  // ------------------------------------------------------------ turkumlar
+  //
+  // Faqat qamrovda uchraydigan turkumlar — butun lugʻat emas.
+  const categoryIds = unique([
+    ...shopRows.map((s) => s.category_id),
+    ...productRows.map((p) => p.category_id),
+    ...(scope.kind === "category" ? [scope.id] : []),
+  ]);
+  const categoryRows = categoryIds.length
+    ? await selectAll<{ id: number; name: string }>(
+        db, "zs_panel_category", "id,name", ["id"],
+        (q) => q.in("id", categoryIds),
+      )
+    : [];
+
+  // ------------------------------------------------------------ kunlik
+  const [shopDayRows, productDayRows, feedbackDayRows, feedbackSpanRows] = await Promise.all([
+    shopIds.length
+      ? selectAll<ShopDayRow>(
+          db, "zs_shop_day",
+          "shop_id,date,orders,orders_certain,avg_price,sweeps,sweeps_expected,window_hours",
+          ["shop_id", "date"],
+          (q) => q.in("shop_id", shopIds).gte("date", axisFrom),
+        )
+      : Promise.resolve([]),
+    productIds.length
+      ? selectAll<ProductDayRow>(
+          db, "zs_product_day",
+          "product_id,date,price,discount_percent,stock,reviews,buyers_per_week,sold_units," +
+            "restocked_units,out_of_stock,sweeps,observed_at,first_observed_at",
+          ["product_id", "date"],
+          (q) => q.in("product_id", productIds).gte("date", axisFrom),
+        )
+      : Promise.resolve([]),
+    productIds.length
+      ? selectAll<FeedbackDayRow>(
+          db, "zs_feedback_day", "product_id,date,feedbacks,avg_rating",
+          ["product_id", "date"],
+          (q) => q.in("product_id", productIds).gte("date", axisFrom),
+        )
+      : Promise.resolve([]),
+    productIds.length
+      ? selectAll<{ product_id: number; first_date: string }>(
+          db, "zs_feedback_span", "product_id,first_date", ["product_id"],
+          (q) => q.in("product_id", productIds),
+        )
+      : Promise.resolve([]),
   ]);
 
+  // ------------------------------------------------------------ yigʻish
   const categories: Category[] = categoryRows.map((c) => ({ id: c.id, name: c.name }));
   const shops: Shop[] = shopRows.map((s) => ({
     id: s.id,
@@ -202,7 +281,7 @@ export async function loadRemoteDataset(): Promise<Dataset> {
         ordersCertain: false,
         avgPrice: 0,
         sweeps: 0,
-        sweepsExpected: 12,
+        sweepsExpected: bounds.sweeps_per_day ?? 12,
         windowHours: null,
       })),
     );
@@ -224,11 +303,7 @@ export async function loadRemoteDataset(): Promise<Dataset> {
   }
 
   // Kunlik qatorlar SIYRAK saqlanadi: faqat oʻlchovi bor kun/mahsulot.
-  //
-  // Ilgari bu yerda har mahsulot uchun butun vaqt oʻqi boʻylab massiv
-  // yasalardi. 81 mahsulotda sezilmasdi, 50 000 da esa 2,3 million obyekt
-  // degani va brauzer koʻtarmasdi. Toʻliq massiv endi faqat soʻralgan
-  // mahsulot uchun quriladi (`getProductDays`) va keshlanadi.
+  // Toʻliq massiv soʻralgan mahsulot uchun quriladi va keshlanadi.
   const sparse = new Map<number, Map<string, Partial<ProductDay>>>();
   const put = (productId: number, date: string, patch: Partial<ProductDay>) => {
     let byDate = sparse.get(productId);
@@ -298,58 +373,91 @@ export async function loadRemoteDataset(): Promise<Dataset> {
     return series;
   };
 
-  const productsByShop = groupBy(products, (p) => p.shopId);
-  const productsByCategory = groupBy(products, (p) => p.categoryId);
-  const shopsByCategory = groupBy(shops, (s) => s.categoryId);
-
   return {
     categories,
     shops,
     products,
     shopDays,
     getProductDays,
-    productsByShop,
-    productsByCategory,
-    shopsByCategory,
+    productsByShop: groupBy(products, (p) => p.shopId),
+    productsByCategory: groupBy(products, (p) => p.categoryId),
+    shopsByCategory: groupBy(shops, (s) => s.categoryId),
     dates,
-    status: buildStatus(sweepRows[0], shopDayRows, dates[dates.length - 1]),
-    sweepsPerDay: shopDayRows[0]?.sweeps_expected ?? 12,
+    scope,
+    truncated,
+    measured: bounds.measured,
+    firstDay: bounds.first_day,
+    status: {
+      lastSweepAt: bounds.last_sweep_at,
+      coveragePercent: bounds.coverage_percent,
+      errors: bounds.errors,
+      source: bounds.source ?? "nomaʻlum",
+    },
+    sweepsPerDay: bounds.sweeps_per_day ?? 12,
   };
 }
 
-/** Eng eski oʻlchovdan bugungacha — uzilishsiz kunlar qatori. */
-function buildDateAxis(observed: string[]): string[] {
-  const sorted = [...observed].sort();
-  const first = sorted[0];
-  const last = sorted[sorted.length - 1];
-  const now = toKey(new Date());
-  return rangeKeys(first, last > now ? last : now);
+interface PanelShopRow {
+  id: number;
+  name: string;
+  category_id: number | null;
+  official: boolean;
 }
 
-/**
- * Holat satri uchun raqamlar.
- *
- * Qamrov — oxirgi kunda oʻlchov tushgan sotuvchilar ulushi. Bu sunʻiy emas:
- * qamrov pasaysa, panelning barcha yigʻindilari ham pasayadi.
- */
-function buildStatus(
-  sweep:
-    | { source: string; started_at: string; finished_at: string | null; errors: number }
-    | undefined,
-  shopDayRows: { date: string; sweeps: number }[],
-  lastDate: string,
-): SweepStatus {
-  const todayRows = shopDayRows.filter((r) => r.date === lastDate);
-  const covered = todayRows.filter((r) => r.sweeps > 0).length;
-  const total = new Set(shopDayRows.map((r) => `${r.date}`)).size ? todayRows.length : 0;
-
-  return {
-    lastSweepAt: sweep?.finished_at ?? sweep?.started_at ?? new Date().toISOString(),
-    coveragePercent: total ? Math.round((covered / total) * 1000) / 10 : 0,
-    errors: sweep?.errors ?? 0,
-    source: sweep?.source ?? "nomaʻlum",
-  };
+interface PanelProductRow {
+  id: number;
+  title: string;
+  shop_id: number | null;
+  category_id: number | null;
 }
+
+interface ShopDayRow {
+  shop_id: number;
+  date: string;
+  orders: number | null;
+  orders_certain: boolean;
+  avg_price: number | null;
+  sweeps: number;
+  sweeps_expected: number;
+  window_hours: number | null;
+}
+
+interface ProductDayRow {
+  product_id: number;
+  date: string;
+  price: number | null;
+  discount_percent: number | null;
+  stock: number | null;
+  reviews: number | null;
+  buyers_per_week: number | null;
+  sold_units: number | null;
+  restocked_units: number | null;
+  out_of_stock: boolean;
+  sweeps: number;
+  observed_at: string | null;
+  first_observed_at: string | null;
+}
+
+interface FeedbackDayRow {
+  product_id: number;
+  date: string;
+  feedbacks: number;
+  avg_rating: number | null;
+}
+
+function unique(values: (number | null)[]): number[] {
+  return [...new Set(values.filter((v): v is number => v != null))];
+}
+
+function dedupeById<T extends { id: number }>(rows: T[]): T[] {
+  const seen = new Map<number, T>();
+  for (const row of rows) if (!seen.has(row.id)) seen.set(row.id, row);
+  return [...seen.values()];
+}
+
+// `buildDateAxis` va `buildStatus` olib tashlandi. Ular vaqt oʻqini va
+// qamrovni brauzerga tortilgan barcha qatorlardan hisoblardi — endi ikkisi
+// ham `zs_panel_bounds` da, bitta soʻrovda keladi.
 
 function groupBy<T extends { id: number }>(items: T[], key: (item: T) => number): Map<number, number[]> {
   const map = new Map<number, number[]>();
@@ -486,6 +594,42 @@ export interface RankPage {
 }
 
 export type RankKind = "shop" | "category" | "product";
+
+/**
+ * Qidiruv bazada.
+ *
+ * Ilgari panel butun lugʻatni brauzerga yuklab olib oʻsha yerda qidirardi.
+ * 81 mahsulotda bu sezilmasdi; 50 000 da esa lugʻatning oʻzi panelni
+ * yiqitadigan hajmga aylanadi. Normalizatsiya (kirill → lotin, apostrof)
+ * bazada ham xuddi shu qoida boʻyicha bajariladi — aks holda "Oʻzbekiston"
+ * bir joyda topilib, boshqasida topilmasdi.
+ */
+export interface SearchRow {
+  kind: string;
+  id: number;
+  name: string;
+  context: string;
+  orders: number;
+  revenue: number;
+}
+
+export async function fetchSearch(
+  kind: string,
+  query: string,
+  from: string,
+  to: string,
+  limit = 8,
+): Promise<SearchRow[]> {
+  return (
+    (await callRpc<SearchRow[] | null>("zs_search", {
+      p_kind: kind,
+      p_query: query,
+      p_from: from,
+      p_to: to,
+      p_limit: limit,
+    })) ?? []
+  );
+}
 
 export async function fetchRankPage(
   kind: RankKind,

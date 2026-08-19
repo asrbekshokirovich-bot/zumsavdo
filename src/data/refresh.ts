@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { setDataStart } from "@/lib/dates";
-import { loadRemoteDataset } from "./remote";
-import { setDataset } from "./dataset";
+import { type DatasetScope, loadRemoteDataset } from "./remote";
+import { hasDataset, setDataset } from "./dataset";
 
 /**
  * Panelni yangilab turish.
@@ -43,6 +43,40 @@ const REFRESH_TIMEOUT_MS = 30_000;
 const MIN_GAP_MS = 5_000;
 
 let lastAttemptAt = 0;
+
+/**
+ * Hozir qaysi qism yuklangani.
+ *
+ * Avtomatik yangilanish shuni qayta oʻqiydi. Ilgari u har safar butun bazani
+ * tortardi — sotuvchi sahifasida turgan odam uchun ham, garchi unga faqat
+ * bitta sotuvchi kerak boʻlsa ham.
+ */
+let currentScope: DatasetScope = { kind: "status" };
+
+export function scopeKey(scope: DatasetScope): string {
+  return scope.kind === "status" ? "status" : `${scope.kind}:${scope.id}`;
+}
+
+/**
+ * Sahifa oʻz qismini yuklaydi va yangilanish ham oʻshanga bogʻlanadi.
+ *
+ * Ayni qism yaqinda yuklangan boʻlsa qayta soʻralmaydi: ochilishda
+ * `bootstrap()` "status" ni oʻqiydi, keyin bosh sahifa yana oʻshani
+ * soʻrardi — bir xil ikkita soʻrov va ular ortidan bosh sahifaning
+ * yigʻindisi ham ikki marta.
+ */
+export async function loadScope(scope: DatasetScope): Promise<void> {
+  const key = scopeKey(scope);
+  const fresh = performance.now() - lastAttemptAt < MIN_GAP_MS;
+  if (key === scopeKey(currentScope) && hasDataset() && fresh) return;
+
+  currentScope = scope;
+  const dataset = await withTimeout(loadRemoteDataset(scope), REFRESH_TIMEOUT_MS);
+  setDataset(dataset);
+  if (dataset.firstDay) setDataStart(dataset.firstDay);
+  markRefreshed();
+  notify();
+}
 
 let version = 0;
 let refreshing = false;
@@ -95,11 +129,11 @@ export async function refreshNow(force = false): Promise<void> {
   lastAttemptAt = now;
   refreshing = true;
   try {
-    const dataset = await withTimeout(loadRemoteDataset(), REFRESH_TIMEOUT_MS);
+    const dataset = await withTimeout(loadRemoteDataset(currentScope), REFRESH_TIMEOUT_MS);
     setDataset(dataset);
     // Yangi oʻlchov eskiroq sanadan boshlangan boʻlishi mumkin — davr
     // tanlagichning chegarasi ham u bilan birga siljisin.
-    if (dataset.dates.length) setDataStart(dataset.dates[0]);
+    if (dataset.firstDay) setDataStart(dataset.firstDay);
     markRefreshed();
     notify();
   } catch {

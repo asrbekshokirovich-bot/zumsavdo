@@ -39,6 +39,10 @@ function emptyDataset(): Dataset {
     productsByCategory: new Map(),
     shopsByCategory: new Map(),
     dates,
+    scope: { kind: "status" },
+    truncated: false,
+    measured: { shops: 0, products: 0 },
+    firstDay: null,
     status: {
       lastSweepAt: "",
       coveragePercent: 0,
@@ -89,7 +93,9 @@ export async function bootstrap(): Promise<BootResult> {
     setDataset(dataset);
     markRefreshed();
     // Davr tanlagich eng eski oʻlchovdan orqaga chiqmasligi kerak.
-    if (dataset.dates.length) setDataStart(dataset.dates[0]);
+    // `dates[0]` emas: vaqt oʻqi 45 kun bilan chegaralangan, oʻlchov esa
+    // undan ancha orqaga boradi va tanlagich uni koʻrsata olishi kerak.
+    if (dataset.firstDay) setDataStart(dataset.firstDay);
     return { mode: "ready" };
   } catch (error) {
     setDataset(emptyDataset());

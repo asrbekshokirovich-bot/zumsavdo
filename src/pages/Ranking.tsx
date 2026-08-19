@@ -6,6 +6,7 @@ import { Crumb, Panel, PlaceholderRows } from "@/components/ui";
 import { RANK_BASES, type RankBasis } from "@/data/api";
 import { type RankKind, type RankPage, fetchRankPage } from "@/data/remote";
 import { useDataVersion } from "@/data/refresh";
+import { useScope } from "@/data/scope";
 import { formatInt, formatMoney, orDash } from "@/lib/format";
 import { usePeriod } from "@/lib/usePeriod";
 
@@ -57,6 +58,8 @@ export function RankingPage() {
   const [page, setPage] = useState<RankPage | null>(null);
   const [error, setError] = useState<string | null>(null);
   const version = useDataVersion();
+  // Bu sahifa ham qatorlarni bazadan sahifalab oladi — lugʻat kerak emas.
+  useScope({ kind: "status" });
 
   const offset = Math.max(0, Number(params.get("dan") ?? 0) || 0);
   const basis = resolveBasis(options, new Set(options.map((o) => o.id)), chosen);

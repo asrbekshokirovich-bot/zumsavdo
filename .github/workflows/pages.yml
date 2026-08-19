@@ -42,10 +42,32 @@ jobs:
       # Secrets qoʻyilgan boʻlsa oʻsha ustun turadi: kalitni omborni
       # oʻzgartirmasdan almashtirish yoki boshqa bazaga ulash mumkin
       # boʻlsin.
+      # Secrets faqat QOʻYILGAN boʻlsa muhitga chiqariladi.
+      #
+      # Ilgari ular toʻgʻridan-toʻgʻri `env:` ga yozilgandi va bu birinchi
+      # urinishni yiqitdi: secret qoʻyilmagan boʻlsa GitHub uni BOʻSH SATR
+      # qilib beradi, Vite esa muhit oʻzgaruvchisini `.env.production` dan
+      # ustun qoʻyadi — boʻsh boʻlsa ham. Natijada ombor manzili bundle ga
+      # umuman tushmadi.
+      #
+      # `$GITHUB_ENV` ga faqat boʻsh boʻlmaganda yoziladi, shuning uchun
+      # secret yoʻq boʻlsa `.env.production` oʻz ishini qiladi.
+      - name: Secrets qoʻyilgan boʻlsa ularni ishlatish
+        env:
+          URL: ${{ secrets.VITE_SUPABASE_URL }}
+          KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -n "$URL" ]; then
+            echo "VITE_SUPABASE_URL=$URL" >> "$GITHUB_ENV"
+            echo "Ombor manzili secrets dan olindi."
+          fi
+          if [ -n "$KEY" ]; then
+            echo "VITE_SUPABASE_ANON_KEY=$KEY" >> "$GITHUB_ENV"
+            echo "Kalit secrets dan olindi."
+          fi
+
       - name: Yigʻish
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           # Pages loyihani `/<ombor-nomi>/` ostida beradi.
           ZUMSAVDO_BASE: /${{ github.event.repository.name }}/
         run: npm run build

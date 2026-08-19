@@ -26,6 +26,10 @@ query zumsavdoCensus($id: Int!) {
       minSellPrice
       minFullPrice
       category { id title }
+      # official soʻraladi, lekin YOZILMAYDI — Uzum uni doim false
+      # qaytaradi. Soʻrovda qoldirilgan sababi: Uzum toʻldira boshlasa,
+      # bir marta tekshirib bilamiz. (Bu yerda backtick ishlatib
+      # boʻlmaydi: soʻrov JS shablon satri ichida.)
       shop { id title official ordersQuantity }
     }
   }
@@ -40,11 +44,12 @@ export function parseCensus(node, observedAt) {
     ? {
         id: Number(product.shop.id),
         name: product.shop.title ?? `Sotuvchi ${product.shop.id}`,
-        // Uzum bu maydonni toʻldirmaydi (2026-08-19 da jonli tekshirilgan:
-        // Artel Brand Shop, ARTEL_OFFICIAL, Яшкино — hammasi false).
-        // `Boolean(...)` boʻsh javobni `false` ga aylantirardi, yaʼni
-        // "bilmadim" "yoʻq" boʻlib yozilardi. Xom holida uzatamiz.
-        official: toBool(product.shop.official),
+        // Uzum bu maydonni ISHLATMAYDI. 63 113 doʻkondan birortasi ham
+        // `true` emas — ARTEL_OFFICIAL, Artel Brand Shop, Яшкино ham `false`.
+        // Yaʼni Uzumning `false` i "rasmiy emas" degani emas: u doimiy.
+        // Doimiyni oʻlchov deb yozsak, boʻshliq oʻlchov boʻlib koʻrinadi.
+        // Boshqa bozor (WB, Yandex) haqiqiy belgi bersa — oʻsha manba yozadi.
+        official: null,
         ordersQuantity: toInt(product.shop.ordersQuantity),
       }
     : null;
@@ -73,17 +78,6 @@ export function parseCensus(node, observedAt) {
       shopOrders: shop?.ordersQuantity ?? null,
     },
   };
-}
-
-/**
- * "Yoʻq" bilan "bilmadim" ni ajratadi.
- *
- * `Boolean(undefined)` → `false`. Shu bitta jimgina almashtirish
- * oʻlchanmagan maydonni oʻlchangan qilib koʻrsatadi. Bunday qiymat
- * bazaga tushsa, keyin uni oʻlchovdan ajratib boʻlmaydi.
- */
-function toBool(value) {
-  return typeof value === "boolean" ? value : null;
 }
 
 function toInt(value) {

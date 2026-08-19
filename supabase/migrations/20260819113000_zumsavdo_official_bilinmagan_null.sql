@@ -109,3 +109,11 @@ begin
     'official = coalesce(excluded.official, zumsavdo.shop.official),');
   execute src;
 end $$;
+
+-- QOʻSHIMCHA (oʻsha kuni, kechroq). Yuqoridagi xulosa toʻgʻri, lekin
+-- yetarli emas edi: Uzum maydonni boʻsh qoldirmaydi — haqiqiy `false`
+-- yuboradi. 63 113 doʻkonda 0 ta `true`. Yaʼni bu `false` oʻlchov emas,
+-- doimiy. Shuning uchun yigʻuvchi endi bu ustunga umuman yozmaydi
+-- (`official: null`). Baza tomonida qoʻshimcha oʻzgarish kerak emas:
+-- `coalesce(excluded.official, eski)` NULL kelganda eskisini saqlaydi,
+-- demak bir marta tozalangandan keyin toza qoladi.

@@ -35,23 +35,13 @@ jobs:
 
       - run: npm ci
 
-      # Kalitlar omborning Secrets boʻlimidan olinadi.
+      # Ombor manzili `.env.production` da — u omborda turadi va hech
+      # qanday sozlash talab qilmaydi. Kalit `sb_publishable_`, yaʻni
+      # Supabase uni aynan brauzerga berish uchun beradi.
       #
-      # Ular yoʻq boʻlsa yigʻish TOʻXTATILADI. Aks holda panel joylanadi,
-      # lekin ombor manzilisiz — ekranda "Ombor sozlanmagan" turadi va
-      # sababi koʻrinmaydi. Xato shu yerda, aniq matn bilan chiqqani
-      # yaxshiroq.
-      - name: Kalitlar borligini tekshirish
-        env:
-          URL: ${{ secrets.VITE_SUPABASE_URL }}
-          KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-        run: |
-          if [ -z "$URL" ] || [ -z "$KEY" ]; then
-            echo "::error::VITE_SUPABASE_URL yoki VITE_SUPABASE_ANON_KEY qoʻyilmagan."
-            echo "Settings → Secrets and variables → Actions → New repository secret"
-            exit 1
-          fi
-
+      # Secrets qoʻyilgan boʻlsa oʻsha ustun turadi: kalitni omborni
+      # oʻzgartirmasdan almashtirish yoki boshqa bazaga ulash mumkin
+      # boʻlsin.
       - name: Yigʻish
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
@@ -59,6 +49,23 @@ jobs:
           # Pages loyihani `/<ombor-nomi>/` ostida beradi.
           ZUMSAVDO_BASE: /${{ github.event.repository.name }}/
         run: npm run build
+
+      # Kirishni emas, NATIJANI tekshiramiz.
+      #
+      # Kalit borligini tekshirish yetarli emas edi: u qoʻyilgan boʻlsa
+      # ham yigʻishga tushmay qolishi mumkin. Yigʻilgan JS ichida ombor
+      # manzili bormi — savol shu, va javobi bir xil aniq.
+      #
+      # Boʻlmasa joylash toʻxtatiladi: ombor manzilisiz panel joylansa,
+      # ekranda sababsiz "Ombor sozlanmagan" turardi.
+      - name: Ombor manzili yigʻilganini tekshirish
+        run: |
+          if ! grep -rq "supabase.co" dist/assets/*.js; then
+            echo "::error::Yigʻilgan panelda ombor manzili yoʻq."
+            echo ".env.production faylini yoki Actions secrets ni tekshiring."
+            exit 1
+          fi
+          echo "Ombor manzili joyida."
 
       # Pages statik server: `/sotuvchi/9103` degan fayl yoʻq va u 404
       # qaytaradi. SPA da bu manzilni brauzerning oʻzi hal qiladi, shuning

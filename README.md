@@ -44,20 +44,23 @@ u `ingest/` ichida oʻsha bayroq bilan ishga tushadi va `ingest/.env` oʻqiladi.
 Panel `main` ga har surilganda avtomatik yigʻiladi va joylanadi.
 Manzil: `https://<foydalanuvchi>.github.io/zumsavdo/`
 
-Bir marta qilinadigan sozlama — ikkita kalit:
+Sozlash **talab qilinmaydi**: ombor manzili `.env.production` da, omborning
+oʻzida turadi. Pages sozlamasini ham workflow oʻzi yoqadi
+(`enablement: true`).
+
+Kalitni omborni oʻzgartirmasdan almashtirish yoki boshqa bazaga ulash
+kerak boʻlsa, Actions secrets qoʻyish mumkin — ular ustun turadi:
 
 **Settings → Secrets and variables → Actions → New repository secret**
 
 ```
 VITE_SUPABASE_URL       = https://<project-ref>.supabase.co
-VITE_SUPABASE_ANON_KEY  = <anon / publishable key>
+VITE_SUPABASE_ANON_KEY  = <publishable key>
 ```
 
-Kalitlar qoʻyilmasa yigʻish ataylab **toʻxtatiladi**. Aks holda panel
-joylanardi-yu, ombor manzilisiz — ekranda "Ombor sozlanmagan" turardi va
-sababi koʻrinmasdi.
-
-Pages sozlamasini workflow oʻzi yoqadi (`enablement: true`).
+Yigʻishdan keyin natija tekshiriladi: yigʻilgan JS ichida ombor manzili
+boʻlmasa joylash **toʻxtatiladi**. Kalit borligini tekshirish yetarli
+emas edi — u qoʻyilgan boʻlsa ham yigʻishga tushmay qolishi mumkin.
 
 ### Nega anon kalitni ochiq qoʻyish mumkin
 

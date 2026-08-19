@@ -117,3 +117,29 @@ end $$;
 -- (`official: null`). Baza tomonida qoʻshimcha oʻzgarish kerak emas:
 -- `coalesce(excluded.official, eski)` NULL kelganda eskisini saqlaydi,
 -- demak bir marta tozalangandan keyin toza qoladi.
+
+-- Baza tomonidagi qoʻriqchi. Yigʻuvchi tuzatildi, lekin ishlab turgan
+-- eski jarayon hamon `false` yuborardi va uni toʻxtatib boʻlmasdi.
+-- `zumsavdo` sxemasi bitta manbadan — Uzumdan — toʻladi, shuning uchun
+-- qoidani chegaraning oʻzida qoʻyish mumkin: Uzumning `false` i maʼnosiz,
+-- demak uni qabul qilmaymiz. `true` esa oʻtadi — Uzum toʻldira boshlasa,
+-- oʻsha kuniyoq bilamiz.
+do $$
+declare src text;
+begin
+  for src in
+    select pg_get_functiondef(p.oid)
+    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public' and p.proname in ('zs_census_batch','zs_ingest_batch')
+  loop
+    if position('nullif(x.official, false)' in src) > 0 then
+      continue;  -- allaqachon qoʻyilgan
+    end if;
+    if position('x.official, now()' in src) = 0 then
+      raise exception 'kutilgan satr topilmadi — funksiya oʻzgargan';
+    end if;
+    execute replace(src, 'x.official, now()', 'nullif(x.official, false), now()');
+  end loop;
+end $$;
+
+update zumsavdo.shop set official = null where official is not null;

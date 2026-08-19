@@ -15,8 +15,14 @@ import type { Period } from "@/lib/period";
  *   ham toʻgʻri. Lekin u faqat sharhi yigʻilgan mahsulotlar boʻyicha:
  *   bozorning hammasi emas, namunasi.
  * - **Yangi id** — Uzum id larni ketma-ket beradi, shuning uchun katalog
- *   chegarasining ikki kunlik farqi kuniga nechta mahsulot yaratilganini
- *   kuzatuvdan mustaqil koʻrsatadi. Bu eng ishonchli oʻsish raqami.
+ *   chegarasining ikki **oʻlchangan** kun orasidagi farqi kuniga nechta
+ *   mahsulot yaratilganini kuzatuvdan mustaqil koʻrsatadi.
+ *
+ *   Bu ustun ilgari perepis qayerga yetganidan hisoblanardi. Oʻtgan
+ *   kunlarning hammasiga bitta xil qiymat yozilgani uchun ular orasidagi
+ *   farq 0 chiqardi, birinchi haqiqiy oʻlchov kuni esa 938 430 — yaʻni
+ *   crawlerning sakrashi bozor oʻsishi boʻlib koʻrinardi. Endi chegara
+ *   faqat zonddan yoziladi va oʻlchanmagan kun boʻsh qoladi.
  * - **Mahsulot / Doʻkon** — bular faqat boshlangʻich sanadan keyin maʻnoli.
  *   Undan oldin ular "perepis nimani topdi" degani edi: crawler bir kunda
  *   630 743 mahsulot koʻrgan, Uzum ularni oʻsha kuni qoʻshgani yoʻq.
@@ -48,7 +54,8 @@ export function GrowthPanel({ period }: { period: Period }) {
           <thead>
             <tr>
               <th>Kun</th>
-              <th className="num">Yangi id</th>
+              <th className="num">Chegara</th>
+              <th className="num">Yangi id / kun</th>
               <th className="num">Mahsulot</th>
               <th className="num">Doʻkon</th>
               <th className="num">Sharh</th>
@@ -57,7 +64,7 @@ export function GrowthPanel({ period }: { period: Period }) {
           <tbody>
             {!rows.length && (
               <tr>
-                <td colSpan={5} className="empty">
+                <td colSpan={6} className="empty">
                   Bu davrda yozuv yoʻq.
                 </td>
               </tr>
@@ -65,7 +72,13 @@ export function GrowthPanel({ period }: { period: Period }) {
             {rows.map((r) => (
               <tr key={r.date}>
                 <td>{formatDayMonth(r.date)}</td>
-                <td className="num">{orDash(r.id_added, formatInt)}</td>
+                <td className="num">{orDash(r.id_frontier, formatInt)}</td>
+                <td className="num">
+                  {orDash(r.id_per_day, formatInt)}
+                  {r.id_per_day !== null && r.gap_days !== null && r.gap_days > 1 && (
+                    <span className="sub"> ({r.gap_days} kun oʻrtachasi)</span>
+                  )}
+                </td>
                 <td className="num">{orDash(r.trusted ? r.new_products : null, formatInt)}</td>
                 <td className="num">{orDash(r.trusted ? r.new_shops : null, formatInt)}</td>
                 <td className="num">{orDash(r.new_feedbacks, formatInt)}</td>
@@ -76,9 +89,12 @@ export function GrowthPanel({ period }: { period: Period }) {
       </div>
 
       <p className="note-inline">
-        <b>Yangi id</b> — Uzum bergan mahsulot id lari soni. Id lar ketma-ket
-        beriladi, shuning uchun katalog chegarasining ikki kunlik farqi
-        kuzatuvdan mustaqil. Ularning hammasi ham tirik mahsulot boʻlmaydi:
+        <b>Chegara</b> — oʻsha kuni oʻlchangan eng katta tirik mahsulot id si.
+        Faqat zond ishlagan kunda toʻladi. <b>Yangi id / kun</b> — ikki
+        oʻlchov orasidagi farq, oradagi kunlarga boʻlingan; shuning uchun u
+        birinchi oʻlchovdan keyin, <b>ikkinchisidan boshlab</b> paydo
+        boʻladi. Id lar ketma-ket berilgani uchun bu raqam kuzatuvdan
+        mustaqil, lekin ularning hammasi tirik mahsulot boʻlmaydi:
         oʻlchandi — id larning <b>~30%</b> i ochiladi.
         {data?.baseline && (
           <>

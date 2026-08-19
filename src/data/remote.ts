@@ -630,8 +630,12 @@ export interface GrowthRow {
   new_products: number | null;
   new_shops: number | null;
   new_feedbacks: number | null;
+  /** Shu kuni oʻlchangan katalog chegarasi. Oʻlchanmagan kun — boʻsh. */
   id_frontier: number | null;
-  id_added: number | null;
+  /** Ikki HAQIQIY oʻlchov farqi, oradagi kunlarga boʻlingan. */
+  id_per_day: number | null;
+  /** Oldingi oʻlchovgacha necha kun — bir kunlik raqam qanchalik silliqlangani. */
+  gap_days: number | null;
   trusted: boolean;
   baseline: string | null;
 }

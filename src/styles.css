@@ -914,3 +914,17 @@ td.name {
   border-left: 2px solid var(--warn);
   padding-left: 8px;
 }
+
+/* Bitta katakdagi ikki raqam — mahsulot va doʻkon. Ular alohida satrda
+   turadi: bir satrda yonma-yon turganda oradagi belgi koʻpaytirish deb
+   oʻqilgan. */
+.pair-main,
+.pair-sub {
+  display: block;
+  white-space: nowrap;
+}
+
+.pair-sub {
+  color: var(--ink3);
+  font-size: 11px;
+}

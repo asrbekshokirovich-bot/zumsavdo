@@ -33,6 +33,23 @@ import type { Period } from "@/lib/period";
  * hech narsa qoʻshilmagan" boʻlib oʻqildi — holbuki chiziqcha "javob
  * yoʻq" degani edi. Ikki ustun yonma-yon turganda farq oʻzi koʻrinadi.
  */
+/**
+ * Ikki raqam bitta katakda: mahsulot va doʻkon.
+ *
+ * Ilgari ular "18 925 · 854 doʻkon" koʻrinishida yozilardi va oʻrtadagi
+ * nuqta koʻpaytirish deb oʻqildi. Endi har raqamning yonida oʻz soʻzi
+ * turadi va ular alohida satrda — belgi talqin qilinmasin.
+ */
+function Pair({ products, shops }: { products: number | null; shops: number | null }) {
+  if (!products && !shops) return <>{orDash(null, formatInt)}</>;
+  return (
+    <>
+      <span className="pair-main">{formatInt(products ?? 0)} mahsulot</span>
+      <span className="pair-sub">{formatInt(shops ?? 0)} doʻkon</span>
+    </>
+  );
+}
+
 export function GrowthPanel({ period }: { period: Period }) {
   const [data, setData] = useState<Growth | null>(null);
   const [rate, setRate] = useState<FrontierRate | null>(null);
@@ -116,16 +133,13 @@ export function GrowthPanel({ period }: { period: Period }) {
                   )}
                 </td>
                 <td className="num">
-                  {orDash(r.trusted ? r.new_products : null, formatInt)}
-                  {r.trusted && r.new_shops != null && (
-                    <span className="sub"> · {formatInt(r.new_shops)} doʻkon</span>
-                  )}
+                  <Pair
+                    products={r.trusted ? r.new_products : null}
+                    shops={r.trusted ? r.new_shops : null}
+                  />
                 </td>
                 <td className="num">
-                  {orDash(r.found_products || null, formatInt)}
-                  {!!r.found_shops && (
-                    <span className="sub"> · {formatInt(r.found_shops)} doʻkon</span>
-                  )}
+                  <Pair products={r.found_products} shops={r.found_shops} />
                 </td>
                 <td className="num">{orDash(r.new_feedbacks, formatInt)}</td>
               </tr>
@@ -135,6 +149,8 @@ export function GrowthPanel({ period }: { period: Period }) {
       </div>
 
       <p className="note-inline">
+        <b>Har katakda ikki raqam bor — mahsulot va doʻkon, alohida.</b>{" "}
+        Bu koʻpaytirish emas.{" "}
         <b>Chiziqcha nol emas — javob yoʻq degani.</b> Masalan 18-avgustda
         baza toʻlgan, lekin u Uzum nimani qoʻshgani emas, perepis nimani
         topgani edi; shuning uchun u raqam "Topildi" ustunida turadi,

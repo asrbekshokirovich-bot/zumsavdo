@@ -23,10 +23,15 @@ import type { Period } from "@/lib/period";
  *   farq 0 chiqardi, birinchi haqiqiy oʻlchov kuni esa 938 430 — yaʻni
  *   crawlerning sakrashi bozor oʻsishi boʻlib koʻrinardi. Endi chegara
  *   faqat zonddan yoziladi va oʻlchanmagan kun boʻsh qoladi.
- * - **Mahsulot / Doʻkon** — bular faqat boshlangʻich sanadan keyin maʻnoli.
- *   Undan oldin ular "perepis nimani topdi" degani edi: crawler bir kunda
- *   630 743 mahsulot koʻrgan, Uzum ularni oʻsha kuni qoʻshgani yoʻq.
- *   Ishonchsiz kunga raqam emas, chiziqcha qoʻyiladi.
+ * - **Qoʻshildi** — bozorga qoʻshilgani. Faqat boshlangʻich sanadan keyin
+ *   maʻnoli, undan oldin chiziqcha turadi.
+ * - **Topildi** — men nechta yangi obyekt koʻrganim. Bu bozor raqami emas
+ *   va hech qachon oʻsish deb koʻrsatilmaydi, lekin yashirilmaydi ham.
+ *
+ * Nega ikkalasi kerak: avval faqat "Qoʻshildi" bor edi va boshlangʻichdan
+ * oldingi kunlar butunlay chiziqcha boʻlib turardi. Bu "oʻsha kunlarda
+ * hech narsa qoʻshilmagan" boʻlib oʻqildi — holbuki chiziqcha "javob
+ * yoʻq" degani edi. Ikki ustun yonma-yon turganda farq oʻzi koʻrinadi.
  */
 export function GrowthPanel({ period }: { period: Period }) {
   const [data, setData] = useState<Growth | null>(null);
@@ -87,8 +92,8 @@ export function GrowthPanel({ period }: { period: Period }) {
               <th>Kun</th>
               <th className="num">Chegara</th>
               <th className="num">Yangi id / kun</th>
-              <th className="num">Mahsulot</th>
-              <th className="num">Doʻkon</th>
+              <th className="num">Qoʻshildi</th>
+              <th className="num">Topildi</th>
               <th className="num">Sharh</th>
             </tr>
           </thead>
@@ -110,8 +115,18 @@ export function GrowthPanel({ period }: { period: Period }) {
                     <span className="sub"> ({r.gap_days} kun oʻrtachasi)</span>
                   )}
                 </td>
-                <td className="num">{orDash(r.trusted ? r.new_products : null, formatInt)}</td>
-                <td className="num">{orDash(r.trusted ? r.new_shops : null, formatInt)}</td>
+                <td className="num">
+                  {orDash(r.trusted ? r.new_products : null, formatInt)}
+                  {r.trusted && r.new_shops != null && (
+                    <span className="sub"> · {formatInt(r.new_shops)} doʻkon</span>
+                  )}
+                </td>
+                <td className="num">
+                  {orDash(r.found_products || null, formatInt)}
+                  {!!r.found_shops && (
+                    <span className="sub"> · {formatInt(r.found_shops)} doʻkon</span>
+                  )}
+                </td>
                 <td className="num">{orDash(r.new_feedbacks, formatInt)}</td>
               </tr>
             ))}
@@ -120,6 +135,10 @@ export function GrowthPanel({ period }: { period: Period }) {
       </div>
 
       <p className="note-inline">
+        <b>Chiziqcha nol emas — javob yoʻq degani.</b> Masalan 18-avgustda
+        baza toʻlgan, lekin u Uzum nimani qoʻshgani emas, perepis nimani
+        topgani edi; shuning uchun u raqam "Topildi" ustunida turadi,
+        "Qoʻshildi" da emas.{" "}
         <b>Chegara</b> — oʻsha kuni oʻlchangan eng katta tirik mahsulot id si.
         Faqat zond ishlagan kunda toʻladi. <b>Yangi id / kun</b> — ikki
         oʻlchov orasidagi farq, oradagi kunlarga boʻlingan; shuning uchun u
@@ -130,10 +149,10 @@ export function GrowthPanel({ period }: { period: Period }) {
         {data?.baseline && (
           <>
             {" "}
-            <b>Mahsulot</b> va <b>Doʻkon</b> ustunlari{" "}
-            {formatDayMonth(data.baseline)} dan keyingi kunlar uchun toʻldiriladi.
-            Undan oldingi kunlarda ular perepis nimani topganini bildirardi —
-            bozor oʻsishini emas — shuning uchun chiziqcha turadi.
+            <b>Qoʻshildi</b> ustuni {formatDayMonth(data.baseline)} dan keyingi
+            kunlar uchun toʻldiriladi: shu kundan boshlab birinchi marta
+            koʻringan obyekt haqiqatan yangi boʻladi. Undan oldingi kunlarda
+            har qanday raqam perepis nimani topganini bildirardi.
           </>
         )}{" "}
         <b>Sharh</b> sanasi Uzumdan keladi, lekin faqat sharhi yigʻilgan

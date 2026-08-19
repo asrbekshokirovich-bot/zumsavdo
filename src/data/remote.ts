@@ -640,6 +640,15 @@ export interface GrowthRow {
   id_frontier: number | null;
   /** Ikki HAQIQIY oʻlchov farqi, oradagi kunlarga boʻlingan. */
   id_per_day: number | null;
+  /**
+   * Shu kuni **men** nechta yangi obyekt koʻrganim.
+   *
+   * Bu bozor raqami emas: 18-avgustda perepis 630 743 mahsulot topgan,
+   * Uzum ularni oʻsha kuni qoʻshgani yoʻq. Lekin uni butunlay yashirish
+   * ham notoʻgʻri — boʻsh qator "hech narsa boʻlmagan" boʻlib oʻqiladi.
+   */
+  found_products: number | null;
+  found_shops: number | null;
   /** Oldingi oʻlchovgacha necha kun — bir kunlik raqam qanchalik silliqlangani. */
   gap_days: number | null;
   trusted: boolean;

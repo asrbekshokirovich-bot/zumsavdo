@@ -124,11 +124,17 @@ async function main() {
     /** Nechta qator bazaga tushdi. Oʻzgarmagan oʻlchov yozilmaydi (06.5). */
     let stored = 0;
     let errors = 0;
+    /** Tushib qolgan id lar sababi bilan — log uchun. */
+    const deadIds = [];
 
     try {
       for await (const batch of source.collect(slot)) {
         targets += batch.shops.length + batch.products.length;
         errors += batch.errors ?? 0;
+        // `deadIds` ilgari yigʻilardi-yu, hech qayerda koʻrsatilmasdi:
+        // log faqat sonini berardi. "1 xato" degan satrdan qaysi mahsulot
+        // va nega tushib qolgani bilinmasdi (QOIDALAR: jim oʻlim yoʻq).
+        for (const d of batch.deadIds ?? []) deadIds.push(d);
         measured += batch.shopObservations.length + batch.productObservations.length;
 
         if (batch.coverage) {
@@ -182,6 +188,19 @@ async function main() {
       if (note) log(`OGOHLANTIRISH — ${note}`);
     }
 
+    if (deadIds.length) {
+      // Hammasi emas, chunki 50 000 lik roʻyxatda oʻnlab boʻlishi mumkin.
+      // Lekin sonini ham, misolini ham koʻrsatamiz.
+      const misol = deadIds
+        .slice(0, 10)
+        .map((d) => `  id ${d.id}: ${d.reason}`)
+        .join("\n");
+      log(
+        `${deadIds.length} ta mahsulot olinmadi:\n${misol}` +
+          (deadIds.length > 10 ? `\n  … yana ${deadIds.length - 10} ta` : ""),
+      );
+    }
+
     totalMeasured += measured;
     totalStored += stored;
     totalErrors += errors;
@@ -216,8 +235,20 @@ async function main() {
   // Do'kon turkumi mahsulotlardan kelib chiqadi va yangi mahsulot qo'shilsa
   // siljiydi. Uni shu yerda — o'lchovdan keyin — yangilaymiz, panel so'rovi
   // paytida emas.
-  const shops = await store.refreshShopCategories();
-  log(`Do'kon turkumi yangilandi: ${shops} ta`);
+  // Xatosi butun sweepni yiqitmaydi. 2026-08-20 da aynan shu yerda
+  // "statement timeout" chiqdi va u OʻZIDAN KOʻRA KOʻPROQ narsani
+  // olib ketdi: undan keyingi kunlik oʻsish va chegara oʻlchovi ham
+  // bajarilmay qoldi. Turkum — hisoblanadigan kesh, keyingi yurishda
+  // yangilanadi; oʻsish qatori esa oʻsha kunga qaytmaydi.
+  try {
+    const r = await store.refreshShopCategories();
+    log(
+      `Do'kon turkumi: ${r.yangilandi} yangilandi` +
+        (r.otkazildi ? `, ${r.otkazildi} oʻtkazildi (qulflangan edi)` : ""),
+    );
+  } catch (error) {
+    log(`Do'kon turkumi yangilanmadi: ${error.message}`);
+  }
 
   // Kunlik o'sish: nechta mahsulot, do'kon va sharh qo'shildi.
   const growth = await store.recordMarketDay();

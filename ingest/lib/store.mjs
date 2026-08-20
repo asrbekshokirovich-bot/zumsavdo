@@ -175,9 +175,15 @@ export function createStore(config) {
      * Uzum do'kon uchun turkum bermaydi. Ilgari bu har panel so'rovida
      * qaytadan hisoblanardi va bitta reyting so'rovining uchdan ikki qismi
      * aynan shunga ketardi. Endi u o'lchov bilan birga yangilanadi.
+     *
+     * `{yangilandi, otkazildi, kerak_edi}` qaytaradi. `otkazildi` — perepis
+     * o'sha qatorni yozayotgani uchun kutmasdan tashlab ketilganlari.
+     * Ular keyingi yurishda olinadi; sonini KO'RSATISH shart, aks holda
+     * to'liq bajarilmagani jimgina yo'qoladi.
      */
     async refreshShopCategories() {
-      return rpc("zs_refresh_shop_categories", { p_only_measured: true });
+      const rows = await rpc("zs_refresh_shop_categories", { p_only_measured: true });
+      return Array.isArray(rows) ? rows[0] : rows;
     },
 
     /** Chegara zondi qayerdan boshlashi — eng katta ma'lum id. */

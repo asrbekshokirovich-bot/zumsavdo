@@ -1,0 +1,81 @@
+# 2-qatlam oʻlchovi — kuniga uch marta.
+#
+# Nega jadval boʻyicha. `sellersStableDays` 60 kunlik uzluksiz tarix
+# talab qiladi va sotuv baholash `prev_stock − stock` farqiga tayanadi.
+# Ikkalasi ham faqat real vaqtda toʻplanadi — keyin tezlashtirib
+# boʻlmaydi. 16–20 avgustda oʻlchov qoʻlda qilingan va 20-avgustda
+# jimgina toʻxtagan; uch kun yoʻqoldi. Shuning uchun bu ish odamning
+# esida turishiga tayanmaydi.
+#
+# Nega kuniga uch marta. Sotuv `greatest(0, prev_stock − stock)` bilan
+# hisoblanadi. Kuniga bitta oʻlchovda kun ichidagi toʻldirish sotuvni
+# yashiradi. Ikki oʻlchov `certainty: oʻrta`, uch oʻlchov `yuqori`
+# beradi.
+name: Sweep (2-qatlam)
+
+on:
+  schedule:
+    # UTC. Toshkent = UTC+5, yaʼni 07:00, 15:00, 23:00.
+    - cron: "0 2,10,18 * * *"
+  workflow_dispatch:
+
+# Ikki sweep bir vaqtda ishlamasin: ular bitta kuzatuv roʻyxatini
+# oʻqiydi va bir xil onda ikki oʻlchov yozsa, kun ichidagi farq
+# buziladi. Ishlayotgani bekor qilinmaydi — tugashi kutiladi.
+concurrency:
+  group: sweep
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    # 50 075 tovar ~26 soʻrov/sek bilan ~32 daqiqa. Zaxira bilan.
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sir borligini tekshirish
+        run: |
+          if [ -z "${{ secrets.ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY }}" ]; then
+            echo "::error::ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY yoʻq."
+            echo "Qoʻshish: Settings → Secrets and variables → Actions →"
+            echo "New repository secret."
+            exit 1
+          fi
+          if [ -z "${{ secrets.ZUMSAVDO_SUPABASE_URL }}" ]; then
+            echo "::error::ZUMSAVDO_SUPABASE_URL yoʻq."
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+
+      - run: npm ci
+        working-directory: ingest
+
+      - name: Oʻlchash
+        working-directory: ingest
+        env:
+          ZUMSAVDO_SUPABASE_URL: ${{ secrets.ZUMSAVDO_SUPABASE_URL }}
+          ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY }}
+        run: node run-sweep.mjs
+
+      # "Ishladi" degani "oʻlchadi" degani emas. Sweep xatosiz tugab,
+      # nol qator yozishi mumkin edi — bunday holat yashil boʻlib
+      # koʻrinardi va hech kim sezmasdi.
+      - name: Haqiqatan oʻlchandimi
+        env:
+          URL: ${{ secrets.ZUMSAVDO_SUPABASE_URL }}
+          KEY: ${{ secrets.ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          bugun=$(date -u -d '+5 hours' +%F)
+          n=$(curl -sS --max-time 30 \
+            -H "apikey: $KEY" -H "Authorization: Bearer $KEY" \
+            -H "Prefer: count=exact" -H "Range: 0-0" \
+            "$URL/rest/v1/zs_product_observation?select=product_id&observed_at=gte.${bugun}T00:00:00%2B05:00" \
+            -D - -o /dev/null | tr -d '\r' | sed -n 's|^content-range: .*/||p')
+          echo "Bugun ($bugun) yozilgan oʻlchov: ${n:-0}"
+          if [ -z "$n" ] || [ "$n" -eq 0 ]; then
+            echo "::error::Sweep xatosiz tugadi, lekin bugun bitta ham oʻlchov yozilmadi."
+            exit 1
+          fi

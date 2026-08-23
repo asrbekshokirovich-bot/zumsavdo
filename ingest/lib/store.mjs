@@ -83,14 +83,43 @@ export function createStore(config) {
       return (await rpc("zs_track_products", { p_ids: productIds, p_source: source })) ?? 0;
     },
 
-    /** Kuzatiladigan mahsulot id lari. */
+    /**
+     * Kuzatiladigan mahsulot id lari.
+     *
+     * Sahifalab oʻqiladi. Bu shart, chunki PostgREST bir soʻrovda eng koʻpi
+     * 1000 qator qaytaradi va **xato bermaydi** — roʻyxat shunchaki
+     * kesiladi. Aynan shu sodir boʻlgan edi: bazada 50 075 ta faol tovar
+     * turgan, sweep esa har safar 1000 tasini olib, "hammasi" deb
+     * oʻlchagan. 2026-08-23 gacha 50 075 tadan atigi 1 005 tasi hech
+     * boʻlmasa bir marta oʻlchangan. Xato jurnalda ham, natijada ham
+     * koʻrinmagan (QOIDALAR.md §8 — jim oʻlim).
+     *
+     * `count` bilan solishtirish shuning uchun turibdi: sahifalash
+     * kelajakda buzilsa, roʻyxat jimgina qisqarmaydi, sweep toʻxtaydi.
+     */
     async trackedProducts() {
-      const { data, error } = await db
-        .from("zs_tracked_product")
-        .select("product_id")
-        .eq("active", true);
-      if (error) throw new Error(`zs_tracked_product oʻqilmadi: ${error.message}`);
-      return (data ?? []).map((row) => Number(row.product_id));
+      const sahifa = 1000;
+      const out = [];
+      let kutilgan = null;
+      for (let from = 0; ; from += sahifa) {
+        const { data, error, count } = await db
+          .from("zs_tracked_product")
+          .select("product_id", { count: from === 0 ? "exact" : undefined })
+          .eq("active", true)
+          .order("product_id", { ascending: true })
+          .range(from, from + sahifa - 1);
+        if (error) throw new Error(`zs_tracked_product oʻqilmadi: ${error.message}`);
+        if (from === 0 && typeof count === "number") kutilgan = count;
+        out.push(...(data ?? []).map((row) => Number(row.product_id)));
+        if (!data || data.length < sahifa) break;
+      }
+      if (kutilgan !== null && out.length !== kutilgan) {
+        throw new Error(
+          `zs_tracked_product toʻliq oʻqilmadi: ${out.length}/${kutilgan}. ` +
+            "Sahifalash buzilgan — kam maʼlumot bilan sweep qilinmaydi.",
+        );
+      }
+      return out;
     },
 
     /**

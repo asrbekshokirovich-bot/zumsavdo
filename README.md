@@ -79,10 +79,34 @@ Tekshirilgan holat:
 Yigʻuvchi `service_role` kaliti bilan ishlaydi va u **hech qachon**
 brauzerga yoki GitHubga tushmaydi — faqat `ingest/.env` da.
 
-Yangi funksiya qoʻshilganda u oʻzi ochilib qolmaydi: `public` sxemasida
-standart huquqlar olib tashlangan, har biriga ataylab `grant` kerak.
-Unutilsa panel darhol ishlamay qoladi va bu koʻrinadi — teskarisi esa
-koʻrinmasdi.
+Yangi **funksiya** qoʻshilganda u oʻzi ochilib qolmaydi: `public`
+sxemasida funksiyalar uchun standart huquq olib tashlangan, har biriga
+ataylab `grant` kerak. Unutilsa panel darhol ishlamay qoladi va bu
+koʻrinadi — teskarisi esa koʻrinmasdi.
+
+> **2026-08-23 da tuzatilgan kamchilik.** Yuqoridagi gap **jadval va
+> koʻrinishlarga taalluqli emas edi**, lekin bu yerda shunday yozilgan
+> edi. Supabase zavod sozlamasida `public` sxemasida `postgres` yaratgan
+> har bir jadval/koʻrinishga `anon` uchun `SELECT` emas, **`ALL`** beradi.
+> Shu sababli toʻqqizta panel koʻrinishiga anon kaliti bilan yozish ham
+> mumkin edi; beshtasi avtomatik yangilanuvchi, yaʼni perepis maʼlumotini
+> oʻchirish mumkin edi. Sxema devori (`zumsavdo` ga USAGE yoʻq) bunga
+> toʻsqinlik qilmagan, chunki koʻrinishlar `security_invoker` siz va
+> egasi `postgres`.
+>
+> Yozish huquqi olib tashlandi, oʻqish qoldi; standart huquqning oʻzi ham
+> `SELECT` ga toraytirildi
+> (`supabase/migrations/20260823090000_zumsavdo_anon_faqat_oqiydi.sql`).
+> Xulosa: bu jadval ilgari oʻlchov bilan emas, ishonch bilan
+> toʻldirilgan ekan. Endi uni buyruq oʻlchaydi:
+>
+> ```
+> cd ingest && npm run xavfsizlik
+> ```
+>
+> Anon kaliti bilan haqiqiy HTTP soʻrov yuboradi: oʻqilishi kerak
+> boʻlgani oʻqiladimi, yozilmasligi kerak boʻlgani 401 qaytaradimi.
+> Panelga tegadigan har bir oʻzgarishdan keyin shuni ishlating.
 
 ## Vercel'ga joylash
 

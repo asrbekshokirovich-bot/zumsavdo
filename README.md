@@ -253,6 +253,46 @@ npm run census -- --status  # perepis qayerga yetgani
 `sweep`, `census` va `probe` ni ildizdan ham chaqirsa boʻladi — ular oʻzi
 `ingest/` ga oʻtadi.
 
+### Sweep jadval boʻyicha ishlaydi
+
+`.github/workflows/sweep.yml` — Toshkent vaqti bilan **07:00, 15:00,
+23:00**. Qoʻlda ham ishga tushirsa boʻladi: Actions → Sweep (2-qatlam)
+→ Run workflow.
+
+Nega odamga tashlab qoʻyilmaydi. `sellersStableDays` 60 kunlik uzluksiz
+tarix talab qiladi, sotuv esa `prev_stock − stock` farqidan chiqadi —
+ikkalasi ham faqat real vaqtda toʻplanadi. 16–20 avgustda oʻlchov qoʻlda
+qilingan va 20-avgustda jimgina toʻxtagan; uch kun qaytmasdan yoʻqolgan.
+
+Ikkita sir kerak (`Settings → Secrets and variables → Actions`):
+`ZUMSAVDO_SUPABASE_URL` va `ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY`.
+Yoʻq boʻlsa ish birinchi qadamda balandan yiqiladi, jimgina oʻtib
+ketmaydi. Oxirgi qadam esa "bugun bitta ham oʻlchov yozildimi" deb
+soʻraydi: sweep xatosiz tugab nol qator yozsa, ish qizil boʻladi.
+
+Bir aylanish ~60 daqiqa (50 075 tovar, ~13 oʻlchov/sek). Jadval 8
+soatlik oraliq bilan qoʻyilgani shuning uchun.
+
+> GitHub 60 kun davomida hech qanday harakat boʻlmagan omborda jadvalli
+> ishlarni oʻchirib qoʻyadi. Ombor faol boʻlsa muammo yoʻq.
+
+#### 2026-08-23 — nega bu ish qoʻshildi
+
+Sweep uch kun toʻxtagani ustiga undan kattaroq narsa chiqdi: bazada
+50 075 ta faol kuzatuv turgan, sweep esa har safar **1000 tasini**
+olib "hammasini oʻlchadim" deb tugagan. Sabab `trackedProducts()` da
+sahifalash yoʻqligi — PostgREST 1000 qatordan keyin kesadi va **xato
+bermaydi**. Shu kunga qadar 50 075 tadan atigi 1 005 tasi hech
+boʻlmasa bir marta oʻlchangan edi.
+
+Tuzatilgach, birinchi jadvalli yugurishning natijasi:
+
+| | oldin | keyin |
+|---|---|---|
+| Hech boʻlmasa bir marta oʻlchangan tovar | 1 005 | **50 019** |
+| Bir sweepda oʻlchangani | 1 000 (shift) | 49 127 |
+| `product_day` qatorlari | 2 172 | 53 196 |
+
 Manba bitta: **`uzum-catalog`**.
 
 Ilgari `sample` nomli namuna generatori ham bor edi va u standart qiymat

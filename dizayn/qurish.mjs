@@ -144,9 +144,20 @@ function matnniTuzat(matn) {
   // qiladi?). Yurist koʻrmaguncha chiqmaydi.
   const k = matn.indexOf('≤ $3 000 budjetli obunachilarga foyda kafolati');
   if (k < 0) throw new Error('Kafolat bloki topilmadi — qurish toʻxtatildi.');
-  let kBoshi = matn.lastIndexOf('<div', k);
-  let kOxiri = matn.indexOf('</div>', matn.indexOf('Shartlar ofertada')) + 6;
-  kOxiri = matn.indexOf('</div>', kOxiri) + 6;
+  const kBoshi = matn.lastIndexOf('<div', k);
+  // BITTA `</div>`, ikkita emas.
+  //
+  // Ilgari bu yerda ikkinchi `</div>` ham olinardi va kesilgan
+  // boʻlakning muvozanati −1 boʻlib qolardi: bitta `<div`, ikkita
+  // `</div>`. Oʻrniga qoʻyilgan matn esa muvozanatli.
+  //
+  // Natijada butun hujjatda bitta yopilmagan `<div` qolardi va
+  // brauzer undan keyingi HAMMA narsani oʻsha ochiq div ichiga
+  // joylardi. Sotuv sahifasi baribir toʻgʻri koʻrinardi — shuning
+  // uchun buni hech kim sezmadi — lekin qolgan uch EKRAN
+  // (Demo chat, Marketpleys, 1688) yashirin idish ichiga tushib
+  // qolgan va "Demoni boshlash" bosilganda BOʻSH sahifa chiqardi.
+  const kOxiri = matn.indexOf('</div>', matn.indexOf('Shartlar ofertada')) + 6;
   matn = matn.slice(0, kBoshi) +
     '<div style="max-width:1200px;margin:0 auto;padding:0 32px 24px;text-align:center">' +
     '<span style="font-size:14px;color:#52627A">Obuna istalgan vaqtda bekor qilinadi. ' +
@@ -296,10 +307,75 @@ function matnniTuzat(matn) {
   if (eOxiri < 0) throw new Error('Almashtirgichning yopilishi topilmadi.');
   matn = matn.slice(0, eBoshi) + matn.slice(eOxiri);
 
+
+  // ---- N+1. Sahifada <title> va tavsif YOʻQ EDI ------------------
+  //
+  // Dizayn vositasi `<head>` ga faqat `charset` va `viewport`
+  // qoʻygan. Natijada brauzer yorligʻida manzil turardi, qidiruv
+  // tizimi esa koʻrsatadigan matn topmasdi.
+  //
+  // Bu ham jimgina nosozlik: sahifa toʻliq ishlaydi, xato yoʻq —
+  // faqat uni hech kim topa olmaydi.
+  //
+  // `canonical` ATAYLAB qoʻyilmadi: saytning yakuniy manzili hali
+  // maʼlum emas. Notoʻgʻri `canonical` — yoʻqidan yomonroq, chunki u
+  // qidiruv tizimiga "asl nusxa boshqa joyda" deb ayta boshlaydi.
+  matn = almashtir(
+    matn,
+    '<meta name="viewport" content="width=device-width, initial-scale=1">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+    '<title>ZumSavdo — Uzumda nima sotishni raqamlar bilan tanlang</title>\n' +
+    '<meta name="description" content="1,5 mln tovar va 82 ming doʻkon ' +
+    'oʻlchovi asosida yoʻnalish tanlash. Taxmin emas — oʻlchangan raqam.">\n' +
+    '<meta property="og:title" content="ZumSavdo">\n' +
+    '<meta property="og:description" content="Uzumda nima sotishni ' +
+    'raqamlar bilan tanlang.">\n' +
+    '<meta property="og:type" content="website">',
+    'sahifa sarlavhasi va tavsifi',
+  );
+
+  // Til belgisi — ekran oʻqigichlar va qidiruv tizimi uchun.
+  matn = almashtir(matn, '<html><head>', '<html lang="uz"><head>',
+    'html lang="uz"');
   return matn;
 }
 
+/**
+ * `<div>` MUVOZANATI — tuzatishlardan keyin.
+ *
+ * Bu qorovul aynan bitta xato uchun qoʻyilgan va u xato allaqachon
+ * bir marta chiqarilgan saytga tushgan:
+ *
+ * 3-tuzatish (foyda kafolati) kesilayotgan boʻlakda bitta `<div` va
+ * IKKITA `</div>` olardi, oʻrniga qoʻyilgani esa muvozanatli edi.
+ * Hujjatda bitta yopilmagan `<div` qolardi.
+ *
+ * Sotuv sahifasi baribir toʻgʻri koʻrinardi — brauzer buzilgan
+ * ichma-ichlikni jimgina tuzatadi va xato bermaydi. Lekin qolgan
+ * uchta EKRAN (Demo chat, Marketpleys, 1688 sim) oʻsha ochiq div
+ * ichiga tushib qolgan va "Demoni boshlash" bosilganda BOʻSH sahifa
+ * chiqardi.
+ *
+ * Yaʼni: HTML ni satr sifatida kesish muvozanatni buzishi mumkin va
+ * brauzer bu haqda hech narsa demaydi. Shuning uchun sanoq shu yerda.
+ */
+function muvozanatniTekshir(oldin, keyin) {
+  const sana = (m, t) => (m.match(new RegExp(t, 'g')) ?? []).length;
+  const a = sana(oldin, '<div') - sana(oldin, '</div>');
+  const b = sana(keyin, '<div') - sana(keyin, '</div>');
+  if (a !== b) {
+    throw new Error(
+      `<div> muvozanati buzildi: ${a} → ${b}. Matn tuzatishlaridan ` +
+      'biri ochilish va yopilishni teng olmayapti. Sotuv sahifasi ' +
+      'baribir toʻgʻri koʻrinishi mumkin, lekin boshqa ekranlar ' +
+      'yashirin idish ichiga tushib qoladi va boʻsh chiqadi.',
+    );
+  }
+}
+
+const sahifaOldin = sahifa;
 sahifa = matnniTuzat(sahifa);
+muvozanatniTekshir(sahifaOldin, sahifa);
 
 // React ni MAHALLIY fayldan ulaymiz.
 //

@@ -61,7 +61,7 @@ jobs:
         run: |
           javob=$(node census.mjs --status)
           echo "$javob"
-          foiz=$(printf '%s' "$javob" | sed -n 's/.*"foiz":"\([0-9.]*\)".*/\1/p')
+          foiz=$(printf '%s' "$javob" | sed -n 's/.*"foiz":"\?\([0-9.]*\)"\?.*/\1/p')
           echo "foiz=$foiz" >> "$GITHUB_OUTPUT"
           if [ -z "$foiz" ]; then
             echo "::error::Holat oʻqilmadi — javob kutilganday emas."
@@ -95,7 +95,7 @@ jobs:
         run: |
           javob=$(node census.mjs --status)
           echo "$javob"
-          yangi=$(printf '%s' "$javob" | sed -n 's/.*"foiz":"\([0-9.]*\)".*/\1/p')
+          yangi=$(printf '%s' "$javob" | sed -n 's/.*"foiz":"\?\([0-9.]*\)"\?.*/\1/p')
           eski="${{ steps.holat.outputs.foiz }}"
           echo "Oldin: $eski%  Keyin: $yangi%"
           if awk "BEGIN{exit !($yangi > $eski)}"; then

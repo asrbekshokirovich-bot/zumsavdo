@@ -1,0 +1,3480 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="boylik/f6ced5bc.js"></script>
+<script src="boylik/c7bac471.js"></script>
+<script src="boylik/98d661fd.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>/* ============================================================
+   HANGUK CONSULTING — Colors & Type Foundations
+   Source of truth:
+   - hanguk-uz (admin/CRM web): src/index.css + tailwind.config.ts
+   - hanguk_app (Flutter student app): lib/design_system/theme/*
+   Brand: Deep Royal Blue #1A3A6C + Vibrant Lime #D4E94C
+   Font: Inter (Google Fonts)
+   ============================================================ */
+
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/4d1e2422.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/e7733644.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/47b42559.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/03d30e5f.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/d25b02c4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/0987dda4.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/4d1e2422.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/e7733644.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/47b42559.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/03d30e5f.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/d25b02c4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/0987dda4.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/4d1e2422.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/e7733644.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/47b42559.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/03d30e5f.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/d25b02c4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/0987dda4.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root {
+  /* ---------- BRAND CORE ---------- */
+  --royal-blue:   #1A3A6C;   /* primary — HSL(216 62% 26%) */
+  --royal-blue-90:#132A4D;   /* gradient stop */
+  --royal-blue-80:#0F213D;   /* gradient stop */
+  --vibrant-lime: #D4E94C;   /* accent — HSL(68 78% 60%) */
+  --lime-deep:    #B4CC19;   /* success / pressed lime — HSL(68 78% 45%) */
+
+  /* ---------- LIGHT THEME (web admin default) ---------- */
+  --background:   #FFFFFF;
+  --foreground:   #0A1A34;   /* ink navy — HSL(216 70% 12%) */
+  --card:         #FFFFFF;
+  --card-foreground:#0A1A34;
+
+  --primary:      var(--royal-blue);
+  --primary-foreground:#FFFFFF;
+  --accent:       var(--vibrant-lime);
+  --accent-foreground:#0A1A34;
+
+  --secondary:    #EFF2F5;   /* soft blue-gray — HSL(216 25% 95%) */
+  --secondary-foreground: var(--royal-blue);
+  --muted:        #F3F5F7;   /* HSL(216 20% 96%) */
+  --muted-foreground:#52627A;/* HSL(216 20% 40%) */
+
+  --border:       #D9DFE8;   /* HSL(216 25% 88%) */
+  --input:        #D9DFE8;
+  --ring:         #C7E04A;   /* lime ring — HSL(68 78% 50%) */
+
+  /* ---------- SEMANTIC ---------- */
+  --success:      #B4CC19;   /* web token — olive-lime, HSL(68 78% 45%) */
+  --success-green:#16A34A;   /* flutter success */
+  --warning:      #F59E0B;   /* warm gold — HSL(38 92% 50%) */
+  --destructive:  #EF4444;   /* HSL(0 84% 60%) */
+  --destructive-app:#DC2626; /* flutter error */
+
+  /* ---------- SIDEBAR (deep navy) ---------- */
+  --sidebar:      #132D53;   /* HSL(216 62% 20%) */
+  --sidebar-foreground:#D6DEEC;
+  --sidebar-accent:#C7E04A;
+
+  /* ---------- DARK / APP SURFACES (Flutter, OLED) ---------- */
+  --app-black:    #000000;   /* scaffold / OLED true black */
+  --app-bg-navy:  #0A0A1A;   /* backgroundNavy */
+  --app-dark-slate:#0F172A;  /* darkSlate / surface */
+  --app-nav:      #0F213D;   /* bottom-nav background */
+  --app-sheet:    #071221;   /* AI chat modal sheet */
+  --app-glass:    rgba(255,255,255,0.12); /* glass card surface */
+  --app-glass-border: rgba(255,255,255,0.10);
+  /* App navy→black gradient (used directly in markup; not a single-value token):
+     linear-gradient(135deg,#1A3A6C 0%,#132A4D 45%,#0F213D 75%,#0A0A1A 100%) */
+
+  /* ---------- RADII (base 0.75rem) ---------- */
+  --radius:    0.75rem;          /* 12px — lg */
+  --radius-md: calc(var(--radius) - 2px); /* 10px */
+  --radius-sm: calc(var(--radius) - 4px); /* 8px */
+  --radius-app-btn: 16px;        /* Flutter buttons / inputs */
+  --radius-app-card:20px;        /* Flutter glass cards */
+  --radius-pill: 999px;
+
+  /* ---------- ELEVATION ---------- */
+  --shadow-sm:  0 1px 2px rgba(10,26,52,0.06);
+  --shadow-md:  0 4px 12px rgba(10,26,52,0.08);
+  --shadow-lg:  0 12px 28px rgba(10,26,52,0.12);
+  --shadow-xl:  0 20px 48px rgba(10,26,52,0.16);
+  --shadow-app: 0 10px 20px rgba(0,0,0,0.30); /* app hero/logo drop */
+
+  /* ---------- TYPE ---------- */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+}
+
+/* ============================================================
+   SEMANTIC TYPE SCALE
+   Inter, tight tracking on display sizes. Bold (700) for
+   headings, 600 for UI labels/buttons, 400-500 body.
+   ============================================================ */
+.h-display { font-family: var(--font-sans); font-weight: 800; font-size: 48px; line-height: 1.05; letter-spacing: -0.02em; color: var(--foreground); }
+.h1 { font-family: var(--font-sans); font-weight: 700; font-size: 36px; line-height: 1.1;  letter-spacing: -0.02em; color: var(--foreground); }
+.h2 { font-family: var(--font-sans); font-weight: 700; font-size: 28px; line-height: 1.15; letter-spacing: -0.015em; color: var(--foreground); }
+.h3 { font-family: var(--font-sans); font-weight: 600; font-size: 22px; line-height: 1.2;  letter-spacing: -0.01em; color: var(--foreground); }
+.h4 { font-family: var(--font-sans); font-weight: 600; font-size: 18px; line-height: 1.3;  color: var(--foreground); }
+.body-lg { font-family: var(--font-sans); font-weight: 400; font-size: 18px; line-height: 1.5; color: var(--foreground); }
+.body    { font-family: var(--font-sans); font-weight: 400; font-size: 15px; line-height: 1.55; color: var(--foreground); }
+.body-sm { font-family: var(--font-sans); font-weight: 400; font-size: 13px; line-height: 1.5; color: var(--muted-foreground); }
+.label   { font-family: var(--font-sans); font-weight: 600; font-size: 13px; line-height: 1.2; letter-spacing: 0.01em; color: var(--foreground); }
+.overline{ font-family: var(--font-sans); font-weight: 600; font-size: 11px; line-height: 1.2; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted-foreground); }
+.btn-text{ font-family: var(--font-sans); font-weight: 700; font-size: 15px; letter-spacing: 0.01em; }
+.code    { font-family: var(--font-mono); font-weight: 500; font-size: 14px; letter-spacing: 0.04em; }
+.magic-code { font-family: var(--font-mono); font-weight: 600; font-size: 20px; letter-spacing: 0.3em; text-transform: uppercase; }
+</style>
+<style>/* ============================================================
+   HANGUK — Evolved "Premium SaaS" theme (redesign)
+   Same brand DNA: Royal Blue + Vibrant Lime + Inter.
+   Refined neutrals, layered elevation, full light + dark.
+   Toggle dark via <html data-theme="dark"> (or .dark).
+   ============================================================ */
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/4d1e2422.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/e7733644.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/47b42559.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/03d30e5f.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/d25b02c4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/0987dda4.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/4d1e2422.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/e7733644.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/47b42559.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/03d30e5f.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/d25b02c4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/0987dda4.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/4d1e2422.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/e7733644.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/47b42559.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/03d30e5f.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/d25b02c4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/0987dda4.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root {
+  /* ---- Brand constants ---- */
+  --blue:        #1A3A6C;   /* royal */
+  --blue-600:    #234C8A;
+  --blue-500:    #2E5FA8;
+  --blue-400:    #4E80C9;
+  --lime:        #D4E94C;   /* accent */
+  --lime-600:    #C2DA2E;
+  --lime-700:    #A8C014;
+
+  /* ---- Light theme (default) ---- */
+  --canvas:      #F6F8FB;   /* app background */
+  --surface:     #FFFFFF;   /* cards */
+  --surface-2:   #FBFCFE;   /* subtle raised / striped */
+  --surface-3:   #F0F3F8;   /* inset / hover fill */
+  --sidebar:     #0F2547;   /* deep navy rail */
+  --sidebar-2:   #163058;   /* rail hover / active fill */
+
+  --ink:         #0C1B33;   /* primary text */
+  --ink-2:       #43526B;   /* secondary text */
+  --ink-3:       #74829A;   /* tertiary / placeholder */
+  --line:        #E5EAF1;   /* hairline border */
+  --line-2:      #EEF1F6;   /* lighter divider */
+
+  --primary:     var(--blue);
+  --primary-ink: #FFFFFF;
+  --accent:      var(--lime);
+  --accent-ink:  #16203A;
+  --ring:        rgba(46,95,168,0.35);
+
+  --tint-blue:   #EEF3FB;   /* soft blue chip bg */
+  --tint-lime:   #F2F7D6;   /* soft lime chip bg */
+
+  --success:     #15A05A;  --success-bg: #E5F6EC;
+  --warning:     #E08600;  --warning-bg: #FCF1DC;
+  --danger:      #E0463C;  --danger-bg:  #FCE9E7;
+  --info:        #2E5FA8;  --info-bg:    #EAF1FB;
+
+  /* ---- Radii ---- */
+  --r-xs: 8px; --r-sm: 10px; --r-md: 14px; --r-lg: 18px; --r-xl: 24px; --r-pill: 999px;
+
+  /* ---- Elevation (light) ---- */
+  --sh-1: 0 1px 2px rgba(12,27,51,0.05), 0 1px 1px rgba(12,27,51,0.03);
+  --sh-2: 0 2px 4px rgba(12,27,51,0.05), 0 4px 12px rgba(12,27,51,0.06);
+  --sh-3: 0 8px 24px rgba(12,27,51,0.08), 0 2px 6px rgba(12,27,51,0.05);
+  --sh-4: 0 18px 48px rgba(12,27,51,0.14), 0 6px 16px rgba(12,27,51,0.08);
+  --sh-lime: 0 6px 20px rgba(168,192,20,0.35);
+  --sh-blue: 0 8px 24px rgba(26,58,108,0.28);
+
+  /* ---- Type ---- */
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; /* @kind font */
+  --mono: 'JetBrains Mono', ui-monospace, monospace; /* @kind font */
+
+  color-scheme: light;
+}
+
+[data-theme="dark"], .dark {
+  --canvas:    #080D17;
+  --surface:   #0F1626;
+  --surface-2: #131C2E;
+  --surface-3: #1A2438;
+  --sidebar:   #0A0F1C;
+  --sidebar-2: #111A2C;
+
+  --ink:    #EAF0F9;
+  --ink-2:  #A7B4CA;
+  --ink-3:  #6B7A95;
+  --line:   #20293C;
+  --line-2: #1A2233;
+
+  --primary:     #3D6FBF;   /* lift royal so it reads on dark */
+  --primary-ink: #FFFFFF;
+  --accent:      var(--lime);
+  --accent-ink:  #16203A;
+  --ring:        rgba(77,128,201,0.45);
+
+  --tint-blue: #14233D;
+  --tint-lime: #232A12;
+
+  --success: #34C77B; --success-bg: #11271C;
+  --warning: #F0A53A; --warning-bg: #2A2110;
+  --danger:  #F2685E; --danger-bg:  #2A1513;
+  --info:    #5C8FD6; --info-bg:    #122036;
+
+  --sh-1: 0 1px 2px rgba(0,0,0,0.4);
+  --sh-2: 0 2px 8px rgba(0,0,0,0.45);
+  --sh-3: 0 10px 28px rgba(0,0,0,0.5);
+  --sh-4: 0 24px 56px rgba(0,0,0,0.6);
+  --sh-blue: 0 8px 24px rgba(61,111,191,0.4);
+
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font); background: var(--canvas); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+/* shared helpers used across the prototype */
+.h-xl { font-size: 30px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; }
+.h-lg { font-size: 23px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+.h-md { font-size: 18px; font-weight: 650; letter-spacing: -0.01em; }
+.h-sm { font-size: 15px; font-weight: 600; }
+.body { font-size: 14px; font-weight: 400; line-height: 1.55; }
+.small { font-size: 13px; }
+.micro { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.mono { font-family: var(--mono); }
+.muted { color: var(--ink-2); }
+.faint { color: var(--ink-3); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--ink-3) 40%, transparent); border-radius: 999px; border: 3px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--ink-3) 60%, transparent); background-clip: content-box; }
+</style>
+<style>/* ============================================================
+   HANGUK DESIGN SYSTEM — root stylesheet
+   Single entry point for consumers: link this one file.
+   It pulls in both the foundational tokens/type and the
+   evolved "premium" redesign theme (light + dark).
+   ============================================================ */
+
+/* Foundational color + type tokens (semantic vars + type scale) */
+/* ============================================================
+   HANGUK CONSULTING — Colors & Type Foundations
+   Source of truth:
+   - hanguk-uz (admin/CRM web): src/index.css + tailwind.config.ts
+   - hanguk_app (Flutter student app): lib/design_system/theme/*
+   Brand: Deep Royal Blue #1A3A6C + Vibrant Lime #D4E94C
+   Font: Inter (Google Fonts)
+   ============================================================ */
+
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/4d1e2422.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/e7733644.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/47b42559.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/03d30e5f.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/d25b02c4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/0987dda4.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/4d1e2422.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/e7733644.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/47b42559.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/03d30e5f.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/d25b02c4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/0987dda4.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/4d1e2422.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/e7733644.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/47b42559.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/03d30e5f.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/d25b02c4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/0987dda4.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root {
+  /* ---------- BRAND CORE ---------- */
+  --royal-blue:   #1A3A6C;   /* primary — HSL(216 62% 26%) */
+  --royal-blue-90:#132A4D;   /* gradient stop */
+  --royal-blue-80:#0F213D;   /* gradient stop */
+  --vibrant-lime: #D4E94C;   /* accent — HSL(68 78% 60%) */
+  --lime-deep:    #B4CC19;   /* success / pressed lime — HSL(68 78% 45%) */
+
+  /* ---------- LIGHT THEME (web admin default) ---------- */
+  --background:   #FFFFFF;
+  --foreground:   #0A1A34;   /* ink navy — HSL(216 70% 12%) */
+  --card:         #FFFFFF;
+  --card-foreground:#0A1A34;
+
+  --primary:      var(--royal-blue);
+  --primary-foreground:#FFFFFF;
+  --accent:       var(--vibrant-lime);
+  --accent-foreground:#0A1A34;
+
+  --secondary:    #EFF2F5;   /* soft blue-gray — HSL(216 25% 95%) */
+  --secondary-foreground: var(--royal-blue);
+  --muted:        #F3F5F7;   /* HSL(216 20% 96%) */
+  --muted-foreground:#52627A;/* HSL(216 20% 40%) */
+
+  --border:       #D9DFE8;   /* HSL(216 25% 88%) */
+  --input:        #D9DFE8;
+  --ring:         #C7E04A;   /* lime ring — HSL(68 78% 50%) */
+
+  /* ---------- SEMANTIC ---------- */
+  --success:      #B4CC19;   /* web token — olive-lime, HSL(68 78% 45%) */
+  --success-green:#16A34A;   /* flutter success */
+  --warning:      #F59E0B;   /* warm gold — HSL(38 92% 50%) */
+  --destructive:  #EF4444;   /* HSL(0 84% 60%) */
+  --destructive-app:#DC2626; /* flutter error */
+
+  /* ---------- SIDEBAR (deep navy) ---------- */
+  --sidebar:      #132D53;   /* HSL(216 62% 20%) */
+  --sidebar-foreground:#D6DEEC;
+  --sidebar-accent:#C7E04A;
+
+  /* ---------- DARK / APP SURFACES (Flutter, OLED) ---------- */
+  --app-black:    #000000;   /* scaffold / OLED true black */
+  --app-bg-navy:  #0A0A1A;   /* backgroundNavy */
+  --app-dark-slate:#0F172A;  /* darkSlate / surface */
+  --app-nav:      #0F213D;   /* bottom-nav background */
+  --app-sheet:    #071221;   /* AI chat modal sheet */
+  --app-glass:    rgba(255,255,255,0.12); /* glass card surface */
+  --app-glass-border: rgba(255,255,255,0.10);
+  /* App navy→black gradient (used directly in markup; not a single-value token):
+     linear-gradient(135deg,#1A3A6C 0%,#132A4D 45%,#0F213D 75%,#0A0A1A 100%) */
+
+  /* ---------- RADII (base 0.75rem) ---------- */
+  --radius:    0.75rem;          /* 12px — lg */
+  --radius-md: calc(var(--radius) - 2px); /* 10px */
+  --radius-sm: calc(var(--radius) - 4px); /* 8px */
+  --radius-app-btn: 16px;        /* Flutter buttons / inputs */
+  --radius-app-card:20px;        /* Flutter glass cards */
+  --radius-pill: 999px;
+
+  /* ---------- ELEVATION ---------- */
+  --shadow-sm:  0 1px 2px rgba(10,26,52,0.06);
+  --shadow-md:  0 4px 12px rgba(10,26,52,0.08);
+  --shadow-lg:  0 12px 28px rgba(10,26,52,0.12);
+  --shadow-xl:  0 20px 48px rgba(10,26,52,0.16);
+  --shadow-app: 0 10px 20px rgba(0,0,0,0.30); /* app hero/logo drop */
+
+  /* ---------- TYPE ---------- */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+}
+
+/* ============================================================
+   SEMANTIC TYPE SCALE
+   Inter, tight tracking on display sizes. Bold (700) for
+   headings, 600 for UI labels/buttons, 400-500 body.
+   ============================================================ */
+.h-display { font-family: var(--font-sans); font-weight: 800; font-size: 48px; line-height: 1.05; letter-spacing: -0.02em; color: var(--foreground); }
+.h1 { font-family: var(--font-sans); font-weight: 700; font-size: 36px; line-height: 1.1;  letter-spacing: -0.02em; color: var(--foreground); }
+.h2 { font-family: var(--font-sans); font-weight: 700; font-size: 28px; line-height: 1.15; letter-spacing: -0.015em; color: var(--foreground); }
+.h3 { font-family: var(--font-sans); font-weight: 600; font-size: 22px; line-height: 1.2;  letter-spacing: -0.01em; color: var(--foreground); }
+.h4 { font-family: var(--font-sans); font-weight: 600; font-size: 18px; line-height: 1.3;  color: var(--foreground); }
+.body-lg { font-family: var(--font-sans); font-weight: 400; font-size: 18px; line-height: 1.5; color: var(--foreground); }
+.body    { font-family: var(--font-sans); font-weight: 400; font-size: 15px; line-height: 1.55; color: var(--foreground); }
+.body-sm { font-family: var(--font-sans); font-weight: 400; font-size: 13px; line-height: 1.5; color: var(--muted-foreground); }
+.label   { font-family: var(--font-sans); font-weight: 600; font-size: 13px; line-height: 1.2; letter-spacing: 0.01em; color: var(--foreground); }
+.overline{ font-family: var(--font-sans); font-weight: 600; font-size: 11px; line-height: 1.2; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted-foreground); }
+.btn-text{ font-family: var(--font-sans); font-weight: 700; font-size: 15px; letter-spacing: 0.01em; }
+.code    { font-family: var(--font-mono); font-weight: 500; font-size: 14px; letter-spacing: 0.04em; }
+.magic-code { font-family: var(--font-mono); font-weight: 600; font-size: 20px; letter-spacing: 0.3em; text-transform: uppercase; }
+
+
+/* Evolved premium theme — refined neutrals, elevation, light + dark.
+   Toggle dark via <html data-theme="dark"> (or .dark). */
+/* ============================================================
+   HANGUK — Evolved "Premium SaaS" theme (redesign)
+   Same brand DNA: Royal Blue + Vibrant Lime + Inter.
+   Refined neutrals, layered elevation, full light + dark.
+   Toggle dark via <html data-theme="dark"> (or .dark).
+   ============================================================ */
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/74ccd4d1.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/f2c2c47a.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/e9fd9ba5.woff2") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/5fd54974.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/9e66c310.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/46ac0ca4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("boylik/bf680bd8.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/4d1e2422.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/e7733644.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/47b42559.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/03d30e5f.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/d25b02c4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("boylik/0987dda4.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/4d1e2422.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/e7733644.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/47b42559.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/03d30e5f.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/d25b02c4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("boylik/0987dda4.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/4d1e2422.woff2") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/e7733644.woff2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/47b42559.woff2") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/03d30e5f.woff2") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/d25b02c4.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("boylik/0987dda4.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root {
+  /* ---- Brand constants ---- */
+  --blue:        #1A3A6C;   /* royal */
+  --blue-600:    #234C8A;
+  --blue-500:    #2E5FA8;
+  --blue-400:    #4E80C9;
+  --lime:        #D4E94C;   /* accent */
+  --lime-600:    #C2DA2E;
+  --lime-700:    #A8C014;
+
+  /* ---- Light theme (default) ---- */
+  --canvas:      #F6F8FB;   /* app background */
+  --surface:     #FFFFFF;   /* cards */
+  --surface-2:   #FBFCFE;   /* subtle raised / striped */
+  --surface-3:   #F0F3F8;   /* inset / hover fill */
+  --sidebar:     #0F2547;   /* deep navy rail */
+  --sidebar-2:   #163058;   /* rail hover / active fill */
+
+  --ink:         #0C1B33;   /* primary text */
+  --ink-2:       #43526B;   /* secondary text */
+  --ink-3:       #74829A;   /* tertiary / placeholder */
+  --line:        #E5EAF1;   /* hairline border */
+  --line-2:      #EEF1F6;   /* lighter divider */
+
+  --primary:     var(--blue);
+  --primary-ink: #FFFFFF;
+  --accent:      var(--lime);
+  --accent-ink:  #16203A;
+  --ring:        rgba(46,95,168,0.35);
+
+  --tint-blue:   #EEF3FB;   /* soft blue chip bg */
+  --tint-lime:   #F2F7D6;   /* soft lime chip bg */
+
+  --success:     #15A05A;  --success-bg: #E5F6EC;
+  --warning:     #E08600;  --warning-bg: #FCF1DC;
+  --danger:      #E0463C;  --danger-bg:  #FCE9E7;
+  --info:        #2E5FA8;  --info-bg:    #EAF1FB;
+
+  /* ---- Radii ---- */
+  --r-xs: 8px; --r-sm: 10px; --r-md: 14px; --r-lg: 18px; --r-xl: 24px; --r-pill: 999px;
+
+  /* ---- Elevation (light) ---- */
+  --sh-1: 0 1px 2px rgba(12,27,51,0.05), 0 1px 1px rgba(12,27,51,0.03);
+  --sh-2: 0 2px 4px rgba(12,27,51,0.05), 0 4px 12px rgba(12,27,51,0.06);
+  --sh-3: 0 8px 24px rgba(12,27,51,0.08), 0 2px 6px rgba(12,27,51,0.05);
+  --sh-4: 0 18px 48px rgba(12,27,51,0.14), 0 6px 16px rgba(12,27,51,0.08);
+  --sh-lime: 0 6px 20px rgba(168,192,20,0.35);
+  --sh-blue: 0 8px 24px rgba(26,58,108,0.28);
+
+  /* ---- Type ---- */
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; /* @kind font */
+  --mono: 'JetBrains Mono', ui-monospace, monospace; /* @kind font */
+
+  color-scheme: light;
+}
+
+[data-theme="dark"], .dark {
+  --canvas:    #080D17;
+  --surface:   #0F1626;
+  --surface-2: #131C2E;
+  --surface-3: #1A2438;
+  --sidebar:   #0A0F1C;
+  --sidebar-2: #111A2C;
+
+  --ink:    #EAF0F9;
+  --ink-2:  #A7B4CA;
+  --ink-3:  #6B7A95;
+  --line:   #20293C;
+  --line-2: #1A2233;
+
+  --primary:     #3D6FBF;   /* lift royal so it reads on dark */
+  --primary-ink: #FFFFFF;
+  --accent:      var(--lime);
+  --accent-ink:  #16203A;
+  --ring:        rgba(77,128,201,0.45);
+
+  --tint-blue: #14233D;
+  --tint-lime: #232A12;
+
+  --success: #34C77B; --success-bg: #11271C;
+  --warning: #F0A53A; --warning-bg: #2A2110;
+  --danger:  #F2685E; --danger-bg:  #2A1513;
+  --info:    #5C8FD6; --info-bg:    #122036;
+
+  --sh-1: 0 1px 2px rgba(0,0,0,0.4);
+  --sh-2: 0 2px 8px rgba(0,0,0,0.45);
+  --sh-3: 0 10px 28px rgba(0,0,0,0.5);
+  --sh-4: 0 24px 56px rgba(0,0,0,0.6);
+  --sh-blue: 0 8px 24px rgba(61,111,191,0.4);
+
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font); background: var(--canvas); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+/* shared helpers used across the prototype */
+.h-xl { font-size: 30px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; }
+.h-lg { font-size: 23px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+.h-md { font-size: 18px; font-weight: 650; letter-spacing: -0.01em; }
+.h-sm { font-size: 15px; font-weight: 600; }
+.body { font-size: 14px; font-weight: 400; line-height: 1.55; }
+.small { font-size: 13px; }
+.micro { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.mono { font-family: var(--mono); }
+.muted { color: var(--ink-2); }
+.faint { color: var(--ink-3); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--ink-3) 40%, transparent); border-radius: 999px; border: 3px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--ink-3) 60%, transparent); background-clip: content-box; }
+
+</style>
+<script src="boylik/a0535151.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:#fff;color:#0A1A34;font-family:'Inter',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#1A3A6C;text-decoration:none}
+a:hover{color:#132A4D}
+button{font-family:inherit}
+input{font-family:inherit}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+</style>
+</helmet>
+
+
+
+<sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:100vh">
+  <nav style="position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid #D9DFE8">
+    <div style="max-width:1200px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:34px;height:34px;border-radius:10px;background:#1A3A6C;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px">Z</div>
+        <div style="font-weight:700;font-size:18px;letter-spacing:-.01em">ZumSavdo</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:28px">
+        <a href="#nima-kiradi" style="font-size:14px;font-weight:500;color:#52627A">Nima kiradi</a>
+        <a href="#fikrlar" style="font-size:14px;font-weight:500;color:#52627A">Bazamiz</a>
+        <a href="#narxlar" style="font-size:14px;font-weight:500;color:#52627A">Narxlar</a>
+        <a href="#" style="font-size:14px;font-weight:600;color:#1A3A6C">Kirish</a>
+        <button sc-camel-on-click="{{ startDemo }}" style="background:#1A3A6C;color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#132A4D">Demoni boshlash</button>
+      </div>
+    </div>
+  </nav>
+
+  <div style="background:linear-gradient(135deg,#1A3A6C 0%,#132A4D 55%,#0F213D 100%);color:#fff">
+    <div style="max-width:1200px;margin:0 auto;padding:88px 32px 96px;display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center">
+      <div>
+        <div style="display:inline-block;padding:6px 14px;border-radius:999px;background:rgba(212,233,76,.16);border:1px solid rgba(212,233,76,.45);color:#D4E94C;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">Uzum bozori tahlili</div>
+        <h1 style="margin:20px 0 20px;font-size:52px;line-height:1.06;font-weight:800;letter-spacing:-.025em;text-wrap:pretty">Uzum va Yandex savdongizni bitta AI bilan boshqaring.</h1>
+        <p style="margin:0 0 34px;font-size:18px;line-height:1.6;color:#C6D2E4;max-width:520px;text-wrap:pretty">Xitoydan qaysi tovarni olishdan bozorga chiqarishgacha, buxgalteriya hisobotigacha — barchasini AI yordamchisi bilan bitta obunada bajaring.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button sc-camel-on-click="{{ startDemo }}" style="background:#D4E94C;color:#0A1A34;border:none;border-radius:12px;padding:16px 28px;font-size:16px;font-weight:700;cursor:pointer" style-hover="background:#C7E04A">Bepul demoni boshlash — 2 daqiqa</button>
+          <a href="#narxlar" style="border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.85);border-radius:12px;padding:16px 26px;font-size:16px;font-weight:600" style-hover="background:rgba(255,255,255,.08)">Narxlarni ko'rish</a>
+        </div>
+        <p style="margin:16px 0 0;font-size:13px;color:#8EA2C0">Ro'yxatdan o'tish shart emas · Karta talab qilinmaydi</p>
+      </div>
+      <div style="aspect-ratio:4/3;border-radius:20px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)">
+        <div style="text-align:center;color:rgba(255,255,255,.55);font-size:13px;font-weight:500">
+          <div style="width:48px;height:48px;border-radius:14px;border:1px dashed rgba(255,255,255,.4);margin:0 auto 12px"></div>
+          Dashboard preview
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#F3F5F7;border-bottom:1px solid #D9DFE8">
+    <div style="max-width:860px;margin:0 auto;padding:72px 32px;text-align:center">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#52627A;margin-bottom:16px">Biz nimaga ishonamiz</div>
+      <p style="margin:0;font-size:22px;line-height:1.6;font-weight:500;color:#0A1A34;text-wrap:pretty">Har bir o'zbek yoshining $1000 bilan ham katta biznesga eshigi ochilishi kerak. Buxgalter, ombor xodimi, tahlilchi, xitoy xaridchi va yuklovchi — bularning barchasi bitta obunada ZumSavdo AI ichida. <span style="background:linear-gradient(transparent 62%,#D4E94C 62%)">Qaror sizniki — raqamlar bizdan.</span></p>
+    </div>
+  </div>
+
+  <div id="nima-kiradi" style="max-width:1200px;margin:0 auto;padding:88px 32px">
+    <div style="text-align:center;margin-bottom:48px">
+      <h2 style="margin:0 0 10px;font-size:34px;font-weight:700;letter-spacing:-.02em">Obunaga nima kiradi</h2>
+      <p style="margin:0;font-size:16px;color:#52627A">10+ ishchi o'rnini bitta obuna bilan almashtiring</p>
+        <p style="margin:10px 0 0;font-size:14px;color:#52627A"><strong style="color:#0A1A34">TAYYOR</strong> — bugun ishlaydi. <strong style="color:#0A1A34">REJADA</strong> — ishlab chiqilmoqda, obunaga qoʻshilgach ochiladi.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
+      <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:26px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#1A3A6C;letter-spacing:.06em;margin-bottom:14px">01</div>
+        <h3 style="margin:0 0 8px;font-size:17px;font-weight:600">Budjet taqsimoti<span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#EFF2F5;color:#52627A;font-size:11px;font-weight:600;letter-spacing:.04em;vertical-align:middle;border:1px solid #D9DFE8">REJADA</span></h3>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#52627A">AI budjetingizni tovar, kargo, YATT, komissiya va zaxiraga aniq bo'lib beradi.</p>
+      </div>
+      <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:26px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#1A3A6C;letter-spacing:.06em;margin-bottom:14px">02</div>
+        <h3 style="margin:0 0 8px;font-size:17px;font-weight:600">Xitoydan xarid maslahati<span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#EFF2F5;color:#52627A;font-size:11px;font-weight:600;letter-spacing:.04em;vertical-align:middle;border:1px solid #D9DFE8">REJADA</span></h3>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#52627A">1688, Pinduoduo, Taobao'da aynan qaysi tovarni, qancha narxda, qaysi sotuvchidan olish.</p>
+      </div>
+      <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:26px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#1A3A6C;letter-spacing:.06em;margin-bottom:14px">03</div>
+        <h3 style="margin:0 0 8px;font-size:17px;font-weight:600">Kargo — narx va tracking<span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#EFF2F5;color:#52627A;font-size:11px;font-weight:600;letter-spacing:.04em;vertical-align:middle;border:1px solid #D9DFE8">REJADA</span></h3>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#52627A">$/kg tarif ochiq. Xitoydan O'zbekiston omboriga real vaqtda tracking.</p>
+      </div>
+      <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:26px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#1A3A6C;letter-spacing:.06em;margin-bottom:14px">04</div>
+        <h3 style="margin:0 0 8px;font-size:17px;font-weight:600">YATT va do'kon ochish<span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#EFF2F5;color:#52627A;font-size:11px;font-weight:600;letter-spacing:.04em;vertical-align:middle;border:1px solid #D9DFE8">REJADA</span></h3>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#52627A">Yakka tadbirkorlik, Uzum/Yandex hisob, bank hisobi — har bir qadam va aniq xarajat bilan.</p>
+      </div>
+      <div style="background:#1A3A6C;border:1px solid #1A3A6C;border-radius:12px;padding:26px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#D4E94C;letter-spacing:.06em;margin-bottom:14px">05</div>
+        <h3 style="margin:0 0 8px;font-size:17px;font-weight:600;color:#fff">Uzum + Yandex avto-yuklash<span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#EFF2F5;color:#52627A;font-size:11px;font-weight:600;letter-spacing:.04em;vertical-align:middle;border:1px solid #D9DFE8">REJADA</span></h3>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#C6D2E4">Bir marta yuklang — ikkinchi marketpleysga avtomatik ko'chiriladi.</p>
+      </div>
+      <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:26px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#1A3A6C;letter-spacing:.06em;margin-bottom:14px">06</div>
+        <h3 style="margin:0 0 8px;font-size:17px;font-weight:600">Bozor analitikasi<span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#D4E94C;color:#0A1A34;font-size:11px;font-weight:700;letter-spacing:.04em;vertical-align:middle">TAYYOR</span></h3>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#52627A">Uzum va Yandex savdo statistikasi, top sotuvchilar, raqobat, narx dinamikasi.</p>
+      </div>
+      <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:26px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#1A3A6C;letter-spacing:.06em;margin-bottom:14px">07</div>
+        <h3 style="margin:0 0 8px;font-size:17px;font-weight:600">Foto topish<span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#EFF2F5;color:#52627A;font-size:11px;font-weight:600;letter-spacing:.04em;vertical-align:middle;border:1px solid #D9DFE8">REJADA</span></h3>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#52627A">Studio kerak emas — internetdan marketpleysga mos foto AI topib beradi.</p>
+      </div>
+      <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:26px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#1A3A6C;letter-spacing:.06em;margin-bottom:14px">08</div>
+        <h3 style="margin:0 0 8px;font-size:17px;font-weight:600">Buxgalteriya hisoboti<span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#EFF2F5;color:#52627A;font-size:11px;font-weight:600;letter-spacing:.04em;vertical-align:middle;border:1px solid #D9DFE8">REJADA</span></h3>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#52627A">Soliq idorasi shabloniga to'liq mos hisobot — buxgalter kerak emas.</p>
+      </div>
+      <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:26px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#1A3A6C;letter-spacing:.06em;margin-bottom:14px">09</div>
+        <h3 style="margin:0 0 8px;font-size:17px;font-weight:600">Restock takliflari<span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#EFF2F5;color:#52627A;font-size:11px;font-weight:600;letter-spacing:.04em;vertical-align:middle;border:1px solid #D9DFE8">REJADA</span></h3>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#52627A">Zaxira budjet bilan tovar tugashidan oldin AI keyingi partiya taklifini beradi.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="fikrlar" style="background:#F3F5F7;border-top:1px solid #D9DFE8;border-bottom:1px solid #D9DFE8">
+    <div style="max-width:1200px;margin:0 auto;padding:88px 32px">
+      <div style="text-align:center;margin-bottom:48px">
+        <h2 style="margin:0 0 10px;font-size:34px;font-weight:700;letter-spacing:-.02em">Bazamizda bugun</h2>
+        <p style="margin:0;font-size:16px;color:#52627A">Har bir raqam oʻlchangan. Hisoblab chiqarilgani yoʻq.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+        <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:6px;box-shadow:0 4px 12px rgba(10,26,52,.08)"><div style="font-size:34px;font-weight:800;letter-spacing:-.02em;color:#0A1A34;font-family:'JetBrains Mono',monospace">1 528 764</div><div style="font-size:15px;font-weight:600;color:#0A1A34">tovar kuzatilmoqda</div><div style="font-size:13px;line-height:1.5;color:#52627A">Uzum katalogi id boʻyicha aylanib chiqiladi — namuna emas, butun katalog.</div></div>
+        <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:6px;box-shadow:0 4px 12px rgba(10,26,52,.08)"><div style="font-size:34px;font-weight:800;letter-spacing:-.02em;color:#0A1A34;font-family:'JetBrains Mono',monospace">82 684</div><div style="font-size:15px;font-weight:600;color:#0A1A34">doʻkon</div><div style="font-size:13px;line-height:1.5;color:#52627A">Har biri qaysi turkumda sotishi bilan.</div></div>
+        <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:6px;box-shadow:0 4px 12px rgba(10,26,52,.08)"><div style="font-size:34px;font-weight:800;letter-spacing:-.02em;color:#0A1A34;font-family:'JetBrains Mono',monospace">5 244</div><div style="font-size:15px;font-weight:600;color:#0A1A34">turkum</div><div style="font-size:13px;line-height:1.5;color:#52627A">Narx, qoldiq va sotuvchilar soni turkum kesimida.</div></div>
+        <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:6px;box-shadow:0 4px 12px rgba(10,26,52,.08)"><div style="font-size:34px;font-weight:800;letter-spacing:-.02em;color:#0A1A34;font-family:'JetBrains Mono',monospace">50 038</div><div style="font-size:15px;font-weight:600;color:#0A1A34">tovar kuniga oʻlchanadi</div><div style="font-size:13px;line-height:1.5;color:#52627A">Kuniga uch marta. Qoldiq farqidan sotuv baholanadi.</div></div>
+      </div>
+      <p style="margin:28px 0 0;text-align:center;font-size:13px;color:#8494A8">
+        2026-08-24 holatiga. Raqamlar bazadan olinadi va har kuni oʻzgaradi.
+      </p>
+    </div>
+  </div>
+
+  <div id="narxlar" style="max-width:1200px;margin:0 auto;padding:88px 32px">
+    <div style="text-align:center;margin-bottom:52px">
+      <h2 style="margin:0 0 10px;font-size:34px;font-weight:700;letter-spacing:-.02em">Narxlar</h2>
+      <p style="margin:0;font-size:16px;color:#52627A">Bitta odam ishlash o'rniga — bitta obuna</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:1020px;margin:0 auto;align-items:start">
+      <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:30px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#52627A">Basic</div>
+        <div style="margin:12px 0 4px;font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:600;letter-spacing:-.02em">99 000 <span style="font-size:13px;font-weight:400;color:#52627A;font-family:'Inter',sans-serif">so'm/oy</span></div>
+        <p style="margin:0 0 22px;font-size:13px;color:#52627A">Yangi boshlovchilar uchun</p>
+        <div style="display:flex;flex-direction:column;gap:11px;margin-bottom:26px">
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#B4CC19;font-weight:700">✓</span>AI chat + reja tuzish</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#B4CC19;font-weight:700">✓</span>Xitoydan xarid maslahati</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#B4CC19;font-weight:700">✓</span>Uzum analitikasi (asosiy)</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#B4CC19;font-weight:700">✓</span>Kargo tracking</div>
+          <div style="display:flex;gap:9px;font-size:14px;color:#8E9CB0"><span>—</span>Yandex integratsiya</div>
+          <div style="display:flex;gap:9px;font-size:14px;color:#8E9CB0"><span>—</span>Auto-yuklash</div>
+          <div style="display:flex;gap:9px;font-size:14px;color:#8E9CB0"><span>—</span>Buxgalteriya hisoboti</div>
+        </div>
+        <button sc-camel-on-click="{{ startDemo }}" style="width:100%;background:#fff;color:#1A3A6C;border:1px solid #1A3A6C;border-radius:10px;padding:13px;font-size:15px;font-weight:600;cursor:pointer" style-hover="background:#EFF2F5">Boshlash</button>
+      </div>
+      <div style="background:#1A3A6C;border-radius:12px;padding:34px 30px;box-shadow:0 20px 48px rgba(10,26,52,.16);position:relative;margin-top:-14px">
+        <div style="position:absolute;top:-13px;left:30px;background:#D4E94C;color:#0A1A34;padding:5px 12px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.08em">TAVSIYA</div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#D4E94C">Pro</div>
+        <div style="margin:12px 0 4px;font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:600;color:#fff;letter-spacing:-.02em">249 000 <span style="font-size:13px;font-weight:400;color:#8EA2C0;font-family:'Inter',sans-serif">so'm/oy</span></div>
+        <p style="margin:0 0 22px;font-size:13px;color:#8EA2C0">O'sib borayotgan sotuvchilar</p>
+        <div style="display:flex;flex-direction:column;gap:11px;margin-bottom:26px;color:#fff">
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#D4E94C;font-weight:700">✓</span>Basic'dagi hammasi</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#D4E94C;font-weight:700">✓</span>Yandex Market integratsiya</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#D4E94C;font-weight:700">✓</span>Auto-yuklash (Uzum ↔ Yandex)</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#D4E94C;font-weight:700">✓</span>Foto topish AI</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#D4E94C;font-weight:700">✓</span>Restock takliflari</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#D4E94C;font-weight:700">✓</span>Buxgalteriya hisoboti</div>
+          <div style="display:flex;gap:9px;font-size:14px;color:#7089AD"><span>—</span>Ko'p do'kon boshqaruvi</div>
+        </div>
+        <button sc-camel-on-click="{{ startDemo }}" style="width:100%;background:#D4E94C;color:#0A1A34;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer" style-hover="background:#C7E04A">Boshlash</button>
+      </div>
+      <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:30px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#52627A">Pro+</div>
+        <div style="margin:12px 0 4px;font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:600;letter-spacing:-.02em">599 000 <span style="font-size:13px;font-weight:400;color:#52627A;font-family:'Inter',sans-serif">so'm/oy</span></div>
+        <p style="margin:0 0 22px;font-size:13px;color:#52627A">Tajribali sotuvchi va agentliklar</p>
+        <div style="display:flex;flex-direction:column;gap:11px;margin-bottom:26px">
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#B4CC19;font-weight:700">✓</span>Pro'dagi hammasi</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#B4CC19;font-weight:700">✓</span>Ko'p do'kon boshqaruvi</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#B4CC19;font-weight:700">✓</span>Chuqurroq bozor tahlili</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#B4CC19;font-weight:700">✓</span>Raqobatchi monitoring</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#B4CC19;font-weight:700">✓</span>Shaxsiy AI menejer</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#B4CC19;font-weight:700">✓</span>Prioritet qo'llab-quvvatlash</div>
+          <div style="display:flex;gap:9px;font-size:14px"><span style="color:#B4CC19;font-weight:700">✓</span>API access</div>
+        </div>
+        <button sc-camel-on-click="{{ startDemo }}" style="width:100%;background:#fff;color:#1A3A6C;border:1px solid #1A3A6C;border-radius:10px;padding:13px;font-size:15px;font-weight:600;cursor:pointer" style-hover="background:#EFF2F5">Boshlash</button>
+      </div>
+    </div>
+    <div style="max-width:1200px;margin:0 auto;padding:0 32px 24px;text-align:center"><span style="font-size:14px;color:#52627A">Obuna istalgan vaqtda bekor qilinadi. Shartlar <a href="#" style="color:#1A3A6C">ofertada</a>.</span></div>
+
+  <div style="background:linear-gradient(135deg,#1A3A6C 0%,#0F213D 100%);color:#fff;text-align:center;padding:96px 32px">
+    <h2 style="margin:0 0 12px;font-size:38px;font-weight:800;letter-spacing:-.02em">Boshlash uchun 2 daqiqa yetadi</h2>
+    <p style="margin:0 0 30px;font-size:17px;color:#C6D2E4">AI chatbot bilan qisqa suhbat — sizga aynan reja tayyor bo'ladi</p>
+    <button sc-camel-on-click="{{ startDemo }}" style="background:#D4E94C;color:#0A1A34;border:none;border-radius:12px;padding:17px 32px;font-size:16px;font-weight:700;cursor:pointer" style-hover="background:#C7E04A">Bepul demoni boshlash</button>
+  </div>
+
+  <div style="border-top:1px solid #D9DFE8">
+    <div style="max-width:1200px;margin:0 auto;padding:32px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;font-size:13px;color:#52627A">
+      <div>© 2026 ZumSavdo</div>
+      <div>Telegram: @zumsavdo · +998 XX XXX XX XX</div>
+      <div style="display:flex;gap:8px"><a href="#">Oferta</a><span>·</span><a href="#">Maxfiylik</a></div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isDemo }}">
+<div style="min-height:100vh;background:#F3F5F7;display:flex;flex-direction:column">
+  <div style="position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #D9DFE8;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:30px;height:30px;border-radius:9px;background:#1A3A6C;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px">Z</div>
+      <div style="font-weight:700;font-size:15px">ZumSavdo <span style="color:#52627A;font-weight:500">Demo</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#52627A">Qadam</span>
+      <div style="display:flex;gap:7px;align-items:center">
+        <sc-for list="{{ dots }}" as="d" hint-placeholder-count="5">
+          <sc-if value="{{ d.filled }}"><span style="width:22px;height:6px;border-radius:999px;background:#D4E94C;display:block"></span></sc-if>
+          <sc-if value="{{ d.current }}"><span style="width:22px;height:6px;border-radius:999px;background:#1A3A6C;display:block"></span></sc-if>
+          <sc-if value="{{ d.empty }}"><span style="width:22px;height:6px;border-radius:999px;background:#D9DFE8;display:block"></span></sc-if>
+        </sc-for>
+      </div>
+    </div>
+    <button sc-camel-on-click="{{ goLanding }}" style="background:#fff;border:1px solid #D9DFE8;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;color:#52627A;cursor:pointer" style-hover="background:#EFF2F5">Chiqish</button>
+  </div>
+
+  <div style="flex:1;max-width:760px;width:100%;margin:0 auto;padding:28px 24px 0;display:flex;flex-direction:column">
+    <div style="flex:1;display:flex;flex-direction:column;gap:14px;padding-bottom:24px">
+      <sc-for list="{{ messages }}" as="m" hint-placeholder-count="3">
+        <sc-if value="{{ m.isAi }}">
+          <div style="display:flex;justify-content:flex-start;animation:fadeUp .3s ease-out">
+            <div style="max-width:80%;background:#fff;border:1px solid #D9DFE8;border-radius:16px 16px 16px 4px;padding:14px 18px;font-size:15px;line-height:1.6;box-shadow:0 1px 2px rgba(10,26,52,.06);display:flex;flex-direction:column;gap:6px">
+              <sc-for list="{{ m.lines }}" as="l" hint-placeholder-count="1"><div>{{ l }}</div></sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ m.isUser }}">
+          <div style="display:flex;justify-content:flex-end;animation:fadeUp .3s ease-out">
+            <div style="max-width:80%;background:#1A3A6C;color:#fff;border-radius:16px 16px 4px 16px;padding:12px 18px;font-size:15px;font-weight:500;line-height:1.5">
+              <sc-for list="{{ m.lines }}" as="l" hint-placeholder-count="1"><div>{{ l }}</div></sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ m.isBudget }}">
+          <div style="display:flex;justify-content:flex-start;animation:fadeUp .3s ease-out">
+            <div style="width:100%;max-width:520px;background:#fff;border:1px solid #D9DFE8;border-radius:16px;padding:22px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+              <div style="display:flex;align-items:baseline;gap:8px;padding-bottom:14px;border-bottom:1px solid #D9DFE8;margin-bottom:18px">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:600">{{ m.totalText }}</div>
+                <div style="font-size:12px;color:#52627A;text-transform:uppercase;letter-spacing:.06em">umumiy budjet</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <sc-for list="{{ m.rows }}" as="r" hint-placeholder-count="4">
+                  <div>
+                    <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px">
+                      <span style="color:#52627A">{{ r.label }}</span>
+                      <span style="font-family:'JetBrains Mono',monospace;font-weight:500">{{ r.value }}</span>
+                    </div>
+                    <div style="height:8px;border-radius:999px;background:#EFF2F5;overflow:hidden">
+                      <div style="height:100%;border-radius:999px;background:#1A3A6C;width:{{ r.width }}"></div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ m.isProducts }}">
+          <div style="display:flex;justify-content:flex-start;animation:fadeUp .3s ease-out">
+            <div style="width:100%;max-width:560px;background:#fff;border:1px solid #D9DFE8;border-radius:16px;padding:16px;box-shadow:0 4px 12px rgba(10,26,52,.08);display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ m.items }}" as="p" hint-placeholder-count="4">
+                <div style="display:grid;grid-template-columns:56px 1fr;gap:14px;padding:12px;border:1px solid #EFF2F5;border-radius:10px;background:#F9FAFB">
+                  <div style="aspect-ratio:1;border-radius:8px;background:#EFF2F5;border:1px dashed #C3CDDB"></div>
+                  <div>
+                    <div style="font-size:14px;font-weight:600;margin-bottom:5px">{{ p.name }}</div>
+                    <div style="font-size:12px;color:#52627A;font-family:'JetBrains Mono',monospace">{{ p.src }}</div>
+                    <div style="font-size:12px;color:#52627A;font-family:'JetBrains Mono',monospace">{{ p.uz }}</div>
+                    <div style="display:inline-block;margin-top:8px;padding:4px 10px;border-radius:999px;background:rgba(212,233,76,.28);color:#0A1A34;font-size:12px;font-weight:600">{{ p.profit }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ m.isCta }}">
+          <div style="animation:fadeUp .3s ease-out;background:#1A3A6C;border-radius:16px;padding:28px;text-align:center;color:#fff;box-shadow:0 12px 28px rgba(10,26,52,.12)">
+            <h4 style="margin:0 0 8px;font-size:20px;font-weight:700">Reja tayyor. Xitoydan xaridni boshlaymizmi?</h4>
+            <p style="margin:0 0 20px;font-size:14px;color:#C6D2E4">1688, Pinduoduo yoki Taobao'dan tanlaysiz. AI kengaytma har bir tovar uchun aniq maslahat beradi.</p>
+            <button sc-camel-on-click="{{ goMarketplaces }}" style="background:#D4E94C;color:#0A1A34;border:none;border-radius:12px;padding:15px 26px;font-size:15px;font-weight:700;cursor:pointer" style-hover="background:#C7E04A">Ha, Xitoy marketpleyslariga o'tish</button>
+          </div>
+        </sc-if>
+      </sc-for>
+    </div>
+
+    <div style="position:sticky;bottom:0;background:#F3F5F7;padding:16px 0 20px;border-top:1px solid #D9DFE8">
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+        <sc-for list="{{ replies }}" as="r" hint-placeholder-count="3">
+          <button sc-camel-on-click="{{ r.onClick }}" style="background:#fff;border:1px solid #1A3A6C;color:#1A3A6C;border-radius:999px;padding:11px 18px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#1A3A6C;color:#fff">{{ r.text }}</button>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:8px">
+        <input type="text" placeholder="Yoki o'zingiz yozing..." style="flex:1;border:1px solid #D9DFE8;border-radius:10px;padding:12px 14px;font-size:14px;background:#fff;outline:none" style-focus="border-color:#C7E04A;box-shadow:0 0 0 3px rgba(199,224,74,.35)">
+        <button style="background:#1A3A6C;color:#fff;border:none;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:600;cursor:pointer">Yuborish</button>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isMarketplaces }}">
+<div style="min-height:100vh;background:#fff">
+  <div style="position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #D9DFE8;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:30px;height:30px;border-radius:9px;background:#1A3A6C;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px">Z</div>
+      <div style="font-weight:700;font-size:15px">ZumSavdo <span style="color:#52627A;font-weight:500">Demo</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#52627A">Qadam</span>
+      <div style="display:flex;gap:7px">
+        <span style="width:22px;height:6px;border-radius:999px;background:#D4E94C"></span>
+        <span style="width:22px;height:6px;border-radius:999px;background:#D4E94C"></span>
+        <span style="width:22px;height:6px;border-radius:999px;background:#D4E94C"></span>
+        <span style="width:22px;height:6px;border-radius:999px;background:#D4E94C"></span>
+        <span style="width:22px;height:6px;border-radius:999px;background:#1A3A6C"></span>
+      </div>
+    </div>
+    <button sc-camel-on-click="{{ goLanding }}" style="background:#fff;border:1px solid #D9DFE8;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;color:#52627A;cursor:pointer">Chiqish</button>
+  </div>
+  <div style="display:grid;grid-template-columns:clamp(300px,30vw,400px) minmax(0,1fr);min-height:calc(100vh - 55px)">
+    <div style="background:#F3F5F7;border-right:1px solid #D9DFE8;padding:28px 24px;display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#52627A">AI suhbat davomi</div>
+      <div style="background:#fff;border:1px solid #D9DFE8;border-radius:16px 16px 16px 4px;padding:14px 16px;font-size:14px;line-height:1.6">Aniq tanlovlaringiz tayyor. Endi Xitoy marketpleyslaridan xarid qilishimiz kerak.</div>
+      <div style="background:#fff;border:1px solid #D9DFE8;border-radius:16px 16px 16px 4px;padding:16px;font-size:14px">
+        <div style="font-weight:600;margin-bottom:10px">Tanlangan tovarlar</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:#52627A">
+          <div style="display:flex;justify-content:space-between;gap:12px"><span>iPhone 15 silikon g'ilof</span><strong style="font-family:'JetBrains Mono',monospace;color:#0A1A34">50 dona</strong></div>
+          <div style="display:flex;justify-content:space-between;gap:12px"><span>Samsung A34/A54 g'ilof</span><strong style="font-family:'JetBrains Mono',monospace;color:#0A1A34">80 dona</strong></div>
+          <div style="display:flex;justify-content:space-between;gap:12px"><span>Universal shishaviy plyonka</span><strong style="font-family:'JetBrains Mono',monospace;color:#0A1A34">200 dona</strong></div>
+          <div style="display:flex;justify-content:space-between;gap:12px"><span>USB-C zaryad kabeli</span><strong style="font-family:'JetBrains Mono',monospace;color:#0A1A34">40 dona</strong></div>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid #D9DFE8;border-radius:16px 16px 16px 4px;padding:14px 16px;font-size:14px;line-height:1.6">Qaysi Xitoy marketpleysidan boshlaymiz? Men <strong>1688'ni tavsiya qilaman</strong> — ulgurji va ishlab chiqaruvchidan to'g'ridan-to'g'ri, eng arzon.</div>
+      <div style="margin-top:auto;padding:14px 16px;border-radius:12px;background:rgba(212,233,76,.2);border:1px solid #C7E04A;font-size:13px;line-height:1.55;color:#0A1A34">Tanlangan marketpleys ochilganidan so'ng, bu suhbat brauzer kengaytmasi ichida davom etadi.</div>
+    </div>
+    <div style="padding:56px 48px;min-width:0">
+      <h2 style="margin:0 0 10px;font-size:30px;font-weight:700;letter-spacing:-.02em">Xitoy marketpleysini tanlang</h2>
+      <p style="margin:0 0 40px;font-size:16px;color:#52627A;max-width:620px">Tanlangan marketpleys yangi oynada ochiladi. ZumSavdo brauzer kengaytmasi avtomatik ishga tushadi.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;max-width:1000px">
+        <div sc-camel-on-click="{{ goSim }}" style="position:relative;background:#fff;border:2px solid #1A3A6C;border-radius:12px;padding:28px;cursor:pointer;box-shadow:0 12px 28px rgba(10,26,52,.12)">
+          <div style="position:absolute;top:-13px;left:24px;background:#D4E94C;color:#0A1A34;padding:5px 12px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.08em">TAVSIYA</div>
+          <div style="aspect-ratio:2/1;border-radius:10px;background:#EFF2F5;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;color:#1A3A6C;margin-bottom:20px">1688.com</div>
+          <h3 style="margin:0 0 8px;font-size:19px;font-weight:700">1688.com</h3>
+          <p style="margin:0 0 22px;font-size:14px;line-height:1.55;color:#52627A;min-height:66px">Ulgurji tovarlar. Ishlab chiqaruvchidan to'g'ridan-to'g'ri. Eng arzon narxlar.</p>
+          <button sc-camel-on-click="{{ goSim }}" style="width:100%;background:#1A3A6C;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:600;cursor:pointer" style-hover="background:#132A4D">1688 ni ochish</button>
+        </div>
+        <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:28px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+          <div style="aspect-ratio:2/1;border-radius:10px;background:#F3F5F7;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;color:#52627A;margin-bottom:20px">Pinduoduo</div>
+          <h3 style="margin:0 0 8px;font-size:19px;font-weight:700">Pinduoduo</h3>
+          <p style="margin:0 0 22px;font-size:14px;line-height:1.55;color:#52627A;min-height:66px">Arzon narxlar, tez yetkazish, kichikroq lotlar ham qabul qilinadi.</p>
+          <button sc-camel-on-click="{{ notReady }}" style="width:100%;background:#fff;color:#1A3A6C;border:1px solid #D9DFE8;border-radius:10px;padding:13px;font-size:15px;font-weight:600;cursor:pointer" style-hover="background:#EFF2F5">Pinduoduo ni ochish</button>
+        </div>
+        <div style="background:#fff;border:1px solid #D9DFE8;border-radius:12px;padding:28px;box-shadow:0 4px 12px rgba(10,26,52,.08)">
+          <div style="aspect-ratio:2/1;border-radius:10px;background:#F3F5F7;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;color:#52627A;margin-bottom:20px">Taobao</div>
+          <h3 style="margin:0 0 8px;font-size:19px;font-weight:700">Taobao</h3>
+          <p style="margin:0 0 22px;font-size:14px;line-height:1.55;color:#52627A;min-height:66px">Keng katalog, brendlar mavjud, chakana ham mumkin.</p>
+          <button sc-camel-on-click="{{ notReady }}" style="width:100%;background:#fff;color:#1A3A6C;border:1px solid #D9DFE8;border-radius:10px;padding:13px;font-size:15px;font-weight:600;cursor:pointer" style-hover="background:#EFF2F5">Taobao ni ochish</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSim }}">
+<div style="min-height:100vh;background:#F3F5F7">
+  <div style="background:#E7EAEE;border-bottom:1px solid #C3CDDB;padding:7px 14px;display:flex;align-items:center;gap:10px">
+    <div style="display:flex;gap:6px">
+      <span style="width:11px;height:11px;border-radius:999px;background:#C3CDDB;display:block"></span>
+      <span style="width:11px;height:11px;border-radius:999px;background:#C3CDDB;display:block"></span>
+      <span style="width:11px;height:11px;border-radius:999px;background:#C3CDDB;display:block"></span>
+    </div>
+    <div style="background:#fff;border:1px solid #C3CDDB;border-bottom:none;border-radius:7px 7px 0 0;padding:5px 14px;font-size:11px;color:#52627A;margin-left:8px">1688.com — Alibaba</div>
+    <div style="flex:1;background:#fff;border:1px solid #C3CDDB;border-radius:8px;padding:5px 12px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#8E9CB0;margin:0 8px">https://s.1688.com/selloffer/offer_search.htm?keywords=phone+case</div>
+    <sc-if value="{{ showExt }}" hint-placeholder-val="{{ true }}">
+      <div style="width:26px;height:26px;border-radius:8px;background:#1A3A6C;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800">Z</div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ showExt }}" hint-placeholder-val="{{ true }}">
+  <div style="background:#1A3A6C;color:#fff;padding:12px 20px;display:flex;align-items:center;gap:28px">
+    <div>
+      <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8EA2C0">Tovar budjeti</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600">{{ budgetTotalText }}</div>
+    </div>
+    <div>
+      <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8EA2C0">Sarflandi</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600">{{ budgetSpentText }}</div>
+    </div>
+    <div>
+      <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8EA2C0">Qoldi</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;color:#D4E94C">{{ budgetLeftText }}</div>
+    </div>
+    <div style="flex:1;height:8px;border-radius:999px;background:rgba(255,255,255,.16);overflow:hidden;min-width:140px">
+      <div style="height:100%;border-radius:999px;background:#D4E94C;transition:width .5s ease-out;width:{{ progressPct }}"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;padding-left:20px;border-left:1px solid rgba(255,255,255,.16);font-size:12px;color:#C6D2E4">
+      <span style="width:20px;height:20px;border-radius:6px;background:#D4E94C;color:#0A1A34;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">Z</span>
+      Kengaytma faol
+    </div>
+  </div>
+  </sc-if>
+
+  <div style="background:#52627A;color:#C3CDDB;font-size:11px;padding:5px 20px;display:flex;justify-content:space-between">
+    <div>Xush kelibsiz, mehmon · <a href="#" style="color:#fff">Kirish</a> · <a href="#" style="color:#fff">Ro'yxatdan o'tish</a></div>
+    <div style="display:flex;gap:16px"><span>Mening 1688</span><span>Xabarlar</span><span>Buyurtmalar</span><span>Yordam</span><span>O'zbek ▾</span></div>
+  </div>
+  <div style="background:#fff;border-bottom:1px solid #C3CDDB;padding:14px 20px;display:flex;align-items:center;gap:20px">
+    <div>
+      <div style="font-size:26px;font-weight:900;letter-spacing:-.03em;color:#0A1A34">1688</div>
+      <div style="font-size:10px;color:#8E9CB0">Alibaba ulgurji</div>
+    </div>
+    <div style="flex:1;max-width:660px">
+      <div style="display:flex;gap:2px;font-size:12px">
+        <span style="padding:6px 14px;border-radius:8px 8px 0 0;background:#0A1A34;color:#fff;font-weight:600">Tovarlar</span>
+        <span style="padding:6px 14px;border-radius:8px 8px 0 0;background:#F3F5F7;color:#52627A">Zavodlar</span>
+        <span style="padding:6px 14px;border-radius:8px 8px 0 0;background:#F3F5F7;color:#52627A">Aniq mos</span>
+      </div>
+      <div style="display:flex;border:2px solid #0A1A34;border-radius:0 8px 8px 8px;overflow:hidden">
+        <div style="padding:9px 12px;background:#F3F5F7;border-right:1px solid #C3CDDB;font-size:12px;color:#52627A;white-space:nowrap;display:flex;align-items:center">Telefon aksessuar ▾</div>
+        <input type="text" value="telefon g'ilofi iPhone 15 silikon" readonly="" style="flex:1;border:none;padding:9px 12px;font-size:13px;outline:none;color:#0A1A34">
+        <button style="border:none;background:#0A1A34;color:#fff;padding:9px 24px;font-size:13px;font-weight:700;cursor:pointer">Qidirish</button>
+      </div>
+      <div style="font-size:11px;color:#8E9CB0;margin-top:7px;display:flex;gap:12px;flex-wrap:wrap">
+        <span>Ommabop:</span><a href="#" style="color:#52627A">iPhone 15 g'ilof</a><a href="#" style="color:#52627A">Samsung A34 g'ilof</a><a href="#" style="color:#52627A">MagSafe</a><a href="#" style="color:#52627A">Shishaviy plyonka</a>
+      </div>
+    </div>
+    <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+      <sc-if value="{{ showExt }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:10px;padding:4px 10px;border-radius:999px;background:rgba(212,233,76,.28);color:#0A1A34;font-weight:600">O'zbek tilida — kengaytma tarjima qildi</div>
+      </sc-if>
+      <div style="display:flex;gap:18px;font-size:11px;color:#52627A;white-space:nowrap">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><span style="width:22px;height:22px;border:1px solid #C3CDDB;border-radius:6px;display:flex;align-items:center;justify-content:center">♡</span>Sevimli</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><span style="width:22px;height:22px;border:1px solid #C3CDDB;border-radius:6px;display:flex;align-items:center;justify-content:center">⌗</span><span style="white-space:nowrap">Savat · {{ cartCount }}</span></div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:2px;padding:0 20px;background:#0A1A34;font-size:12px">
+    <a href="#" style="color:#0A1A34;background:#fff;padding:10px 14px;font-weight:600">Bosh sahifa</a>
+    <a href="#" style="color:#C3CDDB;padding:10px 14px">Brend markazlari</a>
+    <a href="#" style="color:#C3CDDB;padding:10px 14px">Sanoat markazlari</a>
+    <a href="#" style="color:#C3CDDB;padding:10px 14px">Ishlab chiqaruvchilar</a>
+    <a href="#" style="color:#C3CDDB;padding:10px 14px">Yetkazib beruvchi</a>
+    <a href="#" style="color:#C3CDDB;padding:10px 14px">Yangi tovarlar</a>
+    <a href="#" style="color:#C3CDDB;padding:10px 14px">Chegirmalar</a>
+    <a href="#" style="color:#C3CDDB;padding:10px 14px">Ko'p sotilganlar</a>
+    <a href="#" style="color:#C3CDDB;padding:10px 14px">Yordam</a>
+  </div>
+  <div style="padding:9px 20px;background:#fff;border-bottom:1px solid #D9DFE8;font-size:11px;color:#52627A;display:flex;justify-content:space-between">
+    <div>Bosh sahifa <span style="color:#C3CDDB">›</span> Telefon aksessuarlari <span style="color:#C3CDDB">›</span> <strong style="color:#0A1A34">Telefon g'iloflari</strong></div>
+    <div>Jami: <strong style="color:#0A1A34;font-family:'JetBrains Mono',monospace">{{ resultsText }}</strong> ta natija</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:clamp(160px,17vw,230px) minmax(0,1fr) clamp(250px,26vw,360px);align-items:start">
+    <aside style="background:#fff;border-right:1px solid #D9DFE8;font-size:12px">
+      <div style="padding:11px 14px;background:#0A1A34;color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Filtrlar</div>
+      <div style="padding:14px;border-bottom:1px solid #EFF2F5">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#52627A;margin-bottom:8px">Sub-turkum</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#0A1A34;cursor:pointer">iPhone g'iloflari <span style="color:#8E9CB0;font-weight:400">2 340</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">Samsung g'iloflari <span style="color:#8E9CB0">1 120</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">Universal g'iloflar <span style="color:#8E9CB0">890</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">Xiaomi g'iloflari <span style="color:#8E9CB0">670</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">Chexol-kitob <span style="color:#8E9CB0">450</span></div>
+        </div>
+      </div>
+      <div style="padding:14px;border-bottom:1px solid #EFF2F5">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#52627A;margin-bottom:8px">Narx (¥)</div>
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px">
+          <input type="number" placeholder="min" style="width:56px;border:1px solid #D9DFE8;border-radius:6px;padding:5px;font-size:11px">
+          <span style="color:#8E9CB0">—</span>
+          <input type="number" placeholder="max" style="width:56px;border:1px solid #D9DFE8;border-radius:6px;padding:5px;font-size:11px">
+          <button style="padding:5px 10px;border:1px solid #D9DFE8;border-radius:6px;background:#fff;font-size:11px;cursor:pointer">OK</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">0 – ¥5 <span style="color:#8E9CB0">450</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">¥5 – ¥15 <span style="color:#8E9CB0">1 820</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">¥15 – ¥30 <span style="color:#8E9CB0">970</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">¥30+ <span style="color:#8E9CB0">180</span></div>
+        </div>
+      </div>
+      <div style="padding:14px;border-bottom:1px solid #EFF2F5">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#52627A;margin-bottom:8px">Sotuvchi turi</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer"><span><input type="checkbox" style="margin-right:6px">Ishonchli</span><span style="color:#8E9CB0">1 240</span></label>
+          <label style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer"><span><input type="checkbox" style="margin-right:6px">Sertifikatli</span><span style="color:#8E9CB0">890</span></label>
+          <label style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer"><span><input type="checkbox" style="margin-right:6px">Zavod</span><span style="color:#8E9CB0">670</span></label>
+          <label style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer"><span><input type="checkbox" style="margin-right:6px">Yirik ulgurji</span><span style="color:#8E9CB0">340</span></label>
+        </div>
+      </div>
+      <div style="padding:14px;border-bottom:1px solid #EFF2F5">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#52627A;margin-bottom:8px">Reyting</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer"><span><input type="checkbox" style="margin-right:6px">★★★★★ 5.0</span><span style="color:#8E9CB0">180</span></label>
+          <label style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer"><span><input type="checkbox" style="margin-right:6px">★★★★ 4.5+</span><span style="color:#8E9CB0">720</span></label>
+          <label style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer"><span><input type="checkbox" style="margin-right:6px">★★★★ 4.0+</span><span style="color:#8E9CB0">1 340</span></label>
+        </div>
+      </div>
+      <div style="padding:14px;border-bottom:1px solid #EFF2F5">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#52627A;margin-bottom:8px">Min. buyurtma <span style="font-weight:400;text-transform:none;letter-spacing:0">dona</span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span style="padding:4px 9px;border:1px solid #D9DFE8;border-radius:999px;font-size:11px;color:#52627A;cursor:pointer">1 – 20</span>
+          <span style="padding:4px 9px;border:1px solid #D9DFE8;border-radius:999px;font-size:11px;color:#52627A;cursor:pointer">20 – 50</span>
+          <span style="padding:4px 9px;border:1px solid #D9DFE8;border-radius:999px;font-size:11px;color:#52627A;cursor:pointer">50 – 100</span>
+          <span style="padding:4px 9px;border:1px solid #D9DFE8;border-radius:999px;font-size:11px;color:#52627A;cursor:pointer">100 – 500</span>
+          <span style="padding:4px 9px;border:1px solid #D9DFE8;border-radius:999px;font-size:11px;color:#52627A;cursor:pointer">500+</span>
+        </div>
+      </div>
+      <div style="padding:14px;border-bottom:1px solid #EFF2F5">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#52627A;margin-bottom:8px">Kafolatlar</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label style="font-size:12px;color:#52627A;cursor:pointer"><input type="checkbox" style="margin-right:6px">7 kun qaytarish</label>
+          <label style="font-size:12px;color:#52627A;cursor:pointer"><input type="checkbox" style="margin-right:6px">24 soatda jo'natish</label>
+          <label style="font-size:12px;color:#52627A;cursor:pointer"><input type="checkbox" style="margin-right:6px">Sifat kafolati</label>
+          <label style="font-size:12px;color:#52627A;cursor:pointer"><input type="checkbox" style="margin-right:6px">To'lov himoyasi</label>
+        </div>
+      </div>
+      <div style="padding:14px;border-bottom:1px solid #EFF2F5">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#52627A;margin-bottom:8px">Yetkazish joyi</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">Guangdong <span style="color:#8E9CB0">1 890</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">Zhejiang <span style="color:#8E9CB0">890</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">Fujian <span style="color:#8E9CB0">340</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">Jiangsu <span style="color:#8E9CB0">280</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">Shanghai <span style="color:#8E9CB0">190</span></div>
+        </div>
+      </div>
+      <div style="padding:14px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#52627A;margin-bottom:8px">Sotuvchi darajasi</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">★ Yulduzli sotuvchi <span style="color:#8E9CB0">340</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">Bronza <span style="color:#8E9CB0">890</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">Kumush <span style="color:#8E9CB0">560</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#52627A;cursor:pointer">Oltin <span style="color:#8E9CB0">180</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <div style="min-width:0">
+      <div style="background:#fff;border-bottom:1px solid #D9DFE8;padding:10px 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="padding:7px 15px;border-radius:8px;background:#0A1A34;color:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Aralash</span>
+        <span style="padding:7px 15px;border-radius:8px;border:1px solid #D9DFE8;font-size:12px;color:#52627A;cursor:pointer;white-space:nowrap">Savdo hajmi ↓</span>
+        <span style="padding:7px 15px;border-radius:8px;border:1px solid #D9DFE8;font-size:12px;color:#52627A;cursor:pointer;white-space:nowrap">Narx ↕</span>
+        <span style="padding:7px 15px;border-radius:8px;border:1px solid #D9DFE8;font-size:12px;color:#52627A;cursor:pointer;white-space:nowrap">Yangi tovarlar</span>
+        <span style="padding:7px 15px;border-radius:8px;border:1px solid #D9DFE8;font-size:12px;color:#52627A;cursor:pointer;white-space:nowrap">Sotuvchi reytingi</span>
+        <span style="margin-left:auto;font-size:11px;color:#8E9CB0;white-space:nowrap">Sahifa <strong style="color:#0A1A34">1</strong> / 45</span>
+      </div>
+
+      <sc-if value="{{ noticeVisible }}">
+        <div style="margin:14px 16px 0;padding:12px 16px;border-radius:10px;background:#1A3A6C;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:space-between;gap:14px">
+          <div><strong>ZumSavdo kengaytmasi filtrni qo'lladi:</strong> narx pastdan yuqoriga + reyting ★5 + ishonchli sotuvchi</div>
+          <div style="padding:4px 11px;border-radius:999px;background:#D4E94C;color:#0A1A34;font-size:11px;font-weight:700;white-space:nowrap">25 ta mos tovar</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ loading }}">
+        <div style="padding:90px 20px;text-align:center">
+          <div style="height:10px;max-width:320px;margin:0 auto;border-radius:999px;background:linear-gradient(90deg,#EFF2F5,#C3CDDB,#EFF2F5);background-size:200% 100%;animation:shimmer 1.2s infinite"></div>
+          <div style="font-size:13px;color:#52627A;margin-top:14px">1688 sahifasida filtr qo'llanmoqda...</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ gridVisible }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;padding:16px">
+        <sc-for list="{{ products }}" as="p" hint-placeholder-count="6">
+          <div style="background:#fff;border:1px solid #D9DFE8;border-radius:10px;display:flex;flex-direction:column;overflow:hidden">
+            <div style="aspect-ratio:1;background:#F3F5F7;border-bottom:1px solid #EFF2F5;position:relative;display:flex;align-items:center;justify-content:center;color:#8E9CB0;font-size:11px">
+              Tovar rasmi
+              <sc-if value="{{ p.hasTag }}">
+                <div style="position:absolute;top:8px;left:8px;padding:3px 9px;border-radius:999px;background:#0A1A34;color:#fff;font-size:9px;font-weight:700;letter-spacing:.06em">{{ p.tag }}</div>
+              </sc-if>
+            </div>
+            <div style="padding:12px;display:flex;flex-direction:column;gap:9px;flex:1">
+              <div style="font-size:12.5px;line-height:1.4;min-height:35px;color:#0A1A34">{{ p.title }}</div>
+              <div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600;line-height:1">{{ p.cnPrice }}<span style="font-size:10px;color:#8E9CB0;font-weight:400;font-family:'Inter',sans-serif">/dona</span></div>
+                <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">
+                  <sc-for list="{{ p.tiers }}" as="t" hint-placeholder-count="3">
+                    <span style="padding:2px 7px;border-radius:6px;background:#F3F5F7;font-size:10px;color:#52627A;font-family:'JetBrains Mono',monospace">{{ t }}</span>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="border-top:1px solid #EFF2F5;padding-top:8px;display:flex;flex-direction:column;gap:3px;font-size:11px;color:#52627A">
+                <div style="display:flex;justify-content:space-between"><span>Oyda sotildi</span><strong style="color:#0A1A34">{{ p.sales }}</strong></div>
+                <div style="display:flex;justify-content:space-between"><span>Min. buyurtma</span><strong style="color:#0A1A34">{{ p.minLotText }}</strong></div>
+                <div style="display:flex;justify-content:space-between"><span>Reyting</span><strong style="color:#0A1A34">{{ p.ratingText }}</strong></div>
+              </div>
+              <div style="border-top:1px solid #EFF2F5;padding-top:8px">
+                <div style="font-size:11.5px;font-weight:600;margin-bottom:5px">{{ p.seller }}</div>
+                <div style="display:flex;gap:4px;flex-wrap:wrap">
+                  <sc-for list="{{ p.badges }}" as="b" hint-placeholder-count="3">
+                    <span style="padding:2px 7px;border-radius:999px;background:#EFF2F5;font-size:9.5px;color:#52627A">{{ b }}</span>
+                  </sc-for>
+                </div>
+              </div>
+              <sc-if value="{{ showExt }}" hint-placeholder-val="{{ true }}">
+                <div style="margin-top:auto;border-radius:8px;background:#F0F4F9;border:1px solid #D9DFE8;padding:10px">
+                  <div style="display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1A3A6C;margin-bottom:7px">
+                    <span style="width:13px;height:13px;border-radius:4px;background:#1A3A6C;color:#fff;display:flex;align-items:center;justify-content:center;font-size:8px">Z</span>ZumSavdo tahlili
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:3px;font-size:10.5px;color:#52627A">
+                    <div style="display:flex;justify-content:space-between"><span>Uzum narxi</span><strong style="color:#0A1A34;font-family:'JetBrains Mono',monospace">{{ p.uzumText }}</strong></div>
+                    <div style="display:flex;justify-content:space-between"><span>1 donadan foyda</span><strong style="color:#0A1A34;font-family:'JetBrains Mono',monospace">{{ p.profitText }}</strong></div>
+                    <div style="display:flex;justify-content:space-between"><span>Baho</span><strong style="color:#0A1A34">{{ p.grade }}</strong></div>
+                  </div>
+                  <div style="margin-top:8px;padding:5px;border-radius:6px;background:#D4E94C;color:#0A1A34;text-align:center;font-size:11px;font-weight:700">{{ p.marginText }}</div>
+                </div>
+              </sc-if>
+            </div>
+            <div style="padding:10px 12px;border-top:1px solid #EFF2F5;display:flex;gap:6px;align-items:center">
+              <input type="number" value="{{ p.qty }}" sc-camel-on-change="{{ p.onQty }}" style="width:56px;border:1px solid #D9DFE8;border-radius:7px;padding:6px;font-size:11px;text-align:center;font-family:'JetBrains Mono',monospace">
+              <sc-if value="{{ p.added }}">
+                <button style="flex:1;background:#EFF2F5;color:#52627A;border:none;border-radius:7px;padding:8px;font-size:11px;font-weight:600">{{ p.addedLabel }}</button>
+              </sc-if>
+              <sc-if value="{{ p.notAdded }}" hint-placeholder-val="{{ true }}">
+                <button sc-camel-on-click="{{ p.onAdd }}" style="flex:1;background:#1A3A6C;color:#fff;border:none;border-radius:7px;padding:8px;font-size:11px;font-weight:600;cursor:pointer" style-hover="background:#132A4D">{{ p.addLabel }}</button>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <div style="padding:20px;text-align:center;display:flex;gap:5px;justify-content:center;align-items:center">
+        <span style="padding:6px 11px;border:1px solid #D9DFE8;border-radius:7px;background:#fff;font-size:11px;color:#52627A;cursor:pointer">‹</span>
+        <span style="padding:6px 11px;border-radius:7px;background:#0A1A34;color:#fff;font-size:11px;font-weight:700;cursor:pointer">1</span>
+        <span style="padding:6px 11px;border:1px solid #D9DFE8;border-radius:7px;background:#fff;font-size:11px;color:#52627A;cursor:pointer">2</span>
+        <span style="padding:6px 11px;border:1px solid #D9DFE8;border-radius:7px;background:#fff;font-size:11px;color:#52627A;cursor:pointer">3</span>
+        <span style="padding:6px 11px;border:1px solid #D9DFE8;border-radius:7px;background:#fff;font-size:11px;color:#52627A;cursor:pointer">4</span>
+        <span style="padding:6px 11px;border:1px solid #D9DFE8;border-radius:7px;background:#fff;font-size:11px;color:#52627A;cursor:pointer">5</span>
+        <span style="color:#8E9CB0;font-size:11px">...</span>
+        <span style="padding:6px 11px;border:1px solid #D9DFE8;border-radius:7px;background:#fff;font-size:11px;color:#52627A;cursor:pointer">45</span>
+        <span style="padding:6px 11px;border:1px solid #D9DFE8;border-radius:7px;background:#fff;font-size:11px;color:#52627A;cursor:pointer">›</span>
+      </div>
+    </div>
+
+    <sc-if value="{{ showExt }}" hint-placeholder-val="{{ true }}">
+    <div style="background:#F3F5F7;border-left:1px solid #D9DFE8;display:flex;flex-direction:column;position:sticky;top:0;height:100vh">
+      <div style="padding:14px 16px;background:#1A3A6C;color:#fff;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700">
+          <span style="width:22px;height:22px;border-radius:7px;background:#D4E94C;color:#0A1A34;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">Z</span>ZumSavdo yordamchi
+        </div>
+        <div style="font-size:13px;color:#8EA2C0;letter-spacing:3px">– ×</div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ extMessages }}" as="m" hint-placeholder-count="3">
+          <div style="background:#fff;border:1px solid #D9DFE8;border-radius:14px 14px 14px 4px;padding:12px 14px;font-size:13px;line-height:1.6;box-shadow:0 1px 2px rgba(10,26,52,.06);display:flex;flex-direction:column;gap:5px;animation:fadeUp .3s ease-out">
+            <sc-for list="{{ m.lines }}" as="l" hint-placeholder-count="1"><div>{{ l }}</div></sc-for>
+          </div>
+        </sc-for>
+      </div>
+      <div style="border-top:1px solid #D9DFE8;padding:14px;background:#fff;display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ extActions }}" as="a" hint-placeholder-count="2">
+          <sc-if value="{{ a.primary }}">
+            <button sc-camel-on-click="{{ a.onClick }}" style="background:#1A3A6C;color:#fff;border:none;border-radius:10px;padding:11px;font-size:13px;font-weight:600;cursor:pointer" style-hover="background:#132A4D">{{ a.text }}</button>
+          </sc-if>
+          <sc-if value="{{ a.secondary }}">
+            <button sc-camel-on-click="{{ a.onClick }}" style="background:#fff;border:1px solid #D9DFE8;color:#1A3A6C;border-radius:10px;padding:11px;font-size:13px;font-weight:600;cursor:pointer" style-hover="background:#EFF2F5">{{ a.text }}</button>
+          </sc-if>
+        </sc-for>
+        <div style="display:flex;gap:6px">
+          <input type="text" placeholder="Savolingizni yozing..." style="flex:1;border:1px solid #D9DFE8;border-radius:9px;padding:8px 10px;font-size:12px;outline:none" style-focus="border-color:#C7E04A;box-shadow:0 0 0 3px rgba(199,224,74,.35)">
+          <button style="background:#1A3A6C;color:#fff;border:none;border-radius:9px;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer">→</button>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ paywall }}">
+<div style="position:fixed;inset:0;background:rgba(10,26,52,.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:24px">
+  <div style="background:#fff;border-radius:16px;max-width:820px;width:100%;padding:40px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 48px rgba(10,26,52,.16)">
+    <button sc-camel-on-click="{{ closePaywall }}" style="position:absolute;top:16px;right:16px;background:#fff;border:1px solid #D9DFE8;border-radius:8px;padding:6px 12px;font-size:12px;color:#52627A;cursor:pointer">Yopish ×</button>
+    <div style="display:inline-block;padding:5px 12px;border-radius:999px;background:rgba(212,233,76,.28);color:#0A1A34;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Bepul demo yakunlandi</div>
+    <h2 style="margin:18px 0 10px;font-size:28px;font-weight:700;letter-spacing:-.02em">Xaridni davom ettirish uchun obuna kerak</h2>
+    <p style="margin:0 0 28px;font-size:15px;line-height:1.6;color:#52627A;max-width:640px">Bepul demoda siz reja tuzdingiz va birinchi tovarlarni tanlab boshladingiz. Endi qolgan tanlovlarni yakunlash, tovarlarni to'liq sotib olish va kargoni ishga tushirish uchun obunani faollashtiring.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <div style="border:1px solid #D9DFE8;border-radius:12px;padding:22px">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#52627A">Basic</div>
+        <div style="margin:10px 0 16px;font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600">99 000 <span style="font-size:12px;font-weight:400;color:#52627A;font-family:'Inter',sans-serif">so'm/oy</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;margin-bottom:20px">
+          <div style="display:flex;gap:8px"><span style="color:#B4CC19;font-weight:700">✓</span>Xarid davom etadi</div>
+          <div style="display:flex;gap:8px"><span style="color:#B4CC19;font-weight:700">✓</span>Kargo tracking</div>
+          <div style="display:flex;gap:8px"><span style="color:#B4CC19;font-weight:700">✓</span>Uzum analitikasi</div>
+        </div>
+        <button style="width:100%;background:#fff;border:1px solid #1A3A6C;color:#1A3A6C;border-radius:10px;padding:11px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#EFF2F5">Tanlash</button>
+      </div>
+      <div style="background:#1A3A6C;border-radius:12px;padding:22px;position:relative">
+        <div style="position:absolute;top:-11px;left:22px;background:#D4E94C;color:#0A1A34;padding:4px 11px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.08em">TAVSIYA</div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#D4E94C">Pro</div>
+        <div style="margin:10px 0 16px;font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600;color:#fff">249 000 <span style="font-size:12px;font-weight:400;color:#8EA2C0;font-family:'Inter',sans-serif">so'm/oy</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;margin-bottom:20px;color:#fff">
+          <div style="display:flex;gap:8px"><span style="color:#D4E94C;font-weight:700">✓</span>Basic + Auto-yuklash</div>
+          <div style="display:flex;gap:8px"><span style="color:#D4E94C;font-weight:700">✓</span>Foto topish AI</div>
+          <div style="display:flex;gap:8px"><span style="color:#D4E94C;font-weight:700">✓</span>Buxgalteriya hisoboti</div>
+        </div>
+        <button style="width:100%;background:#D4E94C;color:#0A1A34;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer" style-hover="background:#C7E04A">Tanlash</button>
+      </div>
+      <div style="border:1px solid #D9DFE8;border-radius:12px;padding:22px">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#52627A">Pro+</div>
+        <div style="margin:10px 0 16px;font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600">599 000 <span style="font-size:12px;font-weight:400;color:#52627A;font-family:'Inter',sans-serif">so'm/oy</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;margin-bottom:20px">
+          <div style="display:flex;gap:8px"><span style="color:#B4CC19;font-weight:700">✓</span>Pro + ko'p do'kon</div>
+          <div style="display:flex;gap:8px"><span style="color:#B4CC19;font-weight:700">✓</span>Chuqur analitika</div>
+          <div style="display:flex;gap:8px"><span style="color:#B4CC19;font-weight:700">✓</span>Shaxsiy menejer</div>
+        </div>
+        <button style="width:100%;background:#fff;border:1px solid #1A3A6C;color:#1A3A6C;border-radius:10px;padding:11px;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#EFF2F5">Tanlash</button>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:13px;margin:24px 0 0;color:#52627A">14 kun bepul sinov · istalgan vaqtda bekor qilish</p>
+  </div>
+</div>
+</sc-if>
+
+
+
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;showExtension&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo&quot;},&quot;autoFilter&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo&quot;},&quot;demoSpeed&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0.3,&quot;max&quot;:2,&quot;step&quot;:0.1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
+const SUBCATS = {
+  "Texnika aksessuar": [["Telefon g'iloflari","talab yuqori, marja 40–60%"],["Simsiz quloqchinlar","o'rta talab, marja 30–50%"],["Zaryadlash aksessuar","barqaror talab, marja 25–40%"]],
+  "Uy-ro'zg'or": [["Oshxona buyumlari","keng talab, marja 35–50%"],["Bezaklar","trendga bog'liq, marja 40–70%"],["Tozalik vositalari","takroriy xarid, marja 20–30%"]],
+  "Kiyim": [["Erkaklar futbolkasi","katta hajm, marja 30–50%"],["Bolalar kiyimlari","yuqori talab, marja 40–60%"],["Aksessuarlar (sumka, kamar)","yaxshi marja, 45–65%"]],
+  "Bolalar tovarlari": [["O'yinchoqlar","trendga bog'liq, marja 50–80%"],["Bolalar kiyimi","barqaror talab, marja 40–60%"],["O'quv buyumlari","mavsumiy, marja 30–50%"]],
+  "Go'zallik va parvarish": [["Tirnoq mahsulotlari","yuqori talab, marja 50–70%"],["Soch parvarish","takroriy xarid, marja 35–55%"],["Yuz kremlari","raqobat kuchli, marja 40–60%"]]
+};
+
+const SUGGESTIONS = [
+  {name:"iPhone 15 silikon g'ilof", cn:"8", qty:50, uz:39000, profit:17},
+  {name:"Samsung A34/A54 g'ilof", cn:"6", qty:80, uz:32000, profit:24},
+  {name:"Universal shishaviy plyonka", cn:"1.5", qty:200, uz:12000, profit:20},
+  {name:"USB-C zaryad kabeli", cn:"5", qty:40, uz:25000, profit:10},
+  {name:"Simsiz quloqchin (arzon segment)", cn:"22", qty:10, uz:89000, profit:12}
+];
+
+const SIM = [
+  {id:1,title:"iPhone 15 silikon g'ilof — 20+ rang, MagSafe qo'llab-quvvatlaydi",cn:8.5,tiers:[[1,99,12],[100,499,8.5],[500,null,6.2]],rating:5.0,minLot:50,sales:"1 240+",seller:"Guangzhou Yiwu Tech",years:8,badges:["Ishonchli","Zavod"],city:"Guangzhou",uzum:39000,profit:4400,margin:55,usd:60,tag:"TAVSIYA",pass:true},
+  {id:2,title:"iPhone 15 Pro shaffof premium g'ilof, tushishga chidamli",cn:12,tiers:[[1,49,18],[50,199,12],[200,null,9.5]],rating:5.0,minLot:30,sales:"890",seller:"Shenzhen Cloud Case",years:6,badges:["Ishonchli"],city:"Shenzhen",uzum:55000,profit:5200,margin:48,usd:50,pass:true},
+  {id:3,title:"iPhone 14 seriyasi MagSafe g'ilof, magnitli",cn:15,tiers:[[1,19,22],[20,99,15],[100,null,11.8]],rating:5.0,minLot:20,sales:"620",seller:"Foshan Magsafe Co.",years:4,badges:["Sertifikatli"],city:"Foshan",uzum:65000,profit:6100,margin:45,usd:42,pass:true},
+  {id:4,title:"iPhone 15 charm g'ilof, premium teri",cn:25,tiers:[[1,9,35],[10,49,25],[50,null,20]],rating:4.9,minLot:10,sales:"340",seller:"Yiwu Leather Craft",years:12,badges:["Zavod","Yirik ulgurji"],city:"Yiwu",uzum:105000,profit:7800,margin:38,usd:35,pass:false},
+  {id:5,title:"iPhone 15 Plus plastik g'ilof, arzon narx",cn:5.2,tiers:[[1,99,8],[100,499,5.2],[500,null,4.1]],rating:5.0,minLot:100,sales:"2 100+",seller:"Guangzhou Mega Case",years:10,badges:["Ishonchli","Zavod","Yirik ulgurji"],city:"Guangzhou",uzum:28000,profit:2700,margin:52,usd:73,tag:"KO'P SOTILGAN",pass:true},
+  {id:6,title:"iPhone 15 Pro Max karbon fiber g'ilof",cn:18,tiers:[[1,19,26],[20,99,18],[100,null,14.5]],rating:5.0,minLot:20,sales:"780",seller:"Shenzhen Carbon Pro",years:5,badges:["Sertifikatli"],city:"Shenzhen",uzum:78000,profit:6600,margin:43,usd:50,pass:true},
+  {id:7,title:"iPhone 15 oyna orqa g'ilof, silikonli chetlar",cn:10,tiers:[[1,39,14],[40,199,10],[200,null,8]],rating:5.0,minLot:40,sales:"960",seller:"Hangzhou Glass Case",years:7,badges:["Ishonchli"],city:"Hangzhou",uzum:45000,profit:4900,margin:50,usd:56,pass:true},
+  {id:8,title:"iPhone 15 mini silikon g'ilof, yumshoq",cn:6.5,tiers:[[1,79,10],[80,299,6.5],[300,null,4.8]],rating:5.0,minLot:80,sales:"1 540+",seller:"Guangzhou Silica Ltd",years:9,badges:["Ishonchli","Zavod"],city:"Guangzhou",uzum:32000,profit:3600,margin:54,usd:73,pass:true},
+  {id:9,title:"iPhone 15 MagSafe qora premium g'ilof",cn:14,tiers:[[1,24,20],[25,99,14],[100,null,11]],rating:4.8,minLot:25,sales:"420",seller:"Ningbo Case Studio",years:3,badges:["Sertifikatli"],city:"Ningbo",uzum:58000,profit:5400,margin:44,usd:49,pass:false},
+  {id:10,title:"iPhone 15 rangli silikon, minimalistik dizayn",cn:7.8,tiers:[[1,59,11],[60,249,7.8],[250,null,6]],rating:5.0,minLot:60,sales:"1 080",seller:"Yiwu Color Case",years:6,badges:["Ishonchli"],city:"Yiwu",uzum:36000,profit:4100,margin:51,usd:65,pass:true},
+  {id:11,title:"iPhone 14 Pro silikon g'ilof, MagSafe",cn:9.5,tiers:[[1,49,14],[50,199,9.5],[200,null,7.5]],rating:4.6,minLot:50,sales:"540",seller:"Guangzhou Case Hub",years:2,badges:["Yangi"],city:"Guangzhou",uzum:42000,profit:4200,margin:47,usd:66,pass:false},
+  {id:12,title:"iPhone 15 metall g'ilof, mustahkam",cn:22,tiers:[[1,19,30],[20,99,22],[100,null,17]],rating:4.7,minLot:20,sales:"280",seller:"Shanghai Metal Works",years:4,badges:["Zavod"],city:"Shanghai",uzum:88000,profit:5900,margin:35,usd:62,pass:false}
+];
+
+const BUDGET = 650;
+
+class Component extends DCLogic {
+  state = {
+    view: 'landing',
+    messages: [], replies: [], step: 0, ctx: {}, progress: 0,
+    ext: [], extMode: 'ask', filtered: false, loading: false, notice: false,
+    cart: {}, qty: {}, paywall: false, paywallShown: false
+  };
+
+  timers = [];
+  later(fn, ms) { this.timers.push(setTimeout(fn, ms * (this.props.demoSpeed ?? 1))); }
+  clearTimers() { this.timers.forEach(clearTimeout); this.timers = []; }
+  componentWillUnmount() { this.clearTimers(); }
+
+  money(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+
+  go = (view) => {
+    this.clearTimers();
+    window.scrollTo(0, 0);
+    if (view === 'demo') {
+      this.setState({ view, messages: [], replies: [], step: 0, ctx: {}, progress: 0 }, () => this.runStep(0));
+    } else if (view === 'sim') {
+      this.setState({
+        view, cart: {}, qty: {}, filtered: false, notice: false, loading: false,
+        paywall: false, paywallShown: false, extMode: 'ask',
+        ext: [
+          { lines: ["Bu suhbat oldingi chatimizning davomi. Endi 1688 sahifasida sizga yordam beraman."] },
+          { lines: ["Sizning aniq tanlovlaringiz:", "1. Telefon g'ilofi — 50 dona", "2. Shishaviy plyonka — 200 dona", "3. USB-C kabel — 40 dona", "4. Simsiz quloqchin — 10 dona"] },
+          { lines: ["Birinchi tovar — telefon g'iloflari uchun 1688 filtrini qo'yamanmi? Men eng arzon narx + ★5 yulduzli sotuvchilar bo'yicha filtrlayman."] }
+        ]
+      }, () => { if (this.props.autoFilter) this.later(this.startFilter, 900); });
+    } else {
+      this.setState({ view });
+    }
+  };
+
+  startDemo = () => this.go('demo');
+  goLanding = () => this.go('landing');
+  goMarketplaces = () => this.go('marketplaces');
+  goSim = () => this.go('sim');
+  notReady = () => alert("Wireframe: bu marketpleys simulatsiyasi hozircha yo'q. 1688 kartochkasidan foydalaning.");
+
+  push(msg) { this.setState(s => ({ messages: s.messages.concat([msg]) })); }
+  pushExt(lines) { this.setState(s => ({ ext: s.ext.concat([{ lines }]) })); }
+
+  steps() {
+    return [
+      { progress: 0, ai: () => ["Salom! Men ZumSavdo AI'siman. Sizga aynan mos biznes rejasini 2 daqiqada tuzib beraman.", "5 ta savol beraman — javoblar tugmalarda, xohlasangiz o'zingiz ham yozishingiz mumkin."],
+        replies: () => [{ text: "Boshlaymiz", next: 1 }] },
+      { progress: 1, ai: () => ["Birinchi savol — biznesga qancha pul ajratmoqchisiz?"],
+        replies: () => [500, 1000, 2000, 3000].map(b => ({ text: b === 3000 ? "$3000+" : "$" + b, next: 2, save: { budget: b } })) },
+      { progress: 2, ai: s => ["$" + this.money(s.budget) + " — yaxshi boshlang'ich. Endi kategoriya — qaysi turkumda savdo qilmoqchisiz?"],
+        replies: () => Object.keys(SUBCATS).map(c => ({ text: c, next: 3, save: { category: c } })) },
+      { progress: 2, ai: s => {
+          const sub = SUBCATS[s.category] || SUBCATS["Texnika aksessuar"];
+          return [s.category + " — yaxshi. $" + this.money(s.budget) + " budjet uchun eng foydali 3 subkategoriya:"]
+            .concat(sub.map((x, i) => (i + 1) + ". " + x[0] + " — " + x[1]))
+            .concat(["Qaysi biriga aniqlashamiz?"]);
+        },
+        replies: s => (SUBCATS[s.category] || SUBCATS["Texnika aksessuar"]).map(x => ({ text: x[0], next: 4, save: { subcategory: x[0] } })).concat([{ text: "Aralash olaman", next: 4, save: { subcategory: "Aralash" } }]) },
+      { progress: 3, ai: s => [s.subcategory + " — zo'r. Qayerda sotmoqchisiz?"],
+        replies: () => [{ text: "Uzum Market", next: 5, save: { marketplace: "Uzum" } }, { text: "Yandex Market", next: 5, save: { marketplace: "Yandex" } }, { text: "Ikkalasi paralel", next: 5, save: { marketplace: "Uzum + Yandex" } }] },
+      { progress: 4, ai: s => [s.marketplace + " — yaxshi. Oxirgi savol: sizda YATT (yakka tadbirkorlik) va marketpleys do'koni ochiq turibdimi?"],
+        replies: () => [{ text: "Ha, hammasi tayyor", next: 6, save: { yatt: "yes" } }, { text: "YATT bor, do'kon yo'q", next: 6, save: { yatt: "partial" } }, { text: "Hech narsa yo'q — meni boshqaring", next: 6, save: { yatt: "none" } }] },
+      { progress: 5, ai: () => ["Rejangiz tayyorlanmoqda...", "Barcha ma'lumotlar tekshirilyapti..."], reveal: true }
+    ];
+  }
+
+  runStep(i) {
+    const step = this.steps()[i];
+    if (!step) return;
+    const lines = step.ai(this.state.ctx);
+    this.setState({ progress: step.progress, step: i });
+    lines.forEach((l, k) => this.later(() => this.push({ isAi: true, lines: [l] }), 250 + k * 420));
+    this.later(() => {
+      if (step.reveal) this.revealPlan();
+      else this.setState({ replies: step.replies(this.state.ctx).map(r => ({ text: r.text, onClick: () => this.reply(r) })) });
+    }, 250 + lines.length * 420 + 150);
+  }
+
+  reply(r) {
+    this.push({ isUser: true, lines: [r.text] });
+    this.setState(s => ({ ctx: Object.assign({}, s.ctx, r.save || {}), replies: [] }), () => this.later(() => this.runStep(r.next), 450));
+  }
+
+  revealPlan() {
+    const c = this.state.ctx;
+    const b = c.budget || 1000;
+    const goods = Math.round(b * 0.65), cargo = Math.round(b * 0.13);
+    const yatt = c.yatt === 'yes' ? 0 : (c.yatt === 'partial' ? 30 : 50);
+    const store = c.yatt === 'yes' ? 0 : 20;
+    const commission = Math.round(b * 0.02), reserve = Math.round(b * 0.15);
+    const rows = [["Xitoy tovarlari", goods], ["Kargo (Xitoy → UZB)", cargo]];
+    if (yatt) rows.push(["YATT ochish", yatt]);
+    if (store) rows.push(["Marketpleys do'kon", store]);
+    rows.push(["Marketpleys komissiya rezervi", commission], ["Restock zaxira (keyingi partiya)", reserve]);
+
+    this.later(() => this.push({ isAi: true, lines: ["Rejangiz tayyor. Mana $" + this.money(b) + " budjetingiz uchun taqsimot:"] }), 1300);
+    this.later(() => this.push({
+      isBudget: true, totalText: "$" + this.money(b),
+      rows: rows.map(([label, v]) => ({ label, value: "$" + this.money(v) + " · " + Math.round(v / b * 100) + "%", width: Math.round(v / b * 100) + "%" }))
+    }), 1900);
+    this.later(() => this.push({ isAi: true, lines: ["Endi $" + this.money(goods) + " tovar budjetiga aynan qaysi mahsulotlarni tavsiya qilaman (" + (c.subcategory || "aralash") + "):"] }), 2900);
+    this.later(() => this.push({
+      isProducts: true,
+      items: SUGGESTIONS.map(p => ({ name: p.name, src: "1688: ¥" + p.cn + "/dona · " + p.qty + " dona", uz: "Uzum narxi: " + this.money(p.uz) + " so'm", profit: "Sof foyda ~$" + p.profit + " (" + p.qty + " dona)" }))
+    }), 3500);
+    this.later(() => this.push({ isCta: true }), 4300);
+  }
+
+  startFilter = () => {
+    this.pushExt(["Filtrlash boshlandi..."]);
+    this.setState({ loading: true, extMode: 'busy' });
+    this.later(() => {
+      this.setState({ loading: false, filtered: true, notice: true, extMode: 'filtered' });
+      this.pushExt(["Filtrlash tugadi — 25 ta tovar topildi (yuqorida 8 tasi ko'rsatilgan).", "Har bir kartochkada Uzum narxi va sof foyda ko'rsatilgan. Endi qaysi biridan qancha olishni tanlang. Budjet chizig'i ($650) sotib olishlaringiz bo'yicha to'ldiriladi."]);
+    }, 1500);
+  };
+
+  denyFilter = () => {
+    this.pushExt(["Yaxshi, o'zingiz qidiring. Har qanday tovar kartochkasida Uzum narxi va sof foydani ko'rasiz. Yordam kerak bo'lsa yozing."]);
+    this.setState({ extMode: 'denied' });
+  };
+
+  clearFilter = () => {
+    this.setState({ filtered: false, notice: false, extMode: 'denied' });
+    this.pushExt(["Filtr tozalandi. Endi barcha tovarlar ko'rinadi."]);
+  };
+
+  askHelp = () => this.pushExt(["Marja bo'yicha eng yaxshi variantlar: 1-tovar (55%), 5-tovar (52%), 8-tovar (54%). Bular sof foyda bo'yicha eng foydali."]);
+  askNext = () => this.pushExt(["Yaxshi, oldin telefon g'iloflari uchun yetarli miqdorni tanlang. Keyin shishaviy plyonka uchun filtr qo'yamiz."]);
+
+  setQty = (id, v) => this.setState(s => ({ qty: Object.assign({}, s.qty, { [id]: parseInt(v, 10) || 0 }) }));
+
+  addToCart = (p) => {
+    if (this.state.paywallShown) { this.setState({ paywall: true }); return; }
+    const qty = this.state.qty[p.id] || p.minLot;
+    const cost = Math.round(qty * p.cn * 0.14);
+    const cart = Object.assign({}, this.state.cart, { [p.id]: { qty, cost } });
+    const spent = Object.values(cart).reduce((a, c) => a + c.cost, 0);
+    this.setState({ cart });
+    this.pushExt(["Savatga qo'shildi: " + p.title + " — " + qty + " dona · $" + cost + ". Qoldi: $" + this.money(BUDGET - spent) + "."]);
+    if (Object.keys(cart).length >= 2 && !this.state.paywallShown) {
+      this.later(() => { this.setState({ paywall: true, paywallShown: true }); this.pushExt(["Demo yakunlandi. Qolgan tovarlarni sotib olishni davom ettirish uchun obuna kerak."]); }, 900);
+    }
+  };
+
+  closePaywall = () => this.setState({ paywall: false });
+
+  extActionList() {
+    const m = this.state.extMode;
+    if (m === 'ask') return [{ text: "Ha, boshla", primary: true, onClick: this.startFilter }, { text: "Yo'q, keyinroq", secondary: true, onClick: this.denyFilter }];
+    if (m === 'busy') return [];
+    if (m === 'filtered') return [{ text: "Qaysi biri yaxshi?", secondary: true, onClick: this.askHelp }, { text: "Keyingi tovarni filtrlash", secondary: true, onClick: this.askNext }, { text: "Filtrni tozalash", secondary: true, onClick: this.clearFilter }];
+    return [{ text: "Qaysi biri yaxshi?", secondary: true, onClick: this.askHelp }, { text: "Fikrimni o'zgartirdim — filtr qo'y", primary: true, onClick: this.startFilter }];
+  }
+
+  renderVals() {
+    const s = this.state;
+    const showExt = this.props.showExtension ?? true;
+    const list = s.filtered ? SIM.filter(p => p.pass) : SIM;
+    const spent = Object.values(s.cart).reduce((a, c) => a + c.cost, 0);
+
+    return {
+      isLanding: s.view === 'landing',
+      isDemo: s.view === 'demo',
+      isMarketplaces: s.view === 'marketplaces',
+      isSim: s.view === 'sim',
+      showExt,
+      startDemo: this.startDemo, goLanding: this.goLanding, goMarketplaces: this.goMarketplaces,
+      goSim: this.goSim, notReady: this.notReady, closePaywall: this.closePaywall,
+      paywall: s.paywall,
+      messages: s.messages,
+      replies: s.replies,
+      dots: [1, 2, 3, 4, 5].map(i => ({ filled: i <= s.progress, current: i === s.progress + 1, empty: i > s.progress + 1 })),
+      extMessages: s.ext,
+      extActions: this.extActionList(),
+      loading: s.loading,
+      noticeVisible: s.notice && showExt,
+      gridVisible: !s.loading,
+      resultsText: s.filtered ? "25" : "3 890",
+      cartCount: Object.keys(s.cart).length,
+      budgetTotalText: "$" + this.money(BUDGET),
+      budgetSpentText: "$" + this.money(spent),
+      budgetLeftText: "$" + this.money(BUDGET - spent),
+      progressPct: Math.min(100, spent / BUDGET * 100) + "%",
+      products: list.map(p => {
+        const added = !!s.cart[p.id];
+        return {
+          title: p.title,
+          cnPrice: "¥" + p.cn,
+          tiers: p.tiers.map(t => (t[1] === null ? t[0] + "+" : t[0] + "–" + t[1]) + ": ¥" + t[2]),
+          sales: p.sales + " dona",
+          minLotText: p.minLot + " dona",
+          ratingText: "★ " + p.rating.toFixed(1),
+          seller: p.seller,
+          badges: p.badges.concat([p.years + " yil", p.city]),
+          uzumText: this.money(p.uzum) + " so'm",
+          profitText: "~" + this.money(p.profit) + " so'm",
+          grade: p.margin >= 50 ? "A" : (p.margin >= 45 ? "B" : "C"),
+          marginText: "Marja: " + p.margin + "%" + (p.margin >= 45 ? " ✓" : ""),
+          hasTag: !!p.tag, tag: p.tag || "",
+          qty: s.qty[p.id] ?? p.minLot,
+          onQty: (e) => this.setQty(p.id, e.target.value),
+          added, notAdded: !added,
+          addLabel: "Savatga · $" + p.usd,
+          addedLabel: "✓ Qo'shildi · " + (s.cart[p.id] ? s.cart[p.id].qty : 0) + " dona",
+          onAdd: () => this.addToCart(p)
+        };
+      }),
+      navItems: [
+        { label: "1 Landing", key: 'landing' }, { label: "2 Demo chat", key: 'demo' },
+        { label: "3 Marketpleys", key: 'marketplaces' }, { label: "4 1688 sim", key: 'sim' }
+      ].map(n => ({ label: n.label, active: s.view === n.key, inactive: s.view !== n.key, onClick: () => this.go(n.key) }))
+    };
+  }
+}
+
+</script>
+
+
+</body></html>

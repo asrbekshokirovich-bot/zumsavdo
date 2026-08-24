@@ -1,0 +1,32 @@
+-- Yigʻindi hisoblaydigan funksiyalarga vaqt byudjeti.
+--
+-- PostgREST `authenticator` roli bilan ulanadi, uning
+-- `statement_timeout` i 8 soniya, va `service_role` uni meros oladi
+-- (`rolconfig` boʻsh). Maʼlumot oʻsgan sari kunlik hisob shu
+-- byudjetga sigʻmay qoladi.
+--
+-- 2026-08-24 da aynan shu sodir boʻldi. Jadvalli sweep ikki marta
+-- ketma-ket yiqildi:
+--
+--   XATO: zs_rollup_days bajarilmadi: canceling statement due to
+--         statement timeout
+--
+-- Oʻlchov qismi ishlagan (87 000 nishon), kunlik yigʻindi esa
+-- yozilmagan. Yaʼni panel bugungi kunni umuman koʻrmasdi.
+--
+-- Sabab kodda emas, HAJMDA: 50 038 tovarlik kun 8 soniyaga sigʻmaydi.
+-- Muhim tafsilot — buni qoʻlda sinash KOʻRSATMAYDI: qoʻlda ishga
+-- tushirilganda soʻrov boshqa rol (postgres) bilan bajariladi va
+-- uning byudjeti boshqacha. Shuning uchun "qoʻlda ishladi" degan
+-- dalil bu xato uchun yaroqsiz.
+--
+-- Oʻlchab tasdiqlandi: seans byudjeti 1 soniyaga tushirilganda ham
+-- funksiya 9 260 ms ishladi va oʻtdi — funksiya darajasidagi `SET`
+-- seans byudjetini bosib oʻtadi.
+--
+-- Bu funksiyalarni panel soʻramaydi, ular anon uchun yopiq va faqat
+-- yigʻuvchi chaqiradi. Yaʼni uzun byudjet foydalanuvchi soʻrovini
+-- sekinlashtirmaydi.
+
+alter function public.zs_rollup_days(date, date) set statement_timeout = '300s';
+alter function public.zs_record_market_day(date) set statement_timeout = '120s';

@@ -52,7 +52,7 @@ jobs:
       - run: npm ci
         working-directory: ingest
 
-      - name: Perepis tugaganmi
+      - name: Davom etish kerakmi
         id: holat
         working-directory: ingest
         env:
@@ -61,33 +61,49 @@ jobs:
         run: |
           javob=$(node census.mjs --status)
           echo "$javob"
-          foiz=$(printf '%s' "$javob" | sed -n 's/.*"foiz":"\?\([0-9.]*\)"\?.*/\1/p')
-          echo "foiz=$foiz" >> "$GITHUB_OUTPUT"
-          if [ -z "$foiz" ]; then
+          oqi() { printf '%s' "$javob" | sed -n "s/.*\"$1\":\"\\?\\([0-9.]*\\)\"\\?.*/\\1/p"; }
+          pass=$(oqi pass); seen=$(oqi seen)
+          if [ -z "$pass" ] || [ -z "$seen" ]; then
             echo "::error::Holat oʻqilmadi — javob kutilganday emas."
             exit 1
           fi
-          # `awk` ishlatiladi: `[ ]` kasr sonni solishtira olmaydi.
-          if awk "BEGIN{exit !($foiz >= 100)}"; then
-            echo "Perepis toʻliq ($foiz%) — bu yugurish oʻtkazib yuboriladi."
-            echo "tugagan=ha" >> "$GITHUB_OUTPUT"
+          echo "pass=$pass" >> "$GITHUB_OUTPUT"
+          echo "seen=$seen" >> "$GITHUB_OUTPUT"
+
+          # Perepis TUGAMAYDI — u aylanadi. `zs_census_claim` oxirga
+          # yetganda `pass` ni bittaga oshirib, `next_id` ni 1 ga
+          # qaytaradi. Yaʼni "foiz 100 boʻlsa toʻxta" degan shart hech
+          # qachon ishlamasdi: foiz 100 ga yetmasdan 0 ga tushadi.
+          #
+          # 2-oʻtish tugagach toʻxtaymiz. Uchinchi oʻtish — katalogni
+          # yana boshidan aylanib chiqish, yaʼni Uzumga 3,3 mln soʻrov.
+          # Bu foydali (narx va yangi tovar yangilanadi), lekin u
+          # alohida qaror va uni jimgina boshlab yuborish notoʻgʻri.
+          if [ "$pass" -gt 2 ]; then
+            echo "2-oʻtish tugagan (hozir pass $pass)."
+            echo "Uchinchi oʻtishni boshlash — alohida qaror. Ish oʻtkazib yuborildi."
+            echo "davom=yoq" >> "$GITHUB_OUTPUT"
           else
-            echo "tugagan=yoq" >> "$GITHUB_OUTPUT"
+            echo "davom=ha" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Aylanish
-        if: steps.holat.outputs.tugagan == 'yoq'
+        if: steps.holat.outputs.davom == 'ha'
         working-directory: ingest
         env:
           ZUMSAVDO_SUPABASE_URL: ${{ secrets.ZUMSAVDO_SUPABASE_URL }}
           ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY }}
         run: node census.mjs --minutes 300
 
-      # "Ishladi" degani "oldinga siljidi" degani emas. Kursor
-      # qimirlamagan yugurish yashil boʻlib koʻrinmasligi kerak
-      # (QOIDALAR.md §8).
+      # "Ishladi" degani "oldinga siljidi" degani emas.
+      #
+      # Tekshiruv `seen` boʻyicha, `foiz` boʻyicha EMAS. `foiz`
+      # `next_id` dan hisoblanadi, `next_id` esa boʻlak BAND
+      # QILINGANDA siljiydi — yaʼni bitta ham id tekshirilmasa ham
+      # oldinga ketadi. `seen` faqat haqiqatan tekshirilgan id ni
+      # sanaydi.
       - name: Oldinga siljidimi
-        if: steps.holat.outputs.tugagan == 'yoq'
+        if: steps.holat.outputs.davom == 'ha'
         working-directory: ingest
         env:
           ZUMSAVDO_SUPABASE_URL: ${{ secrets.ZUMSAVDO_SUPABASE_URL }}
@@ -95,12 +111,16 @@ jobs:
         run: |
           javob=$(node census.mjs --status)
           echo "$javob"
-          yangi=$(printf '%s' "$javob" | sed -n 's/.*"foiz":"\?\([0-9.]*\)"\?.*/\1/p')
-          eski="${{ steps.holat.outputs.foiz }}"
-          echo "Oldin: $eski%  Keyin: $yangi%"
-          if awk "BEGIN{exit !($yangi > $eski)}"; then
+          oqi() { printf '%s' "$javob" | sed -n "s/.*\"$1\":\"\\?\\([0-9.]*\\)\"\\?.*/\\1/p"; }
+          pass=$(oqi pass); seen=$(oqi seen)
+          eski_pass="${{ steps.holat.outputs.pass }}"
+          eski_seen="${{ steps.holat.outputs.seen }}"
+          echo "Oldin: pass $eski_pass, seen $eski_seen"
+          echo "Keyin: pass $pass, seen $seen"
+          # Yangi oʻtish boshlansa `seen` nolga tushadi — bu ham siljish.
+          if [ "$pass" -gt "$eski_pass" ] || [ "$seen" -gt "$eski_seen" ]; then
             echo "Perepis oldinga siljidi."
           else
-            echo "::error::Perepis qimirlamadi ($eski% → $yangi%)."
+            echo "::error::Perepis qimirlamadi (seen $eski_seen → $seen)."
             exit 1
           fi

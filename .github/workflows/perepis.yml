@@ -1,0 +1,106 @@
+# Perepis — katalogni id boʻyicha aylanib chiqish.
+#
+# Nega jadval bilan. Perepis 19-avgustda boshlangan va 24-avgustga
+# kelib 84,85% da turibdi. Sabab kodda emas: u faqat kompyuter yoniq
+# va buyruq qoʻlda ishga tushirilgan paytda yuradi. Ikki kun tanaffus
+# — ikki kun yoʻqolgan vaqt.
+#
+# NEGA PARALLELLIK OSHIRILMADI. `census.mjs` da ochiq oʻlchov yozilgan:
+# 12 ta parallel soʻrovda 429 chiqmagan, tezlik ~26 soʻrov/sek, va
+# "bundan yuqorisi sinalmagan — Uzum uzoq bloklashi mumkin, u holda
+# perepis tezlashmaydi, TOʻXTAYDI". Xatoning narxi simmetrik emas:
+# tezlashtirishdan yutuq bir necha soat, bloklanishdan zarar butun
+# loyihaning asosi. Tezlik uzluksizlikdan keladi, siqishdan emas.
+#
+# `--minutes 300` — ish oʻzi toza tugaydi. Bunsiz `census.mjs` bitta
+# boʻlak bajarib toʻxtaydi; GitHub esa 6 soatdan keyin jarayonni
+# qoʻpol uzadi va yugurish qizil boʻlardi.
+name: Perepis
+
+on:
+  schedule:
+    # Har 6 soatda. Perepis tugagach birinchi qadam ishni oʻtkazib
+    # yuboradi — yaʼni bekorga soʻrov yuborilmaydi.
+    - cron: "0 1,7,13,19 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: perepis
+  cancel-in-progress: false
+
+jobs:
+  perepis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sir borligini tekshirish
+        run: |
+          if [ -z "${{ secrets.ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY }}" ]; then
+            echo "::error::ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY yoʻq."
+            exit 1
+          fi
+          if [ -z "${{ secrets.ZUMSAVDO_SUPABASE_URL }}" ]; then
+            echo "::error::ZUMSAVDO_SUPABASE_URL yoʻq."
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+
+      - run: npm ci
+        working-directory: ingest
+
+      - name: Perepis tugaganmi
+        id: holat
+        working-directory: ingest
+        env:
+          ZUMSAVDO_SUPABASE_URL: ${{ secrets.ZUMSAVDO_SUPABASE_URL }}
+          ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          javob=$(node census.mjs --status)
+          echo "$javob"
+          foiz=$(printf '%s' "$javob" | sed -n 's/.*"foiz":"\([0-9.]*\)".*/\1/p')
+          echo "foiz=$foiz" >> "$GITHUB_OUTPUT"
+          if [ -z "$foiz" ]; then
+            echo "::error::Holat oʻqilmadi — javob kutilganday emas."
+            exit 1
+          fi
+          # `awk` ishlatiladi: `[ ]` kasr sonni solishtira olmaydi.
+          if awk "BEGIN{exit !($foiz >= 100)}"; then
+            echo "Perepis toʻliq ($foiz%) — bu yugurish oʻtkazib yuboriladi."
+            echo "tugagan=ha" >> "$GITHUB_OUTPUT"
+          else
+            echo "tugagan=yoq" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Aylanish
+        if: steps.holat.outputs.tugagan == 'yoq'
+        working-directory: ingest
+        env:
+          ZUMSAVDO_SUPABASE_URL: ${{ secrets.ZUMSAVDO_SUPABASE_URL }}
+          ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY }}
+        run: node census.mjs --minutes 300
+
+      # "Ishladi" degani "oldinga siljidi" degani emas. Kursor
+      # qimirlamagan yugurish yashil boʻlib koʻrinmasligi kerak
+      # (QOIDALAR.md §8).
+      - name: Oldinga siljidimi
+        if: steps.holat.outputs.tugagan == 'yoq'
+        working-directory: ingest
+        env:
+          ZUMSAVDO_SUPABASE_URL: ${{ secrets.ZUMSAVDO_SUPABASE_URL }}
+          ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          javob=$(node census.mjs --status)
+          echo "$javob"
+          yangi=$(printf '%s' "$javob" | sed -n 's/.*"foiz":"\([0-9.]*\)".*/\1/p')
+          eski="${{ steps.holat.outputs.foiz }}"
+          echo "Oldin: $eski%  Keyin: $yangi%"
+          if awk "BEGIN{exit !($yangi > $eski)}"; then
+            echo "Perepis oldinga siljidi."
+          else
+            echo "::error::Perepis qimirlamadi ($eski% → $yangi%)."
+            exit 1
+          fi

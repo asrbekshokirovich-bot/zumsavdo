@@ -147,6 +147,7 @@ async function crawl() {
   let totalMissing = 0;
   let totalFailed = 0;
   let rateLimitHits = 0;
+  let toxtash = "tugadi";
 
   for (;;) {
     const claim = await store.censusClaim(size);
@@ -199,9 +200,26 @@ async function crawl() {
         `${totalMissing} yoʻq · ${totalFailed} xato · ${rateLimitHits} marta 429`,
     );
 
-    if (!deadline || Date.now() >= deadline) break;
+    // `--minutes` berilmasa BITTA boʻlak bajariladi va toʻxtaydi.
+    // Bu ataylab: chegarasiz buyruq soatlab ishlab ketmasin.
+    //
+    // Lekin u tugagandek koʻrinardi — oxirida holat chiroyli chop
+    // etilardi va boshqa hech narsa aytilmasdi. Perepis qayta-qayta
+    // "toʻxtab qolgani" shundan boʻlishi mumkin: odam buyruqni
+    // ishlatadi, u tinch tugaydi, va perepis 200 000 id oldinga
+    // siljigan boʻladi, xolos.
+    if (!deadline) { toxtash = "bitta boʻlak"; break; }
+    if (Date.now() >= deadline) { toxtash = "vaqt tugadi"; break; }
   }
 
   const status = await store.censusStatus();
   log(`Holat: ${status.foiz}% (pass ${status.pass}, ${status.next_id}/${status.max_id})`);
+  if (Number(status.foiz) < 100) {
+    log(
+      `TUGAMADI (${toxtash}). Perepis ${status.foiz}% da. ` +
+        "Davom ettirish: npm run census -- --minutes 300",
+    );
+  } else {
+    log("Perepis toʻliq aylanib chiqildi.");
+  }
 }

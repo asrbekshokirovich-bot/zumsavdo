@@ -190,7 +190,85 @@ function matnniTuzat(matn) {
     'obunaga qoʻshilgach ochiladi.',
     'nishon izohi');
 
-  // ---- 6. Dizayn asbobining ekran almashtirgichi -----------------
+  // ---- 6. Qahramon qismidagi namuna ekran ------------------------
+  //
+  // Asl dizaynda bu joyda boʻsh kulrang quti turadi ("Dashboard
+  // preview" degan placeholder). Uning oʻrniga mahsulot qanday
+  // koʻrinishini koʻrsatadigan namuna kartochka qoʻyiladi.
+  //
+  // Bu NAMUNA, mijoz maʼlumoti emas — pastida shunday deb yozilgan.
+  // Farqi muhim: soxta guvohlik "shu odam shuncha ishlab topdi"
+  // deydi, namuna ekran esa "dastur shunday koʻrinadi" deydi.
+  // Birinchisi yolgʻon, ikkinchisi odatiy va tushunarli.
+  const qBoshi = matn.indexOf('<div style="aspect-ratio:4/3;border-radius:20px;background:rgba(255,255,255,.10)');
+  if (qBoshi < 0) throw new Error('Qahramon qutisi topilmadi — qurish toʻxtatildi.');
+  let qChuqurlik = 0, qj = qBoshi, qOxiri = -1;
+  while (qj < matn.length) {
+    if (matn.startsWith('<div', qj)) { qChuqurlik++; qj += 4; continue; }
+    if (matn.startsWith('</div>', qj)) {
+      qChuqurlik--; qj += 6;
+      if (qChuqurlik === 0) { qOxiri = qj; break; }
+      continue;
+    }
+    qj++;
+  }
+  if (qOxiri < 0) throw new Error('Qahramon qutisining yopilishi topilmadi.');
+
+  const MONO = "font-family:'JetBrains Mono',monospace";
+  const qator = (nom, summa, foiz, kenglik) =>
+    '<div style="margin-bottom:14px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">' +
+        `<span style="font-size:13px;color:#52627A">${nom}</span>` +
+        `<span style="font-size:13px;color:#0A1A34;${MONO}">${summa} · ${foiz}</span>` +
+      '</div>' +
+      '<div style="height:6px;border-radius:999px;background:#EFF2F5;overflow:hidden">' +
+        `<div style="height:100%;width:${kenglik};border-radius:999px;background:#1A3A6C"></div>` +
+      '</div>' +
+    '</div>';
+
+  const qahramon =
+'<div style="border-radius:20px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(8px);padding:18px">' +
+  // sarlavha qatori
+  '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">' +
+    '<div style="display:flex;align-items:center;gap:9px">' +
+      '<div style="width:26px;height:26px;border-radius:8px;background:#D4E94C;color:#0A1A34;' +
+      'display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800">Z</div>' +
+      '<span style="font-size:14px;font-weight:600;color:#fff">ZumSavdo AI</span>' +
+    '</div>' +
+    '<span style="font-size:10px;font-weight:700;letter-spacing:.09em;color:rgba(255,255,255,.55)">REJA TAYYOR</span>' +
+  '</div>' +
+  // byudjet yorligʻi
+  '<div style="display:flex;justify-content:flex-end;margin-bottom:12px">' +
+    '<span style="background:#D4E94C;color:#0A1A34;border-radius:999px;padding:6px 13px;' +
+    `font-size:12px;font-weight:700;${MONO}">$1 000 · Texnika aksessuar</span>` +
+  '</div>' +
+  // byudjet taqsimoti
+  '<div style="background:#fff;border-radius:14px;padding:18px;margin-bottom:12px">' +
+    '<div style="display:flex;align-items:baseline;gap:10px;margin-bottom:16px">' +
+      `<span style="font-size:26px;font-weight:800;color:#0A1A34;${MONO}">$1 000</span>` +
+      '<span style="font-size:10px;font-weight:700;letter-spacing:.09em;color:#8494A8">BUDJET TAQSIMOTI</span>' +
+    '</div>' +
+    qator('Xitoy tovarlari', '$650', '65%', '65%') +
+    qator('Kargo (Xitoy → UZB)', '$130', '13%', '13%') +
+    qator('Restock zaxira', '$150', '15%', '15%') +
+  '</div>' +
+  // tanlangan tovar
+  '<div style="background:#fff;border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px">' +
+    '<div style="width:38px;height:38px;border-radius:9px;background:#EFF2F5;flex:none"></div>' +
+    '<div style="flex:1;min-width:0">' +
+      '<div style="font-size:13px;font-weight:600;color:#0A1A34">iPhone 15 silikon gʻilof</div>' +
+      `<div style="font-size:11px;color:#8494A8;${MONO}">1688: ¥8/dona · 50 dona</div>` +
+    '</div>' +
+    '<span style="background:#D4E94C;color:#0A1A34;border-radius:999px;padding:4px 10px;' +
+    'font-size:11px;font-weight:700;flex:none">Marja 55%</span>' +
+  '</div>' +
+  '<p style="margin:12px 0 0;text-align:center;font-size:11px;color:rgba(255,255,255,.45)">' +
+  'Namuna ekran — mijoz maʼlumoti emas</p>' +
+'</div>';
+
+  matn = matn.slice(0, qBoshi) + qahramon + matn.slice(qOxiri);
+
+  // ---- 7. Dizayn asbobining ekran almashtirgichi -----------------
   //
   // Pastki oʻng burchakda "EKRAN · 1 Landing · 2 Demo chat · …"
   // paneli turadi. U dizayn asbobi ichida ekranlar orasida yurish

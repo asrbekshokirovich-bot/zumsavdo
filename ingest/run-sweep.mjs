@@ -282,9 +282,15 @@ async function main() {
 async function collectFeedbackHistory(config, source, store) {
   if (!config.feedbackPages || !source.collectFeedbacks) return;
 
-  // Sweepda koʻrilganlar emas, SHARHI YOʻQLAR olinadi. Sabab: sharh
-  // oʻzgarmaydi, bir marta yigʻilsa yetarli — har safar 50 000 mahsulotdan
-  // qayta soʻrash 150 000 keraksiz soʻrov boʻlardi.
+  // Sweepda koʻrilganlar emas, TARIXI HALI YIGʻILMAGANLAR olinadi. Sabab:
+  // sharh oʻzgarmaydi, bir marta yigʻilsa yetarli — har safar 50 000
+  // mahsulotdan qayta soʻrash 150 000 keraksiz soʻrov boʻlardi.
+  //
+  // Navbat Uzumda sharhi BOR mahsulot bilan cheklangan (migratsiya
+  // `20260902110000`). Sharhsiz mahsulot soʻralganda hech narsa
+  // qaytmaydi, jadvalga qator tushmaydi va u navbatdan chiqmaydi —
+  // shunday 8 192 tasi roʻyxat boshiga toʻplanib, oynani toʻliq
+  // egallab olgan edi.
   const productIds = new Set(await store.feedbackBacklog(config.feedbackBatch));
   if (!productIds.size) {
     log("Sharh navbati boʻsh — hammasining tarixi yigʻilgan.");
@@ -310,11 +316,32 @@ async function collectFeedbackHistory(config, source, store) {
     log(`Sharhlar olinmadi: ${error.message}`);
   }
 
+  // Navbat boʻsh emas, xato ham yoʻq, lekin bitta ham qator yozilmadi.
+  // Bu "sharh yoʻq" degani EMAS — "navbat qotgan" degani, va ikkalasi
+  // bazada bir xil koʻrinardi.
+  //
+  // 2026-08-31 dan 09-02 gacha aynan shu holat toʻqqiz marta ketma-ket
+  // takrorlangan (targets 300, captured 0, errors 0) va sweep har safar
+  // xatosiz yopilgani uchun hech kim sezmagan. Sabab tuzatildi, lekin
+  // belgisi qolmaydi degani emas: sharhi bor mahsulot ham hech narsa
+  // qaytarmasligi mumkin. Endi u izohda koʻrinadi.
+  const qotdi = errors === 0 && written === 0;
+  if (qotdi) {
+    log(
+      `OGOHLANTIRISH: navbatda ${productIds.size} mahsulot bor edi, ` +
+        "bittasidan ham sharh kelmadi — navbat qotgan boʻlishi mumkin.",
+    );
+  }
+
   await store.closeSweep(sweepId, {
     targets: productIds.size,
     captured: written,
     errors,
-    note: errors ? "sharh tarixi to'liq emas" : null,
+    note: errors
+      ? "sharh tarixi to'liq emas"
+      : qotdi
+        ? "sharh navbati qotdi — nol qator"
+        : null,
   });
 }
 

@@ -215,6 +215,23 @@ export function createStore(config) {
       return Array.isArray(rows) ? rows[0] : rows;
     },
 
+    /**
+     * Panel yigʻindisi — doʻkon, turkum va mahsulot soni.
+     *
+     * Uchala hisob sanaga umuman bogʻliq emas, lekin ilgari har panel
+     * soʻrovida qaytadan hisoblanardi va yolgʻiz oʻzi 1 778 ms olardi.
+     * `anon` roliga 3 soniyalik chegara qoʻyilgan — panel shu tufayli
+     * ochilmay qolgan edi. Endi hisob shu yerda, supurish oxirida bir
+     * marta bajariladi, panel esa tayyor qatorni oʻqiydi.
+     *
+     * `{shops, categories, products, measured_at}` qaytaradi.
+     * `measured_at` KERAK: yigʻuvchi toʻxtasa raqam jimgina eskiradi va
+     * eskirganini faqat shu maydon koʻrsatadi.
+     */
+    async refreshPanelTotals() {
+      return rpc("zs_refresh_panel_totals", {});
+    },
+
     /** Chegara zondi qayerdan boshlashi — eng katta ma'lum id. */
     async frontierStart() {
       return rpc("zs_frontier_start", {});

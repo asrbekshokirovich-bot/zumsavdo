@@ -229,6 +229,8 @@ oʻqiydi, yozuvchi esa `public.zs_ingest_batch` funksiyasi orqali yozadi.
 | `shop_observation` | kümülativ hisoblagichning bir ondagi holati |
 | `product_observation` | narx, qoldiq, sharh, haftalik xaridor |
 | `shop_day`, `product_day` | kunlik yigʻindi (`rollup_days` hisoblaydi) |
+| `panel_product` | panelda koʻrinadigan mahsulotlar — materiallashtirilgan koʻrinish (pastda) |
+| `panel_totals` | panel yigʻindisi — materiallashtirilgan koʻrinish, bitta qator (pastda) |
 
 Panelga faqat oʻqish kaliti beriladi (`VITE_SUPABASE_ANON_KEY`) — yozish huquqi
 yoʻq. Service role kaliti faqat `ingest/.env` da qoladi va brauzerga tushmaydi.
@@ -236,6 +238,110 @@ yoʻq. Service role kaliti faqat `ingest/.env` da qoladi va brauzerga tushmaydi.
 Ombor sozlanmagan boʻlsa panel namuna toʻplami bilan ochiladi va yuqorida
 **"Bu namuna maʻlumot"** ogohlantirishi turadi — namuna raqami hech qachon
 haqiqiy oʻlchov kabi koʻrinmasligi kerak.
+
+### 2026-09-02 — panel ochilmay qoldi: yigʻindi oʻlchovga aylandi
+
+Bosh sahifa shu xato bilan turib qolgan edi:
+
+```
+Yigʻindi olinmadi: zs_panel_overview bajarilmadi:
+canceling statement due to statement timeout
+```
+
+`anon` rolining `statement_timeout` — **3 soniya**. `zs_panel_overview`
+esa standart davr, yaʼni bitta bugungi kun uchun **5 226 ms** ishlagan.
+Yaʼni gap sanada emas edi: panel har ochilganda yiqilardi.
+
+Vaqt qayerga ketgani (bitta kun, har bir blok alohida oʻlchandi):
+
+| Blok | Vaqt |
+|---|---|
+| summary | 66 ms |
+| daily | 37 ms |
+| shops | 646 ms |
+| categories | 794 ms |
+| products | 1 946 ms |
+| available | 89 ms |
+| `totals` | 1 778 ms |
+
+`totals` — roʻyxatlarda umuman nechtadan borligi (doʻkon, turkum,
+mahsulot). U **sanaga bogʻliq emas**: foydalanuvchi qaysi kunni tanlasa
+ham javob bir xil, lekin har chaqiruvda qaytadan hisoblanardi. Shuning
+uchun u hisobdan chiqarilib, oʻlchovga aylantirildi:
+
+| Nima | Nima qiladi |
+|---|---|
+| `zumsavdo.panel_totals` | materiallashtirilgan koʻrinish, bitta qator: `bir` (`concurrently` uchun unikal kalit), `shops`, `categories`, `products`, `measured_at` |
+| `public.zs_refresh_panel_totals()` | uni yangilaydi va jsonb qaytaradi; faqat `service_role`, `statement_timeout = 120s` |
+| `public.zs_panel_overview` | endi hisoblamaydi — `panel_totals` dan oʻqiydi |
+
+Bugungi qiymat: **11 946** doʻkon, **3 063** turkum, **50 038** mahsulot.
+
+Yangilash supurish oxirida chaqiriladi — kuniga uch marta (02, 10, 18
+UTC). Panel javobining shakli oʻzgarmadi, faqat `totals` ichiga
+`measured_at` qoʻshildi. Bu ortiqcha maydon emas: yigʻuvchi toʻxtasa
+raqam jimgina eskiradi va eskirganini faqat shu maydon koʻrsatadi.
+
+Ikkinchisi — `public.zs_panel_product` koʻrinishi. Eski taʼrifi
+`zumsavdo.product` (2 013 213 qator) boʻylab yurib har biri uchun
+`exists (select 1 from product_day …)` deb soʻrardi. Bu koʻrinish
+yozilganda `product` da oʻn minglab qator bor edi; perepis butun
+katalogni yozib qoʻygach, soʻrov ikki million qatorni koʻrib chiqib
+ellik mingtasini qoldiradigan boʻlib qoldi.
+
+Va bu narx bitta joyda emas, UCHTA joyda toʻlanardi — `zs_panel_shop`
+ham, `zs_panel_category` ham, `totals` ham oʻsha koʻrinishga tayanadi.
+
+Shuning uchun javobning oʻzi saqlanadigan boʻldi:
+
+| Nima | Nima qiladi |
+|---|---|
+| `zumsavdo.panel_product` | 50 038 qatorli materiallashtirilgan koʻrinish; `id` unikal, `shop_id` va `category_id` ga indeks |
+| `public.zs_panel_product` | endi shundan oʻqiydi, hisoblamaydi |
+| `public.zs_refresh_panel_totals()` | ikkala keshni yangilaydi — avval `panel_product`, keyin `panel_totals` (yigʻindi shuni sanaydi) |
+
+Uchinchisi — `zs_product_rank` da TARTIB. U avval ellik ming
+mahsulotning hammasiga nom, doʻkon nomi va turkum nomini olib kelib,
+keyin saralab beshtasini qoldirardi. Endi avval saralanadi va
+kesiladi, nom faqat qolgan beshtasiga qidiriladi. Saralash uchun
+kerak boʻlgan hamma narsa (`units`, `buyers`) yigʻindida allaqachon
+bor — nom saralashga taʼsir qilmaydi.
+
+Toʻgʻriligi tekshirildi: eski va yangi taʼrif 7 kunlik davr uchun
+aynan bir xil 20 qator qaytardi (`except` ikki tomonga ham boʻsh).
+Roʻyxat sonlari ham oʻzgarmadi: 50 038 mahsulot, 11 946 doʻkon,
+3 063 turkum.
+
+### Natija
+
+`zs_panel_overview`, har davr toʻrt marta oʻlchandi:
+
+| Davr | Boshida | `totals` dan keyin | Hammasidan keyin |
+|---|---|---|---|
+| 1 kun | 5 226 ms | 3 583 ms | **702–1 386 ms** |
+| 7 kun | 8 826 ms | — | **1 544–3 108 ms** |
+| 45 kun | — | 6 362–6 505 ms | **2 143–2 638 ms** |
+
+`anon` roli ostida, haqiqiy 3 soniyalik chegara bilan sinaldi: 1 kun
+ham, 45 kun ham xatosiz oʻtdi.
+
+### Sinalgan va ishlamagan yoʻl
+
+Funksiyaga oʻz vaqt byudjetini berish (`alter function … set
+statement_timeout = '20s'`) yordam bermadi: taymer bayonot
+boshlanishida qurollanadi, funksiya ichida GUC oʻzgargani uni qayta
+qurollantirmaydi. Tafsiloti
+`supabase/migrations/20260902140000_zumsavdo_panel_vaqt_byudjeti.sql`
+da — oʻsha yerda repodagi eskiroq notoʻgʻri daʼvo ham tuzatilgan.
+
+### Nima eskirishi mumkin
+
+Ikkala kesh ham supurish oxirida yangilanadi (kuniga uch marta: 02,
+10, 18 UTC). Yigʻuvchi toʻxtasa raqamlar jimgina eskiradi — buni
+faqat `totals.measured_at` koʻrsatadi. Yangi oʻlchangan mahsulot
+panelga darhol emas, keyingi supurishdan keyin chiqadi; xavf kichik,
+chunki oʻlchovni yaratadigan ham, keshni yangilaydigan ham aynan
+oʻsha supurish.
 
 ## Yigʻuvchi (`ingest/`)
 

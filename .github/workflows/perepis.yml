@@ -75,13 +75,30 @@ jobs:
           # qaytaradi. Yaʼni "foiz 100 boʻlsa toʻxta" degan shart hech
           # qachon ishlamasdi: foiz 100 ga yetmasdan 0 ga tushadi.
           #
-          # 2-oʻtish tugagach toʻxtaymiz. Uchinchi oʻtish — katalogni
-          # yana boshidan aylanib chiqish, yaʼni Uzumga 3,3 mln soʻrov.
-          # Bu foydali (narx va yangi tovar yangilanadi), lekin u
-          # alohida qaror va uni jimgina boshlab yuborish notoʻgʻri.
-          if [ "$pass" -gt 2 ]; then
-            echo "2-oʻtish tugagan (hozir pass $pass)."
-            echo "Uchinchi oʻtishni boshlash — alohida qaror. Ish oʻtkazib yuborildi."
+          # Har oʻtish — ALOHIDA qaror. Perepis TUGAMAYDI, u aylanadi:
+          # katalogni yana boshidan chiqish Uzumga 3,3 mln soʻrov degani
+          # va uni jimgina boshlab yuborish notoʻgʻri. Shuning uchun
+          # darvoza oxirgi RUXSAT ETILGAN oʻtishda turadi.
+          #
+          # 3-oʻtishga ruxsat berildi (nazoratchi, 2026-09-02).
+          # Sabab oʻlchandi, taxmin emas: `crawl_cursor.updated_at`
+          # 2026-08-24 14:36 da muzlagan — 9 kun. Shu vaqtda ish yashil
+          # koʻrinardi (30 ta muvaffaqiyatli yugurish), chunki darvoza
+          # yopiq boʻlsa qadam OʻTKAZIB YUBORILADI, yiqilmaydi. Ostidagi
+          # perepisga esa uchta narsa tayanadi va ular ham 9 kun eskirgan
+          # boʻlib qoldi: `brend_qamrovi` (1-tuzoq), `turkum_raqobati`
+          # (6-tuzoq) va turkum hajmi. Ularning `olchandi` ustuni har
+          # kuni yangilanadi — yaʼni panel "yangi" deb koʻrsatib turadi.
+          #
+          # 3-oʻtish 2-si tugagach OʻZI boshlangan va 400 001 id da
+          # toʻxtagan (3,3 mln dan 12%). Yaʼni bu yerdagi oʻzgarish yangi
+          # ish boshlamaydi, boshlanganini davom ettiradi.
+          #
+          # `-gt 3` — 4-oʻtish yana toʻxtaydi va yana shu yerda,
+          # oʻlchov bilan hal qilinadi. Naqsh oʻzgarmaydi.
+          if [ "$pass" -gt 3 ]; then
+            echo "3-oʻtish tugagan (hozir pass $pass)."
+            echo "Toʻrtinchi oʻtishni boshlash — alohida qaror. Ish oʻtkazib yuborildi."
             echo "davom=yoq" >> "$GITHUB_OUTPUT"
           else
             echo "davom=ha" >> "$GITHUB_OUTPUT"

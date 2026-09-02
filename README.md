@@ -230,6 +230,7 @@ oʻqiydi, yozuvchi esa `public.zs_ingest_batch` funksiyasi orqali yozadi.
 | `product_observation` | narx, qoldiq, sharh, haftalik xaridor |
 | `shop_day`, `product_day` | kunlik yigʻindi (`rollup_days` hisoblaydi) |
 | `panel_product` | panelda koʻrinadigan mahsulotlar — materiallashtirilgan koʻrinish (pastda) |
+| `market_found` | kunlik "birinchi marta koʻrildi" hisobi — materiallashtirilgan koʻrinish (pastda) |
 | `panel_totals` | panel yigʻindisi — materiallashtirilgan koʻrinish, bitta qator (pastda) |
 
 Panelga faqat oʻqish kaliti beriladi (`VITE_SUPABASE_ANON_KEY`) — yozish huquqi
@@ -312,18 +313,48 @@ aynan bir xil 20 qator qaytardi (`except` ikki tomonga ham boʻsh).
 Roʻyxat sonlari ham oʻzgarmadi: 50 038 mahsulot, 11 946 doʻkon,
 3 063 turkum.
 
+### Toʻrtinchi va beshinchi: oʻsish grafigi va ikki marta hisob
+
+Panel bosh sahifada beshta soʻrovni PARALLEL yuboradi, yaʼni eng
+sekini emas, ularning YIGʻINDISI muhim. Oʻlchov yana ikkita ogʻirlikni
+koʻrsatdi:
+
+**`zs_market_growth`** (oʻsish grafigi) 30 va 45 kunlik davrda
+3 890–4 032 ms ishlardi — yaʼni panelning "30 kun" tugmasi ham xato
+berardi. Sababi ikkita: `zumsavdo.product` da `first_seen_at` boʻyicha
+indeks umuman yoʻq edi va filtr `at time zone` ichida boʻlgani uchun
+oddiy ustun indeksi baribir yaramasdi (274 MB seq scan, shundan 264 MB
+diskdan); ustiga `group by` ~45 MB lik sortni diskka toʻkardi.
+
+Ikkalasi ham tuzatildi: ifodaga indeks qoʻyildi va kunlik hisob
+`zumsavdo.market_found` materiallashtirilgan koʻrinishiga koʻchirildi.
+`first_seen_at` mavjud qator uchun hech qachon oʻzgarmaydi, yaʼni
+oʻtgan kunlar hisobi qotgan — uni qayta sanashning maʼnosi yoʻq.
+
+**Doʻkon reytingi ikki marta hisoblanardi.** `zs_panel_overview`
+`zs_shop_rank` ni ham, `zs_category_rank` ni ham chaqiradi, ikkinchisi
+esa ichida aynan oʻsha `zs_shop_rank` ni qayta quradi. Endi u bir
+marta quriladi (`materialized` CTE) va turkum yigʻindisi oʻsha
+roʻyxatdan olinadi. `zs_category_rank` va `zs_shop_rank` oʻzgarmadi —
+ular `zs_rank_page` va qidiruv orqali alohida chaqiriladi.
+
 ### Natija
 
-`zs_panel_overview`, har davr toʻrt marta oʻlchandi:
+`zs_panel_overview`, HTTP orqali, `anon` kaliti bilan (tarmoq vaqti ham
+ichida):
 
-| Davr | Boshida | `totals` dan keyin | Hammasidan keyin |
-|---|---|---|---|
-| 1 kun | 5 226 ms | 3 583 ms | **702–1 386 ms** |
-| 7 kun | 8 826 ms | — | **1 544–3 108 ms** |
-| 45 kun | — | 6 362–6 505 ms | **2 143–2 638 ms** |
+| Davr | Boshida | Oxirida |
+|---|---:|---:|
+| 1 kun | 5 226 ms (xato) | **945–1 857 ms** |
+| 7 kun | 8 826 ms (xato) | **1 612–2 410 ms** |
+| 30 kun | xato | **2 106–2 888 ms** |
+| 45 kun | xato | **2 289–2 509 ms** |
 
-`anon` roli ostida, haqiqiy 3 soniyalik chegara bilan sinaldi: 1 kun
-ham, 45 kun ham xatosiz oʻtdi.
+`zs_market_growth`: 1 kun 1 380–2 200 → 758–868 ms, 30 kun 3 916–3 963
+→ 495–860 ms, 45 kun 3 890–4 032 → 846–898 ms.
+
+Bosh sahifaning beshta parallel soʻrovi ham sinaldi: hammasi `200`,
+eng sekini 3 077 ms.
 
 ### Sinalgan va ishlamagan yoʻl
 
@@ -336,12 +367,16 @@ da — oʻsha yerda repodagi eskiroq notoʻgʻri daʼvo ham tuzatilgan.
 
 ### Nima eskirishi mumkin
 
-Ikkala kesh ham supurish oxirida yangilanadi (kuniga uch marta: 02,
-10, 18 UTC). Yigʻuvchi toʻxtasa raqamlar jimgina eskiradi — buni
-faqat `totals.measured_at` koʻrsatadi. Yangi oʻlchangan mahsulot
-panelga darhol emas, keyingi supurishdan keyin chiqadi; xavf kichik,
-chunki oʻlchovni yaratadigan ham, keshni yangilaydigan ham aynan
-oʻsha supurish.
+Uchala kesh ham (`panel_product`, `panel_totals`, `market_found`)
+supurish oxirida, bitta `zs_refresh_panel_totals()` chaqiruvida
+yangilanadi — kuniga uch marta (02, 10, 18 UTC).
+
+Yigʻuvchi toʻxtasa raqamlar jimgina eskiradi va buni faqat
+`totals.measured_at` koʻrsatadi. Yangi oʻlchangan mahsulot panelga
+darhol emas, keyingi supurishdan keyin chiqadi; oʻsish grafigining
+BUGUNGI ustuni ham oxirgi supurish holatini koʻrsatadi. Xavf kichik,
+chunki oʻlchovni yaratadigan ham, keshni yangilaydigan ham aynan oʻsha
+supurish — ular bir yurishda ketma-ket bajariladi.
 
 ## Yigʻuvchi (`ingest/`)
 

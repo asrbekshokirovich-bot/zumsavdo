@@ -17,6 +17,9 @@ Tartib bilan qoʻllanadi:
 | `20260902134000_zumsavdo_product_rank_avval_qirq.sql` | `zs_product_rank` avval saralab kesadi, nomni faqat qolgan qatorlarga qidiradi |
 | `20260902140000_zumsavdo_panel_vaqt_byudjeti.sql` | sinalgan va ishlamagan yoʻlni yozib qoldiradi: funksiya darajasidagi `statement_timeout` bayonot chegarasini uzaytirmaydi |
 | `20260902141000_zumsavdo_panel_product_keshi.sql` | `zumsavdo.panel_product` materiallashtirilgan koʻrinishi; `zs_panel_product` endi shundan oʻqiydi |
+| `20260902142000_zumsavdo_first_seen_tashkent_indeks.sql` | `(first_seen_at at time zone 'Asia/Tashkent')::date` ifodasiga indeks — oʻsish grafigi 274 MB seq scan qilmaydi |
+| `20260902143000_zumsavdo_market_found_keshi.sql` | `zumsavdo.market_found` — kunlik "birinchi koʻrildi" hisobi keshga oʻtdi; `zs_market_growth` endi sanamaydi, qidiradi |
+| `20260902144000_zumsavdo_overview_dokon_reytingi_bir_marta.sql` | `zs_panel_overview` doʻkon reytingini bir marta quradi, turkum yigʻindisini oʻshandan oladi |
 
 Supabase CLI bilan:
 

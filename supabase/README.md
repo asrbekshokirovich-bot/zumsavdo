@@ -20,6 +20,7 @@ Tartib bilan qoʻllanadi:
 | `20260902142000_zumsavdo_first_seen_tashkent_indeks.sql` | `(first_seen_at at time zone 'Asia/Tashkent')::date` ifodasiga indeks — oʻsish grafigi 274 MB seq scan qilmaydi |
 | `20260902143000_zumsavdo_market_found_keshi.sql` | `zumsavdo.market_found` — kunlik "birinchi koʻrildi" hisobi keshga oʻtdi; `zs_market_growth` endi sanamaydi, qidiradi |
 | `20260902144000_zumsavdo_overview_dokon_reytingi_bir_marta.sql` | `zs_panel_overview` doʻkon reytingini bir marta quradi, turkum yigʻindisini oʻshandan oladi |
+| `20260902200000_zumsavdo_shop_rank_keraksiz_skan.sql` | `zs_shop_rank` faqat tanlangan asosni hisoblaydi — qolgan ikkita CTE bekorga `product_day` × `product` ni skanlamaydi |
 
 Supabase CLI bilan:
 

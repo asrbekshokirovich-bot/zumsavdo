@@ -338,6 +338,32 @@ marta quriladi (`materialized` CTE) va turkum yigʻindisi oʻsha
 roʻyxatdan olinadi. `zs_category_rank` va `zs_shop_rank` oʻzgarmadi —
 ular `zs_rank_page` va qidiruv orqali alohida chaqiriladi.
 
+### Oltinchi: asosga kirmagan ikkita skan
+
+Panel 19:24 UTC da YANA 500 qaytardi (30 kunlik davr, 4 474 ms). Sabab
+soʻrov shaklida emas edi — perepis oʻsha payt `zumsavdo.product` ga
+yozayotgan edi (2 013 213 → 2 218 695 qator olti soatda) va
+autovacuum ham ishlayotgandi. Boʻsh bazada oʻsha soʻrov 1 433 ms,
+yuk ostida 8 048 ms.
+
+Yuk ostida ham sigʻishi uchun keraksiz ish olib tashlandi.
+`zs_shop_rank` uchta CTE quradi — `ord` (buyurtma), `demand`
+(xaridor), `sold` (dona) — va `p_basis` ga qarab ulardan BITTASINI
+tanlaydi. Qolgan ikkitasi baribir toʻliq hisoblanardi. Panelning
+standart asosi esa "buyurtma", yaʼni bu ish deyarli har soʻrovda
+bekorga bajarilardi, ustiga `product_day` ni skanlab 2,2 million
+qatorli `product` ga kirib.
+
+Har CTE ga oʻz asosining sharti qoʻyildi. Mantiq oʻzgarmaydi:
+tanlash ifodasi allaqachon bitta ustunni oladi, qolganlari javobga
+chiqmaydi.
+
+Toʻgʻrilik: uchala asos uchun (`orders`, `units`, `buyers`) eski va
+yangi taʼrif **aynan bir xil 60 qator** qaytardi (`except` ikki
+tomonga ham boʻsh).
+
+Oʻlchandi (30 kunlik davr): `zs_shop_rank` 403–429 → 127–169 ms.
+
 ### Natija
 
 `zs_panel_overview`, HTTP orqali, `anon` kaliti bilan (tarmoq vaqti ham
@@ -345,10 +371,13 @@ ichida):
 
 | Davr | Boshida | Oxirida |
 |---|---:|---:|
-| 1 kun | 5 226 ms (xato) | **945–1 857 ms** |
-| 7 kun | 8 826 ms (xato) | **1 612–2 410 ms** |
-| 30 kun | xato | **2 106–2 888 ms** |
-| 45 kun | xato | **2 289–2 509 ms** |
+| 1 kun | 5 226 ms (xato) | **705–1 367 ms** |
+| 7 kun | 8 826 ms (xato) | **1 236–2 014 ms** |
+| 30 kun | xato | **1 995–2 451 ms** |
+| 45 kun | xato | **2 041–2 068 ms** |
+
+Oxirgi ustun perepis ISHLAYOTGAN paytda oʻlchandi — yaʼni bu tinch
+bazadagi eng yaxshi holat emas, kundalik yuk ostidagi holat.
 
 `zs_market_growth`: 1 kun 1 380–2 200 → 758–868 ms, 30 kun 3 916–3 963
 → 495–860 ms, 45 kun 3 890–4 032 → 846–898 ms.

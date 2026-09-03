@@ -385,6 +385,47 @@ bazadagi eng yaxshi holat emas, kundalik yuk ostidagi holat.
 Bosh sahifaning beshta parallel soʻrovi ham sinaldi: hammasi `200`,
 eng sekini 3 077 ms.
 
+### Yettinchi: gap soʻrovda emas, KESHDA edi
+
+Hamma tuzatishlardan keyin ham panel vaqti-vaqti bilan 500 qaytardi.
+Oʻlchov naqshni koʻrsatdi:
+
+| Urinish | Natija |
+|---|---|
+| birinchi | HTTP 500, 3 852–4 686 ms |
+| ikkinchi | HTTP 200, 1 942 ms |
+| uchinchi | HTTP 200, 708 ms |
+
+Yaʼni "panel ochilmadi, yangilasam ochildi". Ayni oʻsha paytda baza
+ICHIDA oʻsha soʻrov atigi **360 ms** ishlardi va 15 619 bufer oʻqirdi
+(`explain (analyze, buffers)`), `pg_stat_activity` da esa bironta
+mijoz soʻrovi yoʻq edi.
+
+Demak gap soʻrovda emas: sovuq holatda oʻsha 15 619 bufer (~122 MB)
+diskdan oʻqiladi. Ularni keshdan siqib chiqaruvchi — perepis: bir
+kunda `zumsavdo.product` 2 013 213 dan 2 218 695 qatorga oʻsdi.
+
+Nazoratchi ikkala yoʻlni ham tanladi (2026-09-02):
+
+1. **Perepis parallelligi 12 dan 6 ga tushirildi**
+   (`ZUMSAVDO_CENSUS_CONCURRENCY`, `.github/workflows/perepis.yml`).
+   12 raqami Uzum tomonidan tanlangan edi va kod standarti
+   oʻzgarmadi — bu chegara oʻz bazamiz uchun. Narxi: perepis
+   taxminan ikki barobar uzoq davom etadi.
+2. **`anon` byudjeti 3 dan 10 soniyaga oshirildi.** Sovuq soʻrov
+   endi xato emas, sekin.
+
+Ikkinchisida bitta tuzoq bor: `alter role` ning oʻzi yetmaydi.
+PostgREST rol sozlamalarini keshlaydi va `notify pgrst, 'reload
+config'` kerak — usiz panel oʻsha-oʻsha 500 qaytaraverdi va vaqt
+~3 800 ms da qotib turdi. Xabardan keyin sovuq soʻrov 6 555 ms da
+**200** qaytardi, keyingilari 1 734–2 379 ms.
+
+Xavfi ochiq yozib qoʻyiladi: `anon` kaliti ommaviy, va byudjet
+qancha uzun boʻlsa bazani ataylab charchatish shuncha arzon.
+Sabab vaqtinchalik — perepis tugagach kesh siqilishi yoʻqoladi va
+byudjet qayta koʻrilishi mumkin.
+
 ### Sinalgan va ishlamagan yoʻl
 
 Funksiyaga oʻz vaqt byudjetini berish (`alter function … set

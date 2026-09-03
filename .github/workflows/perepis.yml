@@ -12,6 +12,11 @@
 # tezlashtirishdan yutuq bir necha soat, bloklanishdan zarar butun
 # loyihaning asosi. Tezlik uzluksizlikdan keladi, siqishdan emas.
 #
+# 2026-09-02 da parallellik AKSINCHA kamaytirildi — 12 dan 6 ga.
+# Sabab Uzum emas, oʻz bazamiz: perepis yozuvlari panelning
+# keshini siqib chiqarardi va panel birinchi urinishda ochilmasdi.
+# Tafsiloti pastda, `ZUMSAVDO_CENSUS_CONCURRENCY` yonida.
+#
 # `--minutes 300` — ish oʻzi toza tugaydi. Bunsiz `census.mjs` bitta
 # boʻlak bajarib toʻxtaydi; GitHub esa 6 soatdan keyin jarayonni
 # qoʻpol uzadi va yugurish qizil boʻlardi.
@@ -110,6 +115,31 @@ jobs:
         env:
           ZUMSAVDO_SUPABASE_URL: ${{ secrets.ZUMSAVDO_SUPABASE_URL }}
           ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY }}
+          # 12 EMAS, 6. Sabab Uzumda emas, OʻZ BAZAMIZDA.
+          #
+          # `census.mjs` dagi 12 raqami Uzum tomonidan tanlangan:
+          # 429 chiqmagan, ~26 soʻrov/sek. U oʻlchov oʻrinli va kod
+          # standarti oʻzgarmadi.
+          #
+          # Lekin perepis oʻz bazamizga ham yozadi va bugun (2026-09-02)
+          # `zumsavdo.product` olti soatda 2 013 213 dan 2 218 695
+          # qatorga oʻsdi. Bu yozuvlar panelning sahifalarini
+          # `shared_buffers` dan siqib chiqaradi, va foydalanuvchi
+          # panelni ochganda soʻrov diskdan oʻqishga majbur boʻladi:
+          #
+          #   birinchi urinish  HTTP 500, 3 852–4 686 ms
+          #   ikkinchi urinish  HTTP 200, 1 942 ms
+          #   uchinchi urinish  HTTP 200,   708 ms
+          #
+          # Yaʼni "panel ochilmadi, yangilasam ochildi". Baza ichida
+          # oʻsha soʻrov atigi 360 ms — gap soʻrovda emas, keshda.
+          #
+          # NARXI: perepis taxminan ikki barobar uzoq davom etadi.
+          # Nazoratchi shuni tanladi (2026-09-02) — panel ishlashi
+          # perepis tezligidan muhimroq. `anon` byudjeti ham
+          # oshirildi (`20260902213000` migratsiyasi); ikkalasi
+          # birga ishlaydi.
+          ZUMSAVDO_CENSUS_CONCURRENCY: "6"
         run: node census.mjs --minutes 300
 
       # "Ishladi" degani "oldinga siljidi" degani emas.

@@ -1,0 +1,47 @@
+-- `anon` uchun 3 soniya emas, 10 soniya.
+--
+-- NEGA. Panel soʻrovi TEZ. 2026-09-02 da oʻlchandi: bitta kunlik
+-- `zs_panel_overview` baza ichida **360 ms** ishlaydi va 15 619
+-- buferni oʻqiydi. Lekin bu ISSIQ oʻlchov — buferlar keshda turganda.
+--
+-- Sovuq holatda oʻsha 15 619 bufer (~122 MB) diskdan oʻqiladi va
+-- soʻrov 3 soniyadan oshadi. Aynan shuni foydalanuvchi koʻradi:
+--
+--   birinchi urinish  HTTP 500, 3 852–4 686 ms
+--   ikkinchi urinish  HTTP 200, 1 942 ms
+--   uchinchi urinish  HTTP 200,   708 ms
+--
+-- Yaʼni "panel ochilmadi, yangilasam ochildi". Bu soʻrov shakli
+-- muammosi EMAS — u bugun 5 226 ms dan 360 ms ga tushirildi. Bu
+-- KESH muammosi: perepis `zumsavdo.product` ga yozib (bugun
+-- 2 013 213 → 2 218 695 qator), panelning sahifalarini keshdan
+-- siqib chiqaradi.
+--
+-- Nima tanlandi. Nazoratchi ikkala yoʻlni ham tanladi (2026-09-02):
+-- perepis parallelligi 12 dan 6 ga tushirildi
+-- (`.github/workflows/perepis.yml`) VA shu byudjet oshirildi.
+--
+-- XAVFI ochiq yozib qoʻyiladi: `anon` kaliti ommaviy (panel ochiq
+-- sayt). Byudjet qancha uzun boʻlsa, bazani ataylab charchatish
+-- shuncha arzon. 10 soniya — oʻlchangan eng yomon sovuq holatdan
+-- (4,7 s) ikki barobar zaxira, lekin cheksiz emas. `authenticated`
+-- roli 8 soniyada qoladi, `service_role` — oʻz byudjetlarida.
+--
+-- Bu vaqtinchalik emas, lekin sabab vaqtinchalik: perepis tugagach
+-- kesh siqilishi yoʻqoladi. Byudjet oʻshanda qayta koʻrilishi mumkin.
+
+alter role anon set statement_timeout = '10s';
+
+-- `alter role` NING OʻZI YETMAYDI — bu oʻlchab bilindi.
+--
+-- Rol sozlamasi qoʻyilgach ham panel HTTP orqali 500 qaytaraverdi va
+-- vaqt ~3 800 ms da qotib turdi, yaʼni eski 3 soniyalik chegara
+-- amalda edi. PostgREST rol sozlamalarini oʻz konfiguratsiyasida
+-- keshlaydi va uni qayta oʻqishi kerak.
+--
+-- Xabardan keyin oʻsha soʻrov (30 kunlik davr):
+--   avval   HTTP 500, 3 803 / 3 817 / 3 819 ms
+--   keyin   HTTP 200, 6 555 → 2 379 → 2 265 → 1 734 ms
+--
+-- Yaʼni sovuq soʻrov endi XATO emas, sekin. Aynan shu kerak edi.
+notify pgrst, 'reload config';

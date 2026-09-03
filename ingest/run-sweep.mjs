@@ -250,6 +250,24 @@ async function main() {
     log(`Do'kon turkumi yangilanmadi: ${error.message}`);
   }
 
+  // Panel yig'indisi ham hisoblanadigan kesh: do'kon, turkum va mahsulot
+  // soni sanaga bog'liq emas, lekin ilgari har panel so'rovida qaytadan
+  // sanalardi va 3 soniyalik `anon` chegarasiga sig'masdi. Uni shu yerda —
+  // o'lchov bazaga tushgandan keyin — bir marta yangilaymiz.
+  //
+  // Xatosi butun sweepni yiqitmaydi, xuddi do'kon turkumidagidek: bu
+  // yangilanmasa raqam bir yurish eskiradi, xolos, ammo undan keyingi
+  // kunlik o'sish qatori o'sha kunga boshqa qaytmaydi.
+  try {
+    const t = await store.refreshPanelTotals();
+    log(
+      `Panel yig'indisi: ${t.shops} do'kon, ${t.categories} turkum, ` +
+        `${t.products} mahsulot.`,
+    );
+  } catch (error) {
+    log(`Panel yig'indisi yangilanmadi: ${error.message}`);
+  }
+
   // Kunlik o'sish: nechta mahsulot, do'kon va sharh qo'shildi.
   const growth = await store.recordMarketDay();
   log(`Kunlik o'sish: ${JSON.stringify(growth)}`);

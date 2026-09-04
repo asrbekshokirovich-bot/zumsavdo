@@ -2,6 +2,59 @@
 <html lang="uz"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+/* Desktop ko'rish rejimi: ?desktop=1 yoki ?desktop=1440 bilan telefonda
+   sayt kompyuter kengligida ochiladi. ?desktop=off — o'chiradi.
+   Faqat havolada bayroq bo'lsa ishlaydi, oddiy tashrifchiga ta'sir qilmaydi. */
+(function(){
+  var KEY='zs-desktop-width', MIN=320, MAX=3840, DEFAULT=1440;
+  function readFlag(){
+    var q=new URLSearchParams(location.search).get('desktop');
+    if(q===null&&location.hash)q=new URLSearchParams(location.hash.slice(1)).get('desktop');
+    return q;
+  }
+  var flag=readFlag(), width=null;
+  if(flag!==null){
+    if(/^(off|0|false)$/i.test(flag)){ try{sessionStorage.removeItem(KEY)}catch(e){} return; }
+    var n=parseInt(flag,10);
+    width=(n>=MIN&&n<=MAX)?n:DEFAULT;
+    try{sessionStorage.setItem(KEY,String(width))}catch(e){}
+  }else{
+    try{var saved=parseInt(sessionStorage.getItem(KEY),10);
+        if(saved>=MIN&&saved<=MAX)width=saved;}catch(e){}
+  }
+  if(!width) return;
+
+  var meta=document.querySelector('meta[name="viewport"]');
+  if(!meta){meta=document.createElement('meta');meta.name='viewport';document.head.appendChild(meta);}
+  var scale=(window.screen&&window.screen.width?window.screen.width:width)/width;
+  meta.setAttribute('content','width='+width+', initial-scale='+scale.toFixed(4)+', user-scalable=yes');
+
+  function badge(){
+    if(document.getElementById('zs-desktop-badge'))return;
+    var b=document.createElement('div');
+    b.id='zs-desktop-badge';
+    b.setAttribute('style','position:fixed;right:8px;bottom:8px;z-index:2147483647;'+
+      'display:flex;align-items:center;gap:8px;background:#0A1A34;color:#fff;'+
+      'font:600 '+Math.round(13/scale)+'px/1 system-ui,sans-serif;'+
+      'padding:'+Math.round(8/scale)+'px '+Math.round(12/scale)+'px;'+
+      'border-radius:'+Math.round(999)+'px;box-shadow:0 4px 14px rgba(0,0,0,.3)');
+    var t=document.createElement('span'); t.textContent='Desktop '+width+'px';
+    var x=document.createElement('button');
+    x.type='button'; x.textContent='×'; x.setAttribute('aria-label','Desktop rejimini yopish');
+    x.setAttribute('style','all:unset;cursor:pointer;color:#D4E94C;font-size:'+Math.round(18/scale)+'px;line-height:1');
+    x.onclick=function(){
+      try{sessionStorage.removeItem(KEY)}catch(e){}
+      location.href=location.pathname;
+    };
+    b.appendChild(t); b.appendChild(x);
+    document.body.appendChild(b);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',badge);
+  else badge();
+})();
+</script>
+
 <title>ZumSavdo — Uzumda nima sotishni raqamlar bilan tanlang</title>
 <meta name="description" content="1,5 mln tovar va 82 ming doʻkon oʻlchovi asosida yoʻnalish tanlash. Taxmin emas — oʻlchangan raqam.">
 <meta property="og:title" content="ZumSavdo">

@@ -69,7 +69,21 @@ const store = createStore(config);
  * shunchaki qaytiladi va jarayon oʻzi tugaydi.
  */
 if (args.includes("--status")) {
-  log(JSON.stringify(await store.censusStatus()));
+  // `log()` EMAS, `console.log()`.
+  //
+  // `log()` har satr oldiga ISO vaqt muhrini qoʻyadi. Bu odam
+  // oʻqiydigan chiqish uchun toʻgʻri, lekin `--status` MASHINA uchun:
+  // uni jadval JSON deb oʻqiydi.
+  //
+  // Oʻlchandi 2026-09-05 06:01: perepis yugurishi shu bilan yiqildi —
+  //
+  //   json.decoder.JSONDecodeError: Extra data: line 1 column 5
+  //
+  // chunki fayl `2026-09-05T06:01:36.451Z  {"name":"census",…}` edi.
+  // Eski qobiq kodi `sed` bilan satr ichidan raqam qidirardi va
+  // prefiks unga xalaqit bermasdi — shuning uchun xato faqat qatʼiy
+  // JSON tahlili qoʻyilganda koʻrindi.
+  console.log(JSON.stringify(await store.censusStatus()));
 } else if (args.includes("--select")) {
   const result = await store.selectTracked(flag(args, "--select", 50000));
   log(`2-qatlam tanlandi: ${JSON.stringify(result)}`);

@@ -94,7 +94,10 @@ jobs:
           echo "$javob"
           # JSON python bilan oʻqiladi, sed bilan emas: `updated_at`
           # sana, eski `sed` esa faqat raqam ajrata olardi.
-          printf '%s' "$javob" > /tmp/holat.json
+          # Birinchi `{` gacha boʻlgani kesiladi. `--status` endi toza
+          # JSON chiqaradi, lekin bu qator ikkinchi himoya: kimdir
+          # chiqishga yana prefiks qoʻshsa, perepis yiqilmasin.
+          printf '%s' "$javob" | sed 's/^[^{]*//' > /tmp/holat.json
           python3 -c "import json,datetime;d=json.load(open('/tmp/holat.json'));u=datetime.datetime.fromisoformat(d['updated_at']);print('pass=%d\nnext_id=%d\nmax_id=%d\nseen=%d\nyosh_soat=%d'%(d['pass'],d['next_id'],d['max_id'],d['seen'],(datetime.datetime.now(datetime.timezone.utc)-u).total_seconds()//3600))" > /tmp/holat.env
           cat /tmp/holat.env
           . /tmp/holat.env
@@ -227,7 +230,7 @@ jobs:
           ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           javob=$(node census.mjs --status)
-          printf '%s' "$javob" > /tmp/holat2.json
+          printf '%s' "$javob" | sed 's/^[^{]*//' > /tmp/holat2.json
           python3 -c "import json;d=json.load(open('/tmp/holat2.json'));print('next_id=%d\nmax_id=%d\npass=%d'%(d['next_id'],d['max_id'],d['pass']))" > /tmp/holat2.env
           . /tmp/holat2.env
           if [ "$next_id" -le "$max_id" ]; then

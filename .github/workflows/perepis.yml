@@ -36,7 +36,9 @@ concurrency:
 jobs:
   perepis:
     runs-on: ubuntu-latest
-    timeout-minutes: 330
+    # 270 daqiqalik oyna + 30 daqiqa zaxira (npm ci, holat, tanlov).
+    # Ilgari 330 edi va boʻlak undan oshib ketardi.
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
 
@@ -63,50 +65,61 @@ jobs:
         env:
           ZUMSAVDO_SUPABASE_URL: ${{ secrets.ZUMSAVDO_SUPABASE_URL }}
           ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY }}
+          # Oʻtishlar orasidagi eng kam tanaffus.
+          #
+          # Perepis TUGAMAYDI — u aylanadi. `zs_census_claim` oxirga
+          # yetganda `pass` ni bittaga oshirib, `next_id` ni 1 ga
+          # qaytaradi. Yaʼni har oʻtish oxirida savol tugʻiladi:
+          # katalogni yana boshidan chiqishga 3,3 mln soʻrov kerak,
+          # buni jimgina boshlab yuborish notoʻgʻri.
+          #
+          # ILGARI bu savol QOʻLDA hal qilinardi: darvoza oxirgi ruxsat
+          # etilgan oʻtish raqamida turardi (`pass -gt N`). Naqsh ikki
+          # marta bir xil zarar keltirdi — 2026-08-24 da 9 kun,
+          # 2026-09-03 da 54 soat perepis jimgina toʻxtab turdi va
+          # yugurishlar YASHIL koʻrindi, chunki qadam oʻtkazib
+          # yuborilardi.
+          #
+          # ENDI raqam emas, RITM cheklanadi. Oʻtish boshlangan boʻlsa
+          # hech qanday darvoza yoʻq — davom etadi. Faqat oxiriga
+          # yetganda (`next_id > max_id`) tanaffus tekshiriladi.
+          #
+          # 24 soat qayerdan: 6 parallelda bitta toʻliq oʻtish ~2,4 kun
+          # (19,6 id/sek, oʻlchandi 2026-09-03). 24 soat tanaffus bilan
+          # tsikl ~3,4 kun — katalog haftada ikki marta yangilanadi va
+          # baza doim tinch oynaga ega boʻladi.
+          ZUMSAVDO_PASS_COOLDOWN_HOURS: "24"
         run: |
           javob=$(node census.mjs --status)
           echo "$javob"
-          oqi() { printf '%s' "$javob" | sed -n "s/.*\"$1\":\"\\?\\([0-9.]*\\)\"\\?.*/\\1/p"; }
-          pass=$(oqi pass); seen=$(oqi seen)
-          if [ -z "$pass" ] || [ -z "$seen" ]; then
-            echo "::error::Holat oʻqilmadi — javob kutilganday emas."
-            exit 1
-          fi
+          # JSON python bilan oʻqiladi, sed bilan emas: `updated_at`
+          # sana, eski `sed` esa faqat raqam ajrata olardi.
+          printf '%s' "$javob" > /tmp/holat.json
+          python3 -c "import json,datetime;d=json.load(open('/tmp/holat.json'));u=datetime.datetime.fromisoformat(d['updated_at']);print('pass=%d\nnext_id=%d\nmax_id=%d\nseen=%d\nyosh_soat=%d'%(d['pass'],d['next_id'],d['max_id'],d['seen'],(datetime.datetime.now(datetime.timezone.utc)-u).total_seconds()//3600))" > /tmp/holat.env
+          cat /tmp/holat.env
+          . /tmp/holat.env
           echo "pass=$pass" >> "$GITHUB_OUTPUT"
           echo "seen=$seen" >> "$GITHUB_OUTPUT"
 
-          # Perepis TUGAMAYDI — u aylanadi. `zs_census_claim` oxirga
-          # yetganda `pass` ni bittaga oshirib, `next_id` ni 1 ga
-          # qaytaradi. Yaʼni "foiz 100 boʻlsa toʻxta" degan shart hech
-          # qachon ishlamasdi: foiz 100 ga yetmasdan 0 ga tushadi.
-          #
-          # Har oʻtish — ALOHIDA qaror. Perepis TUGAMAYDI, u aylanadi:
-          # katalogni yana boshidan chiqish Uzumga 3,3 mln soʻrov degani
-          # va uni jimgina boshlab yuborish notoʻgʻri. Shuning uchun
-          # darvoza oxirgi RUXSAT ETILGAN oʻtishda turadi.
-          #
-          # 3-oʻtishga ruxsat berildi (nazoratchi, 2026-09-02).
-          # Sabab oʻlchandi, taxmin emas: `crawl_cursor.updated_at`
-          # 2026-08-24 14:36 da muzlagan — 9 kun. Shu vaqtda ish yashil
-          # koʻrinardi (30 ta muvaffaqiyatli yugurish), chunki darvoza
-          # yopiq boʻlsa qadam OʻTKAZIB YUBORILADI, yiqilmaydi. Ostidagi
-          # perepisga esa uchta narsa tayanadi va ular ham 9 kun eskirgan
-          # boʻlib qoldi: `brend_qamrovi` (1-tuzoq), `turkum_raqobati`
-          # (6-tuzoq) va turkum hajmi. Ularning `olchandi` ustuni har
-          # kuni yangilanadi — yaʼni panel "yangi" deb koʻrsatib turadi.
-          #
-          # 3-oʻtish 2-si tugagach OʻZI boshlangan va 400 001 id da
-          # toʻxtagan (3,3 mln dan 12%). Yaʼni bu yerdagi oʻzgarish yangi
-          # ish boshlamaydi, boshlanganini davom ettiradi.
-          #
-          # `-gt 3` — 4-oʻtish yana toʻxtaydi va yana shu yerda,
-          # oʻlchov bilan hal qilinadi. Naqsh oʻzgarmaydi.
-          if [ "$pass" -gt 3 ]; then
-            echo "3-oʻtish tugagan (hozir pass $pass)."
-            echo "Toʻrtinchi oʻtishni boshlash — alohida qaror. Ish oʻtkazib yuborildi."
-            echo "davom=yoq" >> "$GITHUB_OUTPUT"
-          else
+          if [ "$next_id" -le "$max_id" ]; then
+            echo "Oʻtish $pass davom etyapti (id $next_id / $max_id)."
             echo "davom=ha" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Oʻtish oxiriga yetgan. Tanaffus tugadimi?
+          kerak="$ZUMSAVDO_PASS_COOLDOWN_HOURS"
+          echo "Oʻtish $pass tugagan. Oxirgi yozuvdan $yosh_soat soat oʻtdi (kerak: $kerak)."
+          if [ "$yosh_soat" -ge "$kerak" ]; then
+            echo "Tanaffus tugadi — $((pass + 1))-oʻtish boshlanadi."
+            echo "davom=ha" >> "$GITHUB_OUTPUT"
+          else
+            # OGOHLANTIRISH, jim yashil emas. Bu holat KUTILGAN va
+            # oʻzi ochiladi, lekin yugurish xulosasida koʻrinishi kerak
+            # — aks holda "toʻxtab qolgan" va "tanaffusda" bir xil
+            # koʻrinadi.
+            echo "::warning::Perepis tanaffusda: $pass-oʻtish tugagan, keyingisi $kerak soatdan keyin boshlanadi (hozir $yosh_soat soat)."
+            echo "davom=yoq" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Aylanish
@@ -140,7 +153,20 @@ jobs:
           # oshirildi (`20260902213000` migratsiyasi); ikkalasi
           # birga ishlaydi.
           ZUMSAVDO_CENSUS_CONCURRENCY: "6"
-        run: node census.mjs --minutes 300
+          # Boʻlak 200 000 emas, 50 000.
+          #
+          # Muddat faqat boʻlaklar ORASIDA tekshiriladi. 200 000 lik
+          # boʻlak 6 parallelda ~170 daqiqa oladi, yaʼni oynaning
+          # oxirida boshlangan boʻlak undan ~170 daqiqa oshib ketardi
+          # va GitHub jarayonni uzardi. 50 000 lik boʻlak ~42 daqiqa —
+          # oynaga ancha aniq sigʻadi.
+          #
+          # `census.mjs` endi keyingi boʻlakning muddatini oʻlchangan
+          # tezlikdan bashorat qiladi va sigʻmasa boshlamaydi. Kichik
+          # boʻlak oʻsha bashoratni aniqroq qiladi va oynani toʻliqroq
+          # ishlatadi: 270 daqiqada oltita boʻlak ~250 daqiqa.
+          ZUMSAVDO_CENSUS_CHUNK: "50000"
+        run: node census.mjs --size 50000 --minutes 270
 
       # "Ishladi" degani "oldinga siljidi" degani emas.
       #
@@ -170,4 +196,51 @@ jobs:
           else
             echo "::error::Perepis qimirlamadi (seen $eski_seen → $seen)."
             exit 1
+          fi
+
+      # Kuzatuv roʻyxatini yangilash — oʻtish TUGAGANDA.
+      #
+      # NEGA BU YERDA. Perepis 1-qatlam: butun katalogni koʻradi.
+      # Sweep esa 2-qatlam: undan tanlangan 50 000 tovarni kuniga uch
+      # marta oʻlchaydi. Ikkisini bogʻlaydigan halqa — `--select`.
+      #
+      # Va oʻsha halqa YOʻQ EDI. Roʻyxat 2026-08-18 da bir marta
+      # qoʻlda tanlangan va shundan beri qimirlamagan: `tracked_product`
+      # da 08-18 dan keyin bitta ham yangi qator yoʻq. Yaʼni perepis
+      # uch marta butun katalogni aylanib chiqqan, 2,5 mln tovarni
+      # koʻrgan — va sweep hamon eng birinchi, TOʻLIQ BOʻLMAGAN
+      # oʻtishdan tanlangan roʻyxatni oʻlchab yurgan.
+      #
+      # "Baza toʻlmayapti" degan savolning asosiy javobi shu edi.
+      #
+      # NEGA AYNAN OʻTISH TUGAGANDA. Tanlov `buyers_per_week` boʻyicha
+      # saralaydi. Toʻliq boʻlmagan oʻtishda katalogning faqat bir
+      # boʻlagi koʻrilgan boʻladi va roʻyxat oʻsha boʻlakka qarab
+      # qiyshayadi. `zs_select_tracked` buni oʻzi ham tekshiradi
+      # (`20260905060000` migratsiyasi), lekin bu yerda ham shart
+      # qoʻyilgan — ikkita himoya bittasidan yaxshi.
+      - name: Kuzatuv roʻyxatini yangilash
+        if: steps.holat.outputs.davom == 'ha'
+        working-directory: ingest
+        env:
+          ZUMSAVDO_SUPABASE_URL: ${{ secrets.ZUMSAVDO_SUPABASE_URL }}
+          ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          javob=$(node census.mjs --status)
+          printf '%s' "$javob" > /tmp/holat2.json
+          python3 -c "import json;d=json.load(open('/tmp/holat2.json'));print('next_id=%d\nmax_id=%d\npass=%d'%(d['next_id'],d['max_id'],d['pass']))" > /tmp/holat2.env
+          . /tmp/holat2.env
+          if [ "$next_id" -le "$max_id" ]; then
+            echo "Oʻtish $pass hali tugamagan (id $next_id / $max_id) — tanlov keyingi safar."
+            exit 0
+          fi
+          echo "Oʻtish $pass tugadi — kuzatuv roʻyxati qayta tanlanadi."
+          natija=$(node census.mjs --select 50000)
+          echo "$natija"
+          # Tanlov jimgina oʻtkazib yuborilmasin: funksiya himoya
+          # ishlaganda `sabab` qaytaradi va `qoshildi` nol boʻladi.
+          if printf '%s' "$natija" | grep -q '"sabab":null'; then
+            echo "Roʻyxat yangilandi."
+          else
+            echo "::warning::Kuzatuv roʻyxati yangilanmadi — javobdagi sababni koʻring."
           fi

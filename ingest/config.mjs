@@ -134,8 +134,16 @@ export function loadConfig({ requireSupabase = true } = {}) {
      * Roʻyxat 50 000 boʻlgani uchun hammasini birdan olish mumkin emas.
      * Har sweep navbatdan shuncha oladi, roʻyxat asta toʻladi va toʻlgach
      * qayta soʻralmaydi.
+     *
+     * 300 dan 1000 ga oshirildi (2026-09-05). Sabab oʻlchandi: 300 tada
+     * navbat 40 370 dan 37 070 ga besh kunda tushdi — shu tezlikda
+     * qolgani ~31 kun. 1000 tada ~9 kun.
+     *
+     * Uzumga qoʻshimcha yuk sezilmas: har sweep 3 sahifadan soʻraydi,
+     * yaʼni +2 100 soʻrov. Oʻsha sweep allaqachon 87 000 soʻrov
+     * yuboradi — bu 2,4% qoʻshimcha.
      */
-    feedbackBatch: Number(process.env.ZUMSAVDO_FEEDBACK_BATCH ?? 300),
+    feedbackBatch: Number(process.env.ZUMSAVDO_FEEDBACK_BATCH ?? 1000),
 
     /**
      * Bir vaqtda nechta mahsulot soʻraladi.

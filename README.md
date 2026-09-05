@@ -448,6 +448,63 @@ BUGUNGI ustuni ham oxirgi supurish holatini koʻrsatadi. Xavf kichik,
 chunki oʻlchovni yaratadigan ham, keshni yangilaydigan ham aynan oʻsha
 supurish — ular bir yurishda ketma-ket bajariladi.
 
+## Ikki qatlam va ularni bogʻlaydigan halqa
+
+Yigʻish ikki qatlamdan iborat va ular BOSHQA-BOSHQA ishlar:
+
+| Qatlam | Nima qiladi | Qachon | Hajm |
+|---|---|---|---|
+| **Perepis** (`census.mjs`) | Butun katalogni id boʻyicha aylanadi | `perepis.yml`, 6 soatda bir | 3,3 mln id |
+| **Supurish** (`run-sweep.mjs`) | Tanlangan tovarlarni oʻlchaydi | `sweep.yml`, kuniga 3 marta | 50 000 tovar |
+
+Ularni bogʻlaydigan halqa — **kuzatuv roʻyxatini tanlash**
+(`zs_select_tracked`): perepis koʻrgan tovarlardan eng talabdagi
+50 000 tasi tanlanadi va supurish oʻshalarni oʻlchaydi.
+
+### 2026-09-05 — halqa uzilgan ekan
+
+Roʻyxat **2026-08-18 da bir marta qoʻlda tanlangan** va shundan beri
+qimirlamagan: `tracked_product` da oʻsha kundan keyin bitta ham yangi
+qator yoʻq. Perepis oradan uch marta butun katalogni aylanib chiqdi,
+2,5 mln tovarni koʻrdi — supurish esa hamon eng birinchi, toʻliq
+boʻlmagan oʻtishdan tanlangan roʻyxatni oʻlchab yurdi.
+
+«Baza toʻlmayapti» degan savolning asosiy javobi shu edi. Yana uchta
+mexanizm qoʻshiladi:
+
+| Mexanizm | Taʼsiri |
+|---|---|
+| Oʻzgarmagan oʻlchov ataylab yozilmaydi (06.5) | Kuniga ~200 000 oʻlchovdan ~6 000 tasi bazaga tushadi |
+| Sharh 300 tadan olinardi | Navbat 37 070 — shu tezlikda ~31 kun. **1 000 ga oshirildi** → ~9 kun |
+| Katalog faqat perepisdan kengayadi | Perepis toʻxtasa yangi tovar umuman qoʻshilmaydi |
+
+**Tuzatildi:** perepis har oʻtishni tugatganda roʻyxat AVTOMATIK
+qayta tanlanadi (`perepis.yml` → «Kuzatuv roʻyxatini yangilash»).
+Tanlov faqat TUGAGAN oʻtishdan boʻladi — toʻliq boʻlmagani roʻyxatni
+qiyshaytirardi.
+
+### Perepis endi oʻzi aylanadi
+
+Ilgari har oʻtish qoʻlda ruxsat talab qilardi (`pass -gt N`). Naqsh
+ikki marta bir xil zarar keltirdi — 2026-08-24 da **9 kun**,
+2026-09-03 da **54 soat** perepis jimgina toʻxtab turdi va
+yugurishlar YASHIL koʻrindi.
+
+Endi raqam emas, **ritm** cheklanadi: oʻtish boshlangan boʻlsa davom
+etadi, oxiriga yetganda 24 soatlik tanaffus kutiladi. Tanaffus
+`::warning` bilan koʻrinadi — jim yashil emas.
+
+### Kuzatuvchi boshqa ishda turadi
+
+`ingest/holat.mjs` — bir chaqiruvda butun yigʻuvchining holati
+(`zs_holat()`). Uni **supurish** chaqiradi, perepis emas: perepis
+toʻxtaganda u umuman ishlamaydi, yaʼni oʻzini tekshira olmaydi.
+
+Ogohlantiradi: oʻtish oʻrtasida 12 soat qimirlamasa, oʻtishlar
+orasida 48 soat, panel keshi 12 soat eskirsa, kuzatuv roʻyxati
+1 000 dan tushsa. Chegaralar `ingest/holat.test.mjs` da qotirilgan —
+kuzatuvchining oʻzi jimgina buzilmasin.
+
 ## Yigʻuvchi (`ingest/`)
 
 ```bash

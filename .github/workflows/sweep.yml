@@ -79,3 +79,24 @@ jobs:
             echo "::error::Sweep xatosiz tugadi, lekin bugun bitta ham oʻlchov yozilmadi."
             exit 1
           fi
+
+
+      # Butun yigʻuvchining holati — har yurishda, kuniga uch marta.
+      #
+      # Kuzatuvchi AYBDORDAN BOSHQA ishda turadi: perepis toʻxtaganda
+      # u umuman ishlamaydi, yaʼni oʻzini tekshira olmaydi. Supurish
+      # esa undan mustaqil va tez-tez yuradi.
+      #
+      # `if: always()` — supurish yiqilsa ham holat chop etiladi.
+      # Skript hech qachon yiqilmaydi (chiqish kodi doim 0): perepis
+      # nosozligi supurishni qizil qilmasligi kerak, aks holda ikki
+      # muammo bir-birini yashiradi.
+      #
+      # Tafsilot va chegaralar: `ingest/holat.mjs`.
+      - name: Yigʻuvchi holati
+        if: always()
+        working-directory: ingest
+        env:
+          ZUMSAVDO_SUPABASE_URL: ${{ secrets.ZUMSAVDO_SUPABASE_URL }}
+          ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.ZUMSAVDO_SUPABASE_SERVICE_ROLE_KEY }}
+        run: node holat.mjs

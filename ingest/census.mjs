@@ -34,6 +34,16 @@ const CONCURRENCY = Number(process.env.ZUMSAVDO_CENSUS_CONCURRENCY || 12);
 /** Nechta natija toʻplangach bazaga yoziladi. */
 const FLUSH_EVERY = 2000;
 
+/**
+ * Boʻlak boshlashdan oldin ishlatiladigan ehtiyotkor tezlik (id/sek).
+ *
+ * Birinchi boʻlakdan oldin haqiqiy tezlik nomaʼlum, lekin muddat
+ * hisobi kerak. Past baho xavfsiz: u koʻproq vaqt talab qiladi deb
+ * hisoblaydi va shubhali holatda boʻlakni boshlamaydi.
+ * Oʻlchangan: 12 parallelda ~26, 6 parallelda ~19,6 id/sek.
+ */
+const EHTIYOT_TEZLIK = 12;
+
 function log(message) {
   process.stdout.write(`${new Date().toISOString()}  ${message}\n`);
 }
@@ -148,6 +158,8 @@ async function crawl() {
   let totalFailed = 0;
   let rateLimitHits = 0;
   let toxtash = "tugadi";
+  /** Oxirgi boʻlakda oʻlchangan haqiqiy tezlik (id/sek). */
+  let olchanganTezlik = null;
 
   for (;;) {
     const claim = await store.censusClaim(size);
@@ -195,6 +207,9 @@ async function crawl() {
     }
 
     totalLive += await flush(pass, batch, seen);
+    // Keyingi boʻlakning muddatini shu oʻlchovdan bashorat qilamiz.
+    const bolakSoniyasi = (Date.now() - started) / 1000;
+    if (bolakSoniyasi > 0) olchanganTezlik = (toId - fromId + 1) / bolakSoniyasi;
     log(
       `Boʻlak tugadi: ${totalSeen} tekshirildi · ${totalLive} tirik · ` +
         `${totalMissing} yoʻq · ${totalFailed} xato · ${rateLimitHits} marta 429`,
@@ -210,6 +225,33 @@ async function crawl() {
     // siljigan boʻladi, xolos.
     if (!deadline) { toxtash = "bitta boʻlak"; break; }
     if (Date.now() >= deadline) { toxtash = "vaqt tugadi"; break; }
+
+    // TUGATA OLMAYDIGAN BOʻLAK BOSHLANMAYDI.
+    //
+    // Muddat ilgari faqat shu yerda tekshirilardi, yaʼni oynaning
+    // 299-daqiqasida yangi boʻlak boshlanishi mumkin edi va u yana
+    // ~170 daqiqa ishlardi. GitHub esa `timeout-minutes` da jarayonni
+    // qoʻpol uzadi.
+    //
+    // Oʻlchandi 2026-09-03 22:57: yugurish aynan shunday uzildi
+    // ("The operation was canceled"), 59 988/200 000 da. Boʻlak
+    // yarim qolgani yomoni emas — `zs_census_claim` `next_id` ni
+    // ALLAQACHON oldinga surgan, yaʼni qolgan 140 012 id shu
+    // oʻtishda BOSHQA TEKSHIRILMAYDI. Jimgina yoʻqotish.
+    //
+    // Endi keyingi boʻlakning kutilgan muddati hisoblanadi va u
+    // oynaga sigʻmasa, ish TOZA tugaydi.
+    const tezlik = olchanganTezlik ?? EHTIYOT_TEZLIK;
+    const kutilgan = (size / tezlik) * 1000;
+    if (Date.now() + kutilgan > deadline) {
+      toxtash = "keyingi boʻlakka vaqt yetmaydi";
+      log(
+        `Keyingi boʻlak ~${Math.round(kutilgan / 60000)} daqiqa oladi ` +
+          `(${tezlik.toFixed(1)} id/sek), oynada ` +
+          `${Math.round((deadline - Date.now()) / 60000)} daqiqa qoldi — boshlanmaydi.`,
+      );
+      break;
+    }
   }
 
   const status = await store.censusStatus();

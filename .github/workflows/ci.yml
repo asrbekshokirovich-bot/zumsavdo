@@ -1,0 +1,31 @@
+# Testlar — har push va har PR da.
+#
+# NEGA KERAK. Bu omborda CI umuman yoʻq edi: `ingest/` dagi kod faqat
+# jadval boʻyicha, ishlab turgan bazaga qarshi tekshirilardi. Yaʼni
+# xato faqat yigʻish paytida, yarim tunda va kimsasiz koʻrinardi.
+#
+# `holat.mjs` — kuzatuvchi. U jimgina buzilsa (bitta chegara raqami
+# oʻzgarsa) hech qachon ogohlantirmaydigan boʻlib qoladi va biz buni
+# faqat navbatdagi uzoq toʻxtashda bilib olardik. Uni faqat test
+# ushlaydi.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - run: npm ci
+        working-directory: ingest
+      # Tarmoqqa chiqmaydi va sirlarsiz ishlaydi: `holat.mjs` faqat
+      # buyruq sifatida ishga tushirilganda soʻrov yuboradi.
+      - run: npm test
+        working-directory: ingest
